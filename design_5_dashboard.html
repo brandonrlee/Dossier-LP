@@ -122,6 +122,74 @@
   }
   .check .material-symbols-outlined { font-size: 10px; font-variation-settings: 'wght' 700; }
   .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+  /* Settings panel */
+  .settings-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(253, 247, 255, 0.35);
+    backdrop-filter: blur(6px) saturate(140%);
+    -webkit-backdrop-filter: blur(6px) saturate(140%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+    z-index: 60;
+  }
+  .settings-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .settings-panel {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: min(420px, calc(100vw - 24px));
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(203, 196, 210, 0.5);
+    border-radius: 28px;
+    box-shadow: 0 24px 60px -20px rgba(34, 0, 93, 0.25), 0 4px 12px rgba(34, 0, 93, 0.08);
+    transform: translateX(calc(100% + 24px));
+    transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 70;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .settings-panel.open { transform: translateX(0); }
+  .settings-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 4px;
+    border-bottom: 1px solid rgba(203, 196, 210, 0.45);
+    cursor: pointer;
+    transition: background 160ms ease;
+    border-radius: 10px;
+    padding-left: 10px; padding-right: 10px;
+  }
+  .settings-row:hover { background: rgba(233, 221, 255, 0.35); }
+  .settings-row .row-icon {
+    width: 36px; height: 36px; border-radius: 999px;
+    background: #f2ecf4; color: #1d1b20;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .seg {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f2ecf4;
+    border-radius: 999px;
+    padding: 4px;
+  }
+  .seg button {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: #494551;
+    transition: background 160ms ease, color 160ms ease;
+  }
+  .seg button.active { background: #ffffff; color: #1d1b20; box-shadow: 0 1px 2px rgba(29, 27, 32, 0.06); }
 </style>
 </head>
 <body class="text-on-surface flex flex-col font-[Inter] antialiased">
@@ -137,7 +205,7 @@
       <span>text dossier</span>
       <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
     </button>
-    <button aria-label="Settings" class="bg-surface-container-lowest pill-shadow rounded-full w-9 h-9 inline-flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+    <button id="open-settings" aria-label="Settings" class="bg-surface-container-lowest pill-shadow rounded-full w-9 h-9 inline-flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
       <span class="material-symbols-outlined text-[18px]">settings</span>
     </button>
   </div>
@@ -243,6 +311,127 @@
 
   </div>
 </main>
+
+<!-- ================== SETTINGS PANEL ================== -->
+<div id="settings-backdrop" class="settings-backdrop" aria-hidden="true"></div>
+
+<aside id="settings-panel" class="settings-panel" role="dialog" aria-label="Settings" aria-hidden="true">
+  <div class="flex justify-end p-4 pb-0">
+    <button id="close-settings" aria-label="Close settings" class="w-9 h-9 rounded-full inline-flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+      <span class="material-symbols-outlined text-[20px]">close</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto px-7 pb-4">
+    <!-- Profile -->
+    <div class="flex flex-col items-center gap-2 pt-2 pb-6">
+      <div class="w-20 h-20 rounded-full bg-white border border-outline-variant/60 flex items-center justify-center text-[40px] shadow-sm">
+        🇺🇸
+      </div>
+      <h2 class="text-[28px] tracking-tight text-on-surface lowercase mt-1" style="font-family: 'Bricolage Grotesque'; font-weight: 600; letter-spacing: -0.025em;">
+        no username yet
+      </h2>
+      <p class="text-[13px] text-on-surface-variant tabular-nums">🇺🇸 +1 480 246 5857</p>
+    </div>
+
+    <!-- Rows -->
+    <div class="flex flex-col">
+      <a href="#" class="settings-row">
+        <span class="row-icon"><span class="material-symbols-outlined text-[18px]">power</span></span>
+        <span class="flex-1 flex flex-col">
+          <span class="text-[15px] font-semibold text-on-surface lowercase" style="font-family: 'Bricolage Grotesque';">connections</span>
+          <span class="text-[12px] text-on-surface-variant lowercase">apps you've signed into</span>
+        </span>
+        <span class="material-symbols-outlined text-[18px] text-outline">chevron_right</span>
+      </a>
+
+      <a href="#" class="settings-row">
+        <span class="row-icon"><span class="material-symbols-outlined text-[18px]">person</span></span>
+        <span class="flex-1 flex flex-col">
+          <span class="text-[15px] font-semibold text-on-surface lowercase" style="font-family: 'Bricolage Grotesque';">profile</span>
+          <span class="text-[12px] text-on-surface-variant lowercase">username, account</span>
+        </span>
+        <span class="material-symbols-outlined text-[18px] text-outline">chevron_right</span>
+      </a>
+
+      <a href="#" class="settings-row">
+        <span class="row-icon"><span class="material-symbols-outlined text-[18px]">credit_card</span></span>
+        <span class="flex-1 flex flex-col">
+          <span class="text-[15px] font-semibold text-on-surface lowercase" style="font-family: 'Bricolage Grotesque';">billing</span>
+          <span class="text-[12px] text-on-surface-variant lowercase">plan, card, invoices</span>
+        </span>
+        <span class="material-symbols-outlined text-[18px] text-outline">chevron_right</span>
+      </a>
+
+      <a href="#" class="settings-row">
+        <span class="row-icon"><span class="material-symbols-outlined text-[18px]">shield</span></span>
+        <span class="flex-1 flex flex-col">
+          <span class="text-[15px] font-semibold text-on-surface lowercase" style="font-family: 'Bricolage Grotesque';">privacy</span>
+          <span class="text-[12px] text-on-surface-variant lowercase">data, danger zone</span>
+        </span>
+        <span class="material-symbols-outlined text-[18px] text-outline">chevron_right</span>
+      </a>
+
+      <a href="#" class="settings-row" style="border-bottom: none;">
+        <span class="row-icon"><span class="material-symbols-outlined text-[18px]">help</span></span>
+        <span class="flex-1 flex flex-col">
+          <span class="text-[15px] font-semibold text-on-surface lowercase" style="font-family: 'Bricolage Grotesque';">faq</span>
+          <span class="text-[12px] text-on-surface-variant lowercase">how dossier works</span>
+        </span>
+        <span class="material-symbols-outlined text-[18px] text-outline">chevron_right</span>
+      </a>
+    </div>
+
+    <!-- Appearance -->
+    <div class="mt-6 pt-5 border-t border-outline-variant/60">
+      <h3 class="text-[15px] font-semibold text-on-surface lowercase" style="font-family: 'Bricolage Grotesque';">appearance</h3>
+      <p class="text-[12px] text-on-surface-variant lowercase mt-0.5">light, dark, or follow your system</p>
+      <div class="seg mt-3" role="tablist">
+        <button data-theme="system">
+          system <span class="material-symbols-outlined text-[14px]">desktop_windows</span>
+        </button>
+        <button data-theme="light" class="active">
+          light <span class="material-symbols-outlined text-[14px]">light_mode</span>
+        </button>
+        <button data-theme="dark">
+          dark <span class="material-symbols-outlined text-[14px]">dark_mode</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Log out -->
+  <div class="border-t border-outline-variant/60 px-7 py-4">
+    <a href="login.html" class="settings-row" style="border-bottom: none; padding: 8px 10px; color: #c7330b;">
+      <span class="row-icon" style="background: #ffe4d6; color: #c7330b;"><span class="material-symbols-outlined text-[18px]">logout</span></span>
+      <span class="flex-1 text-[15px] font-semibold lowercase" style="font-family: 'Bricolage Grotesque'; color: #c7330b;">log out</span>
+      <span class="material-symbols-outlined text-[18px]" style="color: #c7330b;">chevron_right</span>
+    </a>
+  </div>
+</aside>
+
+<script>
+  (function () {
+    const openBtn = document.getElementById('open-settings');
+    const closeBtn = document.getElementById('close-settings');
+    const panel = document.getElementById('settings-panel');
+    const backdrop = document.getElementById('settings-backdrop');
+    const open = () => { panel.classList.add('open'); backdrop.classList.add('open'); panel.setAttribute('aria-hidden', 'false'); };
+    const close = () => { panel.classList.remove('open'); backdrop.classList.remove('open'); panel.setAttribute('aria-hidden', 'true'); };
+    openBtn?.addEventListener('click', open);
+    closeBtn?.addEventListener('click', close);
+    backdrop?.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+    // Theme segmented control (visual only)
+    document.querySelectorAll('.seg button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.seg button').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  })();
+</script>
 
 </body>
 </html>
