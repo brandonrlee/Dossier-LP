@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Doss</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23F5F0FF%22/><text y=%22.92em%22 font-size=%2278%22 x=%2218%22 fill=%22%238B5CFF%22 font-family=%22ui-serif,Georgia%22 font-style=%22italic%22 font-weight=%22500%22>d</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          background: 'hsl(285 100% 99%)',
+          card: '#ffffff',
+          muted: 'hsl(258 100% 97%)',
+          border: 'hsl(266 65% 91%)',
+          primary: 'hsl(258 100% 68%)',
+          accent: 'hsl(327 100% 68%)',
+          fg: 'hsl(258 14% 9%)',
+          mutedFg: 'hsl(258 8% 44%)',
+        },
+        fontFamily: {
+          sans: ['Geist', 'ui-sans-serif', 'system-ui'],
+          mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
+          serif: ['"Instrument Serif"', 'ui-serif', 'Georgia', 'serif'],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  :root {
+    --background: 285 100% 99%;
+    --card: 0 0% 100%;
+    --muted: 258 100% 97%;
+    --border: 266 65% 91%;
+    --primary: 258 100% 68%;
+    --accent: 327 100% 68%;
+    --fg: 258 14% 9%;
+    --muted-fg: 258 8% 44%;
+  }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+    color: hsl(var(--fg));
+    background:
+      radial-gradient(1200px 600px at 85% -10%, hsl(258 100% 95% / 0.55), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, hsl(327 100% 95% / 0.35), transparent 55%),
+      hsl(var(--background));
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .font-mono { font-family: 'Geist Mono', ui-monospace, monospace; font-feature-settings: "tnum", "ss01"; }
+  .font-serif { font-family: 'Instrument Serif', ui-serif, Georgia, serif; }
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  .surface {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.875rem;
+    box-shadow: 0 1px 0 0 hsl(258 30% 95% / 0.6), 0 1px 3px 0 hsl(258 30% 60% / 0.04);
+  }
+  .surface-soft {
+    border-radius: 0.875rem;
+    background: hsl(258 100% 98%);
+    border: 1px solid hsl(266 65% 93%);
+  }
+  .score-pill {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: hsl(258 100% 96%);
+    color: hsl(258 60% 40%);
+    border: 1px solid hsl(266 65% 92%);
+    display: inline-block;
+    line-height: 1.2;
+  }
+  .signal-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: hsl(327 100% 68%);
+    box-shadow: 0 0 0 3px hsl(327 100% 92% / 0.7);
+  }
+  .pip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    border: 1px solid;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background 150ms ease;
+  }
+  .kbd {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    border: 1px solid hsl(var(--border));
+    background: hsl(258 100% 98%);
+    color: hsl(var(--muted-fg));
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .rise   { animation: rise 0.4s ease-out both; }
+  .rise-1 { animation-delay: 0.05s; }
+  .rise-2 { animation-delay: 0.10s; }
+  .rise-3 { animation-delay: 0.15s; }
+
+  .scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(266 65% 88% / 0.6);
+    border-radius: 9999px;
+  }
+  .scrollbar::-webkit-scrollbar-thumb:hover { background: hsl(266 65% 80% / 0.8); }
+  * { scrollbar-width: thin; scrollbar-color: hsl(266 65% 88% / 0.6) transparent; }
+
+  .clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .event-card {
+    text-align: left;
+    width: 100%;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.875rem;
+    padding: 20px;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+    box-shadow: 0 1px 0 0 hsl(258 30% 95% / 0.6), 0 1px 3px 0 hsl(258 30% 60% / 0.04);
+    cursor: pointer;
+    position: relative;
+  }
+  .event-card:hover {
+    border-color: #C9B4ED;
+    box-shadow: 0 4px 18px -8px hsl(258 100% 70% / 0.18);
+  }
+  .event-card.is-selected {
+    box-shadow: 0 0 0 2px hsl(258 100% 68% / 0.30);
+    border-color: hsl(258 100% 68% / 0.55);
+  }
+  .event-card .chev {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    color: hsl(258 60% 70%);
+    transition: transform 180ms ease;
+  }
+  .event-card:hover .chev { transform: translateX(2px); }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+    color: hsl(var(--muted-fg));
+    cursor: pointer;
+    transition: all 150ms ease;
+    white-space: nowrap;
+  }
+  .filter-chip:hover { border-color: #C9B4ED; }
+  .filter-chip.active {
+    background: hsl(258 14% 9%);
+    color: white;
+    border-color: hsl(258 14% 9%);
+  }
+  .filter-chip .count {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 11px;
+    opacity: 0.7;
+  }
+
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    color: hsl(var(--muted-fg));
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: all 150ms ease;
+  }
+  .icon-btn:hover {
+    color: hsl(var(--fg));
+    border-color: hsl(var(--border));
+    background: hsl(var(--muted));
+  }
+  .icon-btn.is-saved { color: hsl(258 100% 68%); }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: hsl(258 100% 68%);
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid hsl(258 100% 60%);
+    cursor: pointer;
+    transition: background 150ms ease;
+  }
+  .btn-primary:hover { background: hsl(258 100% 64%); }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: hsl(var(--card));
+    color: hsl(var(--fg));
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid hsl(var(--border));
+    cursor: pointer;
+    transition: background 150ms ease;
+  }
+  .btn-outline:hover { background: hsl(var(--muted)); }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    font-size: 13.5px;
+    color: hsl(var(--muted-fg));
+    cursor: pointer;
+    transition: background 150ms ease;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+  }
+  .nav-item:hover { background: #F8F4FF; color: hsl(var(--fg)); }
+  .nav-item.active {
+    background: #F5F0FF;
+    color: hsl(var(--fg));
+    font-weight: 500;
+  }
+  .nav-item.active .lucide { color: hsl(258 100% 68%); }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: hsl(0 0% 100% / 0.72);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  .topbar-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .brand {
+    display: inline-flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, hsl(258 100% 68%), hsl(327 100% 68%));
+    color: white;
+  }
+  .brand-name {
+    font-family: 'Instrument Serif', ui-serif, Georgia, serif;
+    font-size: 22px;
+    color: hsl(var(--fg));
+    letter-spacing: -0.01em;
+  }
+  .topnav {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-left: auto;
+  }
+  .topnav .nav-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border-radius: 9999px;
+    font-size: 13px;
+    color: hsl(var(--muted-fg));
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid transparent;
+    transition: all 150ms ease;
+  }
+  .topnav .nav-tab:hover { color: hsl(var(--fg)); background: #F8F4FF; }
+  .topnav .nav-tab.active {
+    background: #F5F0FF;
+    color: hsl(var(--fg));
+    border-color: hsl(266 65% 90%);
+    font-weight: 500;
+  }
+  .topnav .nav-tab.active .lucide { color: hsl(258 100% 68%); }
+  .topnav .nav-tab .count {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 10.5px;
+    opacity: 0.7;
+  }
+  .user-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 10px 4px 4px;
+    border-radius: 9999px;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+  }
+
+  .drawer-overlay {
+    position: fixed; inset: 0;
+    background: hsl(258 14% 9% / 0.18);
+    backdrop-filter: blur(2px);
+    z-index: 50;
+    display: flex;
+    justify-content: flex-end;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease;
+  }
+  .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+  .drawer-panel {
+    width: 100%;
+    max-width: 480px;
+    height: 100%;
+    background: hsl(var(--card));
+    border-left: 1px solid hsl(var(--border));
+    box-shadow: -16px 0 40px -20px hsl(258 30% 30% / 0.18);
+    transform: translateX(20px);
+    transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    overflow-y: auto;
+    padding: 28px 28px 80px;
+  }
+  .drawer-overlay.open .drawer-panel { transform: translateX(0); }
+
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: hsl(258 30% 14% / 0.36);
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    z-index: 55;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal-panel {
+    width: 100%;
+    max-width: 760px;
+    max-height: calc(100vh - 64px);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 18px;
+    box-shadow: 0 30px 80px -20px hsl(258 30% 20% / 0.45), 0 1px 0 hsl(0 0% 100% / 0.6) inset;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(14px) scale(0.985);
+    transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .modal-overlay.open .modal-panel { transform: translateY(0) scale(1); }
+  .modal-body { overflow-y: auto; }
+
+  .timeline-dot {
+    width: 6px; height: 6px;
+    border-radius: 9999px;
+    background: hsl(258 100% 68%);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+
+  .stat-box {
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: hsl(var(--card));
+  }
+  .stat-box.lav {
+    background: hsl(258 100% 98%);
+    border-color: hsl(266 65% 93%);
+  }
+  .stat-num {
+    font-family: 'Instrument Serif', ui-serif, Georgia, serif;
+    font-size: 22px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    color: hsl(var(--fg));
+  }
+  .stat-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: hsl(var(--muted-fg));
+    margin-top: 6px;
+  }
+
+  .avatar {
+    border-radius: 9999px;
+    border: 1px solid hsl(0 0% 100% / 0.6);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    flex-shrink: 0;
+    background-clip: padding-box;
+  }
+  .signal-bg {
+    background: hsl(327 100% 92% / 0.7);
+  }
+
+  .dashed-top { border-top: 1px dashed hsl(266 65% 88%); }
+  .input-clean {
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    color: hsl(var(--fg));
+    font-size: 14px;
+  }
+  .input-clean::placeholder { color: hsl(var(--muted-fg)); }
+
+  .search-shell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 12px;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+  .search-shell:focus-within {
+    border-color: hsl(258 100% 68% / 0.6);
+    box-shadow: 0 0 0 4px hsl(258 100% 68% / 0.12);
+  }
+
+  .text-fg { color: hsl(var(--fg)); }
+  .text-mfg { color: hsl(var(--muted-fg)); }
+  .border-b1 { border-bottom: 1px solid hsl(var(--border)); }
+  .border-t1 { border-top: 1px solid hsl(var(--border)); }
+  .bg-mut { background: hsl(var(--muted)); }
+  .bg-card { background: hsl(var(--card)); }
+
+  .person-row { transition: background 150ms ease; }
+  .person-row:hover { background: hsl(258 100% 98%); }
+  .person-row:hover .row-save { opacity: 1; }
+  .row-save { opacity: 0; transition: opacity 150ms ease; }
+
+  .tag {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    line-height: 1.6;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .tag-soft {
+    background: hsl(258 100% 96%);
+    color: hsl(258 60% 40%);
+    border-color: hsl(266 65% 92%);
+  }
+
+  @media (max-width: 1023px) {
+    .lg-only { display: none !important; }
+  }
+  @media (min-width: 1024px) {
+    .lg-hide { display: none !important; }
+  }
+  @media (max-width: 767px) {
+    .md-only { display: none !important; }
+    .sidebar-shell {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      transform: translateX(-100%);
+      transition: transform 200ms ease;
+      z-index: 60;
+      width: 280px !important;
+    }
+    .sidebar-shell.open { transform: translateX(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar-shell w-[240px] flex-shrink-0 flex flex-col">
+    <div class="px-5 pt-6 pb-3 flex items-center gap-2">
+      <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg" style="background: linear-gradient(135deg, hsl(258 100% 68%), hsl(327 100% 68%));">
+        <i data-lucide="folder-open" class="text-white" style="width:16px;height:16px;"></i>
+      </span>
+      <span class="font-serif text-[20px] tracking-tight text-fg">Doss</span>
+    </div>
+    <nav class="px-3 mt-2 flex flex-col gap-1" id="nav"></nav>
+    <div class="mt-auto px-4 pb-5 flex flex-col gap-3">
+      <div class="surface-soft p-3.5">
+        <div class="flex items-center gap-2 mb-2">
+          <i data-lucide="sparkles" style="width:14px;height:14px;color:hsl(327 100% 60%);"></i>
+          <span class="text-[10.5px] font-medium uppercase tracking-wider text-mfg">This week</span>
+        </div>
+        <p class="text-[12.5px] leading-snug text-fg">
+          <span class="font-mono tabular">3</span> high-signal events,
+          <span class="font-mono tabular">42</span> people worth meeting.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 px-1">
+        <span class="avatar w-8 h-8 text-[12px]" style="background: linear-gradient(135deg, hsl(258 80% 88%), hsl(288 80% 78%)); color: hsl(258 60% 28%);">B</span>
+        <div class="leading-tight">
+          <div class="text-[12.5px] font-medium text-fg">Brandon</div>
+          <div class="text-[10.5px] text-mfg">Tract · SF</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile top bar -->
+  <div class="lg-hide md:hidden fixed top-0 inset-x-0 h-14 z-40 bg-white/85 backdrop-blur border-b1 flex items-center px-4 justify-between">
+    <button id="mobileMenuBtn" class="icon-btn"><i data-lucide="menu" style="width:18px;height:18px;"></i></button>
+    <span class="font-serif text-[18px] text-fg">Doss</span>
+    <span class="w-[30px]"></span>
+  </div>
+
+  <!-- Main + detail -->
+  <div class="flex-1 flex min-w-0">
+    <main class="flex-1 min-w-0 overflow-y-auto scrollbar" style="max-height:100vh;">
+      <div class="max-w-[1100px] mx-auto px-6 lg:px-10 pt-8 pb-16 md:pt-10" id="viewRoot"></div>
+    </main>
+
+    <aside id="eventDetailDesk" class="hidden lg:flex w-[440px] flex-shrink-0 border-l border-[hsl(var(--border))] bg-card overflow-y-auto scrollbar" style="max-height:100vh;"></aside>
+  </div>
+</div>
+
+<!-- Event detail sheet (md and below) -->
+<div id="eventDetailSheet" class="sheet-overlay">
+  <div class="drawer-panel"></div>
+</div>
+
+<!-- Person profile drawer -->
+<div id="profileDrawer" class="drawer-overlay">
+  <div class="drawer-panel"></div>
+</div>
+
+<script>
+//
+// ─── DATA ───────────────────────────────────────────────────────────────────────
+//
+
+const ME = { firstName: 'Brandon', goal: 'Find healthcare AI partners and seed-stage frontier investors.' };
+
+const CATEGORIES = {
+  'private': { label: 'Private · Invite-only', short: 'Private', tagBg: '#16141C0A', tagText: '#16141C', order: 1 },
+  'ai-tech': { label: 'AI / Tech', short: 'AI / Tech', tagBg: '#EFF7FF', tagText: '#1E5BBF', order: 2 },
+  'startup-vc': { label: 'Startup / VC', short: 'Startup / VC', tagBg: '#F1ECFF', tagText: '#5B3DCC', order: 3 },
+  'healthcare': { label: 'Healthcare', short: 'Healthcare', tagBg: '#EAF8F1', tagText: '#1F7A4F', order: 4 },
+  'university': { label: 'University · Student', short: 'University', tagBg: '#FFF7E6', tagText: '#9A6B0A', order: 5 },
+  'creator-social': { label: 'Creator · Social', short: 'Creator', tagBg: '#FFF0F8', tagText: '#B83085', order: 6 },
+};
+
+const STATUSES = {
+  'not-met':       { label: 'Not met',       dot: '#9EA0A8', text: '#494551', bg: '#F4F2F7', border: '#E4E1EA' },
+  'want-to-meet':  { label: 'Want to meet',  dot: '#8B5CFF', text: '#5B3DCC', bg: '#F1ECFF', border: '#E1D4FD' },
+  'saved':         { label: 'Saved',         dot: '#8B5CFF', text: '#5B3DCC', bg: '#F1ECFF', border: '#E1D4FD' },
+  'met':           { label: 'Met',           dot: '#1F7A4F', text: '#1F7A4F', bg: '#EAF8F1', border: '#CDE9D8' },
+  'followed-up':   { label: 'Followed up',   dot: '#1F7A4F', text: '#1F7A4F', bg: '#EAF8F1', border: '#CDE9D8' },
+  'ignored':       { label: 'Ignored',       dot: '#9EA0A8', text: '#6F687A', bg: '#F4F2F7', border: '#E4E1EA' },
+};
+
+const PEOPLE = [
+  {
+    id: 'p_sarah_chen', name: 'Sarah Chen', title: 'Partner', company: 'SeedFund',
+    tags: ['AI', 'Healthcare', 'Seed'], score: 94, status: 'saved',
+    eventIds: ['e_ai_founder_dinner', 'e_cerebral_valley', 'e_healthcare_roundtable'],
+    initials: 'SC', hue: 270,
+    whyMeet: "Leads SeedFund's healthcare AI thesis. Six checks in clinical workflow startups in 2025.",
+    talkingPoint: "Where she draws the line between 'workflow wedge' and 'real clinical value' — she has a clear answer.",
+    introMessage: "Sarah — saw your healthcare AI thesis post. Building Tract, a clinical-decision tool with two design partners at UCSF. Worth twenty minutes?",
+    summary: "Decisive. Replies same-day. Likes founders who can name the bottleneck on slide one."
+  },
+  {
+    id: 'p_marcus_webb', name: 'Marcus Webb', title: 'Founder & CEO', company: 'Cortex',
+    tags: ['AI', 'Agents', 'Infra'], score: 91, status: 'met',
+    eventIds: ['e_ai_founder_dinner', 'e_cerebral_valley'],
+    initials: 'MW', hue: 220,
+    whyMeet: "Built the agent orchestration layer half the AI tooling companies now run on. Knows everyone in infra.",
+    summary: "Generous with intros. Less so with time."
+  },
+  {
+    id: 'p_priya_raman', name: 'Priya Raman', title: 'Partner', company: 'First Round',
+    tags: ['Vertical AI', 'Enterprise'], score: 89, status: 'want-to-meet',
+    eventIds: ['e_ai_founder_dinner', 'e_cerebral_valley', 'e_yc_demo', 'e_healthcare_roundtable'],
+    initials: 'PR', hue: 310,
+    whyMeet: "Pre-seed checks into Cursor and Cognition. Decisive — no second meeting.",
+    talkingPoint: "She's looking for vertical AI in regulated industries. Lead with your design partner contracts, not your model.",
+    introMessage: "Priya — Brandon at Tract. Two signed UCSF design partners for clinical decision support. Quick intro coffee?",
+    summary: "First-meeting checks. Reads the room fast."
+  },
+  {
+    id: 'p_daniel_park', name: 'Daniel Park', title: 'VP Product', company: 'Vercel',
+    tags: ['Devtools', 'DX'], score: 86, status: 'followed-up',
+    eventIds: ['e_ai_founder_dinner', 'e_cerebral_valley'],
+    initials: 'DP', hue: 200,
+    whyMeet: "Owns Vercel's AI SDK roadmap. Open to partner integrations for vertical AI tools.",
+    summary: "Methodical. Wants the technical wedge spelled out."
+  },
+  {
+    id: 'p_elena_rodriguez', name: 'Elena Rodriguez', title: 'Founder & CEO', company: 'Remedy',
+    tags: ['Healthcare', 'Clinical AI'], score: 92, status: 'saved',
+    eventIds: ['e_ai_founder_dinner', 'e_cerebral_valley', 'e_healthcare_roundtable'],
+    initials: 'ER', hue: 340,
+    whyMeet: "Building the clinical AI app every healthcare investor cites. Will know who else is real and who is theatre.",
+    talkingPoint: "Ask about her UCSF rollout — she's six months ahead of where you are. The lessons compound.",
+    introMessage: "Elena — admire the Remedy work. Building the same wedge from a different angle (decision support, not documentation). Coffee?",
+    summary: "Founder-friendly. Allergic to pitches."
+  },
+  {
+    id: 'p_tomas_acuna', name: 'Tomas Acuña', title: 'GP', company: 'Spark Capital',
+    tags: ['Seed', 'Frontier'], score: 88, status: 'want-to-meet',
+    eventIds: ['e_ai_founder_dinner', 'e_cerebral_valley', 'e_yc_demo'],
+    initials: 'TA', hue: 30,
+    whyMeet: "One of three GPs at Spark writing seed checks into frontier AI. Holds the pen on healthcare specifically.",
+    summary: "Long meetings. Asks 'who else is in the round' first."
+  },
+  {
+    id: 'p_aisha_kapoor', name: 'Aisha Kapoor', title: 'Founder', company: 'Lumen',
+    tags: ['Creator', 'Growth'], score: 84, status: 'want-to-meet',
+    eventIds: ['e_cerebral_valley', 'e_creator_brunch'],
+    initials: 'AK', hue: 320,
+    whyMeet: "Grew Lumen's creator economy product from zero to fifty thousand users in six months — knows distribution loops.",
+  },
+  {
+    id: 'p_jordan_reeves', name: 'Jordan Reeves', title: 'Research Engineer', company: 'Anthropic',
+    tags: ['AI', 'Agents', 'Research'], score: 90, status: 'not-met',
+    eventIds: ['e_cerebral_valley'],
+    initials: 'JR', hue: 250,
+    whyMeet: "Works on tool use and reasoning at Anthropic. Open to chats with vertical-AI builders pushing the model.",
+  },
+  {
+    id: 'p_kenji_tanaka', name: 'Kenji Tanaka', title: 'Founder & CEO', company: 'Rookie Health',
+    tags: ['Healthcare', 'Operator'], score: 87, status: 'saved',
+    eventIds: ['e_ai_founder_dinner', 'e_healthcare_roundtable'],
+    initials: 'KT', hue: 150,
+    whyMeet: "Closed Series A two months ago. Knows the healthcare investor landscape down to the partner level.",
+  },
+  {
+    id: 'p_lila_brown', name: 'Lila Brown', title: 'Investor', company: 'Founders Fund',
+    tags: ['Frontier', 'Seed'], score: 93, status: 'saved',
+    eventIds: ['e_ai_founder_dinner', 'e_cerebral_valley', 'e_yc_demo', 'e_stanford_mixer'],
+    initials: 'LB', hue: 290,
+    whyMeet: "Founders Fund's most active seed investor in 2025. Eight checks YTD — three healthcare AI.",
+    talkingPoint: "She's been burned twice by clinical-AI rounds that died at FDA. Lead with your regulatory path.",
+    introMessage: "Lila — Brandon at Tract. Clinical decision support, two signed UCSF design partners, FDA Class II in motion. Worth a quick coffee?",
+    summary: "Replies in under an hour. High bar, fast process."
+  },
+  {
+    id: 'p_felix_ng', name: 'Felix Ng', title: 'GP', company: 'HF0 Fellowship',
+    tags: ['Accelerator', 'Founders'], score: 89, status: 'want-to-meet',
+    eventIds: ['e_ai_founder_dinner', 'e_cerebral_valley'],
+    initials: 'FN', hue: 180,
+    whyMeet: "Picks twelve founders a year for HF0. Sees every healthcare AI deck before it goes wide.",
+  },
+  {
+    id: 'p_marina_solo', name: 'Marina Solo', title: 'Founder', company: 'Stitch',
+    tags: ['Devtools', 'OSS'], score: 85, status: 'not-met',
+    eventIds: ['e_cerebral_valley'],
+    initials: 'MS', hue: 90,
+    whyMeet: "Building the open-source layer beneath every AI agent demo this year. Distribution thinker.",
+  },
+  {
+    id: 'p_aaron_vasquez', name: 'Aaron Vasquez', title: 'Surgeon & Founder', company: 'UCSF · Stealth',
+    tags: ['Healthcare', 'Operator'], score: 86, status: 'not-met',
+    eventIds: ['e_healthcare_roundtable'],
+    initials: 'AV', hue: 60,
+    whyMeet: "Practicing cardiothoracic surgeon spinning out a clinical decision support tool.",
+  },
+  {
+    id: 'p_mira_patel', name: 'Mira Patel', title: "Stanford GSB '26", company: 'Stanford',
+    tags: ['Student', 'Founders'], score: 79, status: 'not-met',
+    eventIds: ['e_stanford_mixer'],
+    initials: 'MP', hue: 10,
+    whyMeet: "Founder-track GSB student running the campus AI club. Plugged into the next-cohort founders.",
+  },
+];
+
+const EVENTS = [
+  {
+    id: 'e_ai_founder_dinner', name: 'AI Founder Dinner — Mission',
+    category: 'private', date: 'Fri, Nov 14', dayLabel: 'In 5 days',
+    time: '7:00 PM', location: '21st & Folsom', city: 'San Francisco',
+    summary: "Twelve-person closed dinner. Healthcare AI founders with active rounds, hosted by SeedFund.",
+    topSignal: "Three of four healthcare AI investors writing checks this quarter at one table.",
+    attendingPersonIds: ['p_sarah_chen', 'p_marcus_webb', 'p_priya_raman', 'p_daniel_park', 'p_elena_rodriguez', 'p_tomas_acuna', 'p_kenji_tanaka', 'p_lila_brown', 'p_felix_ng'],
+  },
+  {
+    id: 'e_cerebral_valley', name: 'Cerebral Valley Demo Night',
+    category: 'ai-tech', date: 'Tue, Nov 18', dayLabel: 'In 9 days',
+    time: '6:30 PM', location: 'Shack15 · Ferry Building', city: 'San Francisco',
+    summary: "Eleven AI startup demos in front of 300 operators and investors. The room you walk into to leave with intros.",
+    topSignal: "Anthropic, Vercel, and Founders Fund principals all in the same room within a 90-minute window.",
+    attendingPersonIds: ['p_sarah_chen', 'p_marcus_webb', 'p_priya_raman', 'p_daniel_park', 'p_elena_rodriguez', 'p_tomas_acuna', 'p_aisha_kapoor', 'p_jordan_reeves', 'p_lila_brown', 'p_felix_ng', 'p_marina_solo'],
+  },
+  {
+    id: 'e_yc_demo', name: 'Y Combinator Fall Demo Day',
+    category: 'startup-vc', date: 'Wed, Nov 19', dayLabel: 'In 10 days',
+    time: '10:00 AM', location: 'YC HQ · Mountain View', city: 'Bay Area',
+    summary: "Day one of YC's Fall '25 batch. Forty AI-first companies pitching in the morning track.",
+    topSignal: "Active seed investors writing first checks the same week.",
+    attendingPersonIds: ['p_priya_raman', 'p_tomas_acuna', 'p_lila_brown'],
+  },
+  {
+    id: 'e_healthcare_roundtable', name: 'Healthcare AI Roundtable at UCSF',
+    category: 'healthcare', date: 'Thu, Nov 20', dayLabel: 'In 11 days',
+    time: '5:30 PM', location: 'Mission Hall · UCSF', city: 'San Francisco',
+    summary: "Closed roundtable for clinical operators and healthcare AI founders. Off-the-record format.",
+    topSignal: "Three practicing clinicians actively building or backing clinical AI tools — the rare room with both sides.",
+    attendingPersonIds: ['p_sarah_chen', 'p_priya_raman', 'p_elena_rodriguez', 'p_kenji_tanaka', 'p_aaron_vasquez'],
+  },
+  {
+    id: 'e_stanford_mixer', name: 'Stanford GSB Founder Mixer',
+    category: 'university', date: 'Sat, Nov 22', dayLabel: 'In 13 days',
+    time: '8:00 PM', location: 'Bishop Auditorium · Stanford', city: 'Bay Area',
+    summary: "GSB founder track meets local seed investors. Quieter format — actual conversations, not pitches.",
+    topSignal: "Two seed investors who routinely back GSB founders out the gate.",
+    attendingPersonIds: ['p_lila_brown', 'p_mira_patel'],
+  },
+  {
+    id: 'e_creator_brunch', name: 'Creator Economy Brunch',
+    category: 'creator-social', date: 'Sun, Nov 23', dayLabel: 'In 14 days',
+    time: '11:00 AM', location: 'Foreign Cinema', city: 'San Francisco',
+    summary: "Creator-economy founders comparing notes on growth loops and audience-led products.",
+    topSignal: "Founder running a fifty-thousand-user creator product in six months — distribution playbook still rare.",
+    attendingPersonIds: ['p_aisha_kapoor'],
+  },
+];
+
+//
+// ─── STATE ──────────────────────────────────────────────────────────────────────
+//
+
+const state = {
+  tab: 'dashboard',
+  search: '',
+  peopleSearch: '',
+  activeCategories: new Set(),
+  peopleFilter: 'all',
+  selectedEventId: 'e_ai_founder_dinner',
+  selectedPersonId: null,
+  profileOpen: false,
+  sidebarOpen: false,
+  sheetOpen: false,
+  people: PEOPLE.map(p => ({ ...p })),
+  notes: {},
+};
+
+//
+// ─── HELPERS ────────────────────────────────────────────────────────────────────
+//
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function getPerson(id) { return state.people.find(p => p.id === id); }
+function getEvent(id) { return EVENTS.find(e => e.id === id); }
+function isHighRepeat(p) { return (p.eventIds || []).length >= 4; }
+function isRepeat(p) { return (p.eventIds || []).length >= 2; }
+function isSavedStatus(s) { return s === 'saved'; }
+function isHighSignal(p) { return p.score >= 85; }
+
+function tier(score) {
+  if (score >= 92) return 'Exceptional';
+  if (score >= 85) return 'High';
+  if (score >= 78) return 'Strong';
+  return 'Notable';
+}
+
+function avatarHtml(p, size) {
+  const s = size || 38;
+  const fontSize = Math.round(s * 0.36);
+  const bgFrom = `hsl(${p.hue} 80% 88%)`;
+  const bgTo = `hsl(${(p.hue + 30) % 360} 80% 78%)`;
+  const fg = `hsl(${p.hue} 60% 28%)`;
+  return `<span class="avatar" style="width:${s}px;height:${s}px;font-size:${fontSize}px;background:linear-gradient(135deg, ${bgFrom}, ${bgTo});color:${fg};">${escapeHtml(p.initials)}</span>`;
+}
+
+function categoryTag(cat, opts = {}) {
+  const c = CATEGORIES[cat];
+  const sm = opts.size === 'xs';
+  return `<span class="tag" style="background:${c.tagBg};color:${c.tagText};font-size:${sm ? '10px' : '11px'};">${escapeHtml(opts.short ? c.short : c.label)}</span>`;
+}
+
+function statusPip(status, opts = {}) {
+  const s = STATUSES[status];
+  const active = opts.active;
+  const style = active
+    ? `background:${s.bg};color:${s.text};border-color:${s.border};`
+    : `background:transparent;color:${s.text};border-color:${s.border};opacity:0.55;`;
+  return `<span class="pip" style="${style}" data-status="${status}"><span style="width:6px;height:6px;border-radius:9999px;background:${s.dot};display:inline-block;"></span>${escapeHtml(s.label)}</span>`;
+}
+
+function chipTag(text) {
+  return `<span class="tag tag-soft">${escapeHtml(text)}</span>`;
+}
+
+function iconHtml(name, size = 14, klass = '') {
+  return `<i data-lucide="${name}" class="${klass}" style="width:${size}px;height:${size}px;"></i>`;
+}
+
+//
+// ─── RENDER: SIDEBAR NAV ────────────────────────────────────────────────────────
+//
+
+function renderNav() {
+  const savedCount = state.people.filter(p => p.status === 'saved').length;
+  const items = [
+    { id: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard' },
+    { id: 'events',    label: 'Events',    icon: 'calendar' },
+    { id: 'people',    label: 'People',    icon: 'users' },
+    { id: 'saved',     label: 'Saved',     icon: 'bookmark', badge: savedCount },
+    { id: 'settings',  label: 'Settings',  icon: 'settings-2' },
+  ];
+  $('#nav').innerHTML = items.map(it => `
+    <button class="nav-item ${state.tab === it.id ? 'active' : ''}" data-tab="${it.id}">
+      ${iconHtml(it.icon, 16)}
+      <span class="flex-1">${it.label}</span>
+      ${it.badge ? `<span class="font-mono tabular text-[10.5px] text-mfg">${it.badge}</span>` : ''}
+    </button>
+  `).join('');
+  $$('#nav .nav-item').forEach(b => {
+    b.addEventListener('click', () => {
+      state.tab = b.dataset.tab;
+      state.sidebarOpen = false;
+      render();
+    });
+  });
+}
+
+//
+// ─── RENDER: VIEWS ──────────────────────────────────────────────────────────────
+//
+
+function viewHeader(eyebrow, title, sub, dotColor) {
+  return `
+    <div class="flex flex-col gap-2 mb-7 rise">
+      <div class="flex items-center gap-2 text-[10.5px] uppercase tracking-[0.12em] text-mfg">
+        ${dotColor ? `<span style="width:6px;height:6px;border-radius:9999px;background:${dotColor};display:inline-block;"></span>` : ''}
+        ${escapeHtml(eyebrow)}
+      </div>
+      <h1 class="font-serif text-fg leading-[1.05] tracking-tight" style="font-size:clamp(34px, 4.4vw, 46px);">${title}</h1>
+      ${sub ? `<p class="text-[15px] text-mfg leading-relaxed max-w-xl">${sub}</p>` : ''}
+    </div>
+  `;
+}
+
+function searchBar(placeholder, value, dataKey) {
+  return `
+    <div class="search-shell rise rise-1 mb-5">
+      ${iconHtml('search', 15, 'text-mfg')}
+      <input class="input-clean" placeholder="${escapeHtml(placeholder)}" value="${escapeHtml(value)}" data-search="${dataKey}" />
+      <span class="kbd lg-only">⌘K</span>
+    </div>
+  `;
+}
+
+function categoryFilters() {
+  const counts = {};
+  Object.keys(CATEGORIES).forEach(k => { counts[k] = 0; });
+  EVENTS.forEach(e => { counts[e.category] = (counts[e.category] || 0) + 1; });
+
+  const all = Object.entries(CATEGORIES)
+    .sort((a, b) => a[1].order - b[1].order)
+    .map(([k, v]) => {
+      const active = state.activeCategories.has(k);
+      return `<button class="filter-chip ${active ? 'active' : ''}" data-cat="${k}">
+        ${escapeHtml(v.short)}
+        <span class="count">${counts[k] || 0}</span>
+      </button>`;
+    }).join('');
+
+  return `
+    <div class="flex items-center gap-2 mb-5 flex-wrap rise rise-2">
+      <span class="flex items-center gap-1.5 text-[12px] text-mfg mr-1">${iconHtml('filter', 13)} Filter</span>
+      ${all}
+    </div>
+  `;
+}
+
+function avatarStack(personIds, max = 4) {
+  const ppl = personIds.map(id => getPerson(id)).filter(Boolean);
+  const shown = ppl.slice(0, max);
+  const extra = ppl.length - shown.length;
+  return `
+    <div class="flex items-center">
+      ${shown.map((p, i) => `<span style="margin-left:${i === 0 ? 0 : '-6px'};display:inline-block;">${avatarHtml(p, 22)}</span>`).join('')}
+      ${extra > 0 ? `<span class="font-mono tabular text-[11px] text-mfg ml-2">+${extra}</span>` : ''}
+    </div>
+  `;
+}
+
+function eventCardHtml(e) {
+  const attendees = e.attendingPersonIds.map(getPerson).filter(Boolean);
+  const highSignalN = attendees.filter(isHighSignal).length;
+  const seenBeforeN = attendees.filter(isRepeat).length;
+  const savedN = attendees.filter(p => p.status === 'saved').length;
+  const isSel = state.selectedEventId === e.id;
+
+  return `
+    <button class="event-card ${isSel ? 'is-selected' : ''}" data-event="${e.id}">
+      <span class="chev">${iconHtml('chevron-right', 18)}</span>
+      <div class="flex items-center gap-2 mb-3">
+        ${categoryTag(e.category, { short: true })}
+        <span class="font-mono tabular text-[11.5px] text-mfg">${escapeHtml(e.dayLabel)}</span>
+      </div>
+      <h3 class="text-[16px] font-medium text-fg tracking-tight mb-1.5 truncate pr-8">${escapeHtml(e.name)}</h3>
+      <div class="flex items-center gap-3 text-[12.5px] text-mfg mb-3">
+        <span class="inline-flex items-center gap-1.5">${iconHtml('clock', 13)} ${escapeHtml(e.date)} · ${escapeHtml(e.time)}</span>
+        <span class="inline-flex items-center gap-1.5">${iconHtml('map-pin', 13)} ${escapeHtml(e.location)}</span>
+      </div>
+      <p class="text-[13px] text-mfg clamp-2 mb-4">${escapeHtml(e.summary)}</p>
+      <div class="flex items-center justify-between">
+        ${avatarStack(e.attendingPersonIds, 4)}
+        <div class="flex items-center gap-2 font-mono tabular text-[11.5px] text-mfg">
+          <span>${highSignalN} high-signal</span>
+          <span class="text-[hsl(266_30%_80%)]">·</span>
+          <span class="inline-flex items-center gap-1">${iconHtml('eye', 12)} ${seenBeforeN} seen before</span>
+          ${savedN > 0 ? `<span class="text-[hsl(266_30%_80%)]">·</span>
+            <span class="inline-flex items-center gap-1" style="color:hsl(258 100% 60%);">${iconHtml('bookmark', 12, '!fill-current')} ${savedN}</span>` : ''}
+        </div>
+      </div>
+      <div class="dashed-top mt-4 pt-3 flex items-center gap-2">
+        ${iconHtml('sparkles', 13, 'shrink-0')}<span style="color:hsl(327 100% 60%);"></span>
+        <span class="text-[12.5px] text-mfg shrink-0">Top signal:</span>
+        <span class="text-[12.5px] font-medium text-fg truncate">${escapeHtml(e.topSignal)}</span>
+      </div>
+    </button>
+  `;
+}
+
+function renderDashboard() {
+  const search = state.search.trim().toLowerCase();
+  const filtered = EVENTS.filter(e => {
+    if (state.activeCategories.size && !state.activeCategories.has(e.category)) return false;
+    if (!search) return true;
+    if (e.name.toLowerCase().includes(search)) return true;
+    if (e.summary.toLowerCase().includes(search)) return true;
+    if (e.topSignal.toLowerCase().includes(search)) return true;
+    return e.attendingPersonIds.some(id => {
+      const p = getPerson(id);
+      return p && (p.name.toLowerCase().includes(search) || p.company.toLowerCase().includes(search));
+    });
+  });
+
+  const groupOrder = Object.keys(CATEGORIES).sort((a, b) => CATEGORIES[a].order - CATEGORIES[b].order);
+  const grouped = {};
+  filtered.forEach(e => {
+    if (!grouped[e.category]) grouped[e.category] = [];
+    grouped[e.category].push(e);
+  });
+
+  const eventCount = filtered.length;
+  const peopleCount = state.people.filter(p => p.score >= 84).length;
+
+  const sub = `
+    <span class="font-mono tabular">${eventCount}</span> events ahead.
+    <span class="font-mono tabular">${peopleCount}</span> people worth meeting.
+  `;
+
+  return `
+    ${viewHeader('Dashboard · This week', `Good evening, <em class="not-italic font-serif">${escapeHtml(ME.firstName)}</em>.`, sub, 'hsl(327 100% 68%)')}
+    ${searchBar('Search events, people, companies…', state.search, 'main')}
+    ${categoryFilters()}
+    ${groupOrder.map(cat => {
+      const events = grouped[cat];
+      if (!events || !events.length) return '';
+      return `
+        <section class="mb-8 rise rise-3">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-[12.5px] font-medium uppercase tracking-[0.1em] text-mfg flex items-center gap-2">
+              ${categoryTag(cat, { short: true })}
+              <span>${escapeHtml(CATEGORIES[cat].label)}</span>
+            </h2>
+            <span class="font-mono tabular text-[11px] text-mfg">${events.length} event${events.length > 1 ? 's' : ''}</span>
+          </div>
+          <div class="grid gap-3" style="grid-template-columns:repeat(auto-fill,minmax(min(360px,100%),1fr));">
+            ${events.map(eventCardHtml).join('')}
+          </div>
+        </section>
+      `;
+    }).join('')}
+    ${filtered.length === 0 ? `
+      <div class="surface-soft px-6 py-10 text-center text-mfg text-[13.5px]">
+        No events match those filters.
+      </div>
+    ` : ''}
+  `;
+}
+
+function renderPeople() {
+  const counts = { all: state.people.length };
+  const matchTag = (p, t) => p.tags.some(x => x.toLowerCase().includes(t));
+  state.people.forEach(p => {
+    counts.founders = (counts.founders || 0) + (/founder/i.test(p.title) ? 1 : 0);
+    counts.vcs = (counts.vcs || 0) + (/(partner|gp|investor)/i.test(p.title) ? 1 : 0);
+    counts.engineers = (counts.engineers || 0) + (/(engineer|research)/i.test(p.title) ? 1 : 0);
+    counts.healthcare = (counts.healthcare || 0) + (matchTag(p, 'healthcare') ? 1 : 0);
+    counts.ai = (counts.ai || 0) + (matchTag(p, 'ai') ? 1 : 0);
+    counts.students = (counts.students || 0) + (matchTag(p, 'student') ? 1 : 0);
+    counts.operators = (counts.operators || 0) + (matchTag(p, 'operator') ? 1 : 0);
+    counts.investors = (counts.investors || 0) + (matchTag(p, 'seed') || matchTag(p, 'frontier') ? 1 : 0);
+  });
+
+  const filters = [
+    { id: 'all', label: 'Everyone' },
+    { id: 'founders', label: 'Founders' },
+    { id: 'vcs', label: 'VCs' },
+    { id: 'engineers', label: 'Engineers' },
+    { id: 'healthcare', label: 'Healthcare' },
+    { id: 'ai', label: 'AI' },
+    { id: 'students', label: 'Students' },
+    { id: 'operators', label: 'Operators' },
+    { id: 'investors', label: 'Investors' },
+  ].filter(f => f.id === 'all' || (counts[f.id] || 0) > 0);
+
+  const search = state.peopleSearch.trim().toLowerCase();
+  let people = state.people.slice().sort((a, b) => b.score - a.score);
+  if (state.peopleFilter !== 'all') {
+    people = people.filter(p => {
+      switch (state.peopleFilter) {
+        case 'founders': return /founder/i.test(p.title);
+        case 'vcs': return /(partner|gp|investor)/i.test(p.title);
+        case 'engineers': return /(engineer|research)/i.test(p.title);
+        case 'healthcare': return matchTag(p, 'healthcare');
+        case 'ai': return matchTag(p, 'ai');
+        case 'students': return matchTag(p, 'student');
+        case 'operators': return matchTag(p, 'operator');
+        case 'investors': return matchTag(p, 'seed') || matchTag(p, 'frontier');
+      }
+      return true;
+    });
+  }
+  if (search) {
+    people = people.filter(p =>
+      p.name.toLowerCase().includes(search) ||
+      p.company.toLowerCase().includes(search) ||
+      p.title.toLowerCase().includes(search) ||
+      p.tags.join(' ').toLowerCase().includes(search)
+    );
+  }
+
+  const repeatCount = state.people.filter(isRepeat).length;
+  const sub = `A living rolodex. Every person Doss finds at an event is here — with their full event history. <span class="font-mono tabular">${repeatCount}</span> people show up across multiple high-signal rooms.`;
+
+  return `
+    ${viewHeader('Network · Rolodex', 'People', sub, 'hsl(258 100% 68%)')}
+    ${searchBar('Search people, companies, roles…', state.peopleSearch, 'people')}
+    <div class="flex items-center gap-2 mb-5 flex-wrap rise rise-2">
+      ${filters.map(f => `<button class="filter-chip ${state.peopleFilter === f.id ? 'active' : ''}" data-pfilter="${f.id}">
+        ${escapeHtml(f.label)}
+        <span class="count">${counts[f.id] || 0}</span>
+      </button>`).join('')}
+    </div>
+    <div class="grid gap-3" style="grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));">
+      ${people.map(p => personCardHtml(p)).join('')}
+    </div>
+    ${people.length === 0 ? `<div class="surface-soft px-6 py-10 text-center text-mfg text-[13.5px] mt-4">No people match.</div>` : ''}
+  `;
+}
+
+function personCardHtml(p) {
+  const status = STATUSES[p.status];
+  const repeatPink = isHighRepeat(p);
+  return `
+    <div class="surface p-4 rise" data-person-card="${p.id}">
+      <div class="flex items-start gap-3">
+        ${avatarHtml(p, 42)}
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <button class="text-[14px] font-medium text-fg truncate hover:underline" data-open-person="${p.id}">${escapeHtml(p.name)}</button>
+            ${repeatPink ? '<span class="signal-dot" title="High repeat signal"></span>' : ''}
+          </div>
+          <div class="text-[12.5px] text-mfg truncate">${escapeHtml(p.title)} · ${escapeHtml(p.company)}</div>
+        </div>
+        <span class="score-pill">${p.score}</span>
+      </div>
+      <p class="text-[12.5px] text-mfg leading-snug mt-3 clamp-2">${escapeHtml(p.whyMeet || '')}</p>
+      <div class="flex flex-wrap gap-1.5 mt-3">
+        ${p.tags.slice(0, 3).map(chipTag).join('')}
+      </div>
+      <div class="dashed-top mt-4 pt-3 flex items-center justify-between">
+        <span class="inline-flex items-center gap-1.5 text-[11.5px] ${repeatPink ? '' : 'text-mfg'}" ${repeatPink ? 'style="color:hsl(327 100% 55%);"' : ''}>
+          ${iconHtml('repeat', 12)} Seen at <span class="font-mono tabular">${p.eventIds.length}</span> event${p.eventIds.length > 1 ? 's' : ''}
+        </span>
+        <div class="flex items-center gap-2">
+          <span class="pip" style="background:${status.bg};color:${status.text};border-color:${status.border};">
+            <span style="width:6px;height:6px;border-radius:9999px;background:${status.dot};"></span>${escapeHtml(status.label)}
+          </span>
+          <button class="icon-btn ${isSavedStatus(p.status) ? 'is-saved' : ''}" data-toggle-save="${p.id}" title="${isSavedStatus(p.status) ? 'Unsave' : 'Save'}">
+            ${iconHtml('bookmark', 14, isSavedStatus(p.status) ? '!fill-current' : '')}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderSaved() {
+  const saved = state.people.filter(p => p.status === 'saved').sort((a, b) => b.score - a.score);
+  const eventsWithSaved = EVENTS.filter(e => e.attendingPersonIds.some(id => {
+    const p = getPerson(id); return p && p.status === 'saved';
+  }));
+
+  return `
+    ${viewHeader('Shortlist · Saved', 'Your shortlist', `<span class="font-mono tabular">${saved.length}</span> saved people. <span class="font-mono tabular">${eventsWithSaved.length}</span> upcoming rooms where they\'ll be.`, 'hsl(258 100% 68%)')}
+    <section class="mb-9">
+      <h2 class="text-[12.5px] font-medium uppercase tracking-[0.1em] text-mfg mb-3 flex items-center gap-2">${iconHtml('bookmark', 13, '!fill-current')} <span>Saved people</span></h2>
+      ${saved.length ? `<div class="grid gap-3" style="grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));">
+        ${saved.map(personCardHtml).join('')}
+      </div>` : `<div class="surface-soft px-6 py-8 text-center text-mfg text-[13.5px]">Nothing saved yet. Tap the bookmark on any person.</div>`}
+    </section>
+    <section>
+      <h2 class="text-[12.5px] font-medium uppercase tracking-[0.1em] text-mfg mb-3 flex items-center gap-2">${iconHtml('calendar-check', 13)} <span>Events where saved people are attending</span></h2>
+      ${eventsWithSaved.length ? `<div class="grid gap-3" style="grid-template-columns:repeat(auto-fill,minmax(min(360px,100%),1fr));">
+        ${eventsWithSaved.map(eventCardHtml).join('')}
+      </div>` : `<div class="surface-soft px-6 py-8 text-center text-mfg text-[13.5px]">Saved people aren\'t at any upcoming events.</div>`}
+    </section>
+  `;
+}
+
+function renderSettings() {
+  const cats = Object.keys(CATEGORIES);
+  return `
+    ${viewHeader('Settings', 'Tune your signal', 'How Doss decides which rooms and people belong in front of you.', null)}
+    <div class="flex flex-col gap-4 max-w-2xl">
+      <div class="surface p-5">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[10.5px] font-medium uppercase tracking-[0.1em] text-mfg">Goals</span>
+          <button class="btn-outline" style="padding:6px 12px;font-size:12px;">${iconHtml('pencil-line', 13)} Edit</button>
+        </div>
+        <p class="text-[14px] text-fg leading-relaxed">${escapeHtml(ME.goal)}</p>
+      </div>
+      <div class="surface p-5">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[10.5px] font-medium uppercase tracking-[0.1em] text-mfg">Categories I care about</span>
+          <button class="btn-outline" style="padding:6px 12px;font-size:12px;">${iconHtml('pencil-line', 13)} Edit</button>
+        </div>
+        <div class="flex flex-wrap gap-2">${cats.map(c => categoryTag(c)).join('')}</div>
+      </div>
+      <div class="surface-soft p-5 text-[12.5px] text-mfg leading-relaxed">
+        Doss is a quiet intelligence tool. No notifications, no follow-up nudges. It surfaces what matters before each event and remembers who shows up.
+      </div>
+    </div>
+  `;
+}
+
+//
+// ─── EVENT DETAIL PANEL ─────────────────────────────────────────────────────────
+//
+
+function eventDetailHtml(e) {
+  if (!e) {
+    return `<div class="p-7 text-center text-mfg text-[13.5px] flex flex-col items-center justify-center h-full">
+      ${iconHtml('arrow-left', 16, 'text-mfg')}
+      <div class="mt-3">Pick an event to see who to meet.</div>
+    </div>`;
+  }
+  const attendees = e.attendingPersonIds.map(getPerson).filter(Boolean);
+  const ranked = attendees.slice().sort((a, b) => b.score - a.score);
+  const top10 = ranked.slice(0, 10);
+  const seenBefore = attendees.filter(isRepeat).slice(0, 4);
+  const newOnes = attendees.filter(p => !isRepeat(p) && p.score >= 80).slice(0, 4);
+  const savedAttending = attendees.filter(p => p.status === 'saved');
+
+  const toMeet = attendees.filter(p => p.status === 'want-to-meet' || p.status === 'not-met').length;
+  const seenN = seenBefore.length;
+  const savedN = savedAttending.length;
+
+  return `
+    <div class="p-6 border-b1">
+      <div class="flex items-center justify-between mb-3">
+        ${categoryTag(e.category, { short: true })}
+        <button class="icon-btn" data-close-detail>${iconHtml('x', 16)}</button>
+      </div>
+      <h2 class="font-serif text-[26px] tracking-tight text-fg leading-tight">${escapeHtml(e.name)}</h2>
+      <div class="mt-2.5 flex flex-col gap-1 text-[12.5px] text-mfg">
+        <span class="inline-flex items-center gap-1.5">${iconHtml('clock', 13)} ${escapeHtml(e.date)} · ${escapeHtml(e.time)}</span>
+        <span class="inline-flex items-center gap-1.5">${iconHtml('map-pin', 13)} ${escapeHtml(e.location)} · ${escapeHtml(e.city)}</span>
+      </div>
+      <p class="text-[13px] mt-3 leading-relaxed" style="color:hsl(258 14% 9% / 0.8);">${escapeHtml(e.summary)}</p>
+      <div class="grid grid-cols-3 gap-2 mt-4">
+        <div class="stat-box"><div class="stat-num">${toMeet}</div><div class="stat-label">To meet</div></div>
+        <div class="stat-box"><div class="stat-num">${seenN}</div><div class="stat-label">Seen before</div></div>
+        <div class="stat-box lav"><div class="stat-num" style="color:hsl(258 100% 60%);">${savedN}</div><div class="stat-label" style="color:hsl(258 60% 40%);">Saved</div></div>
+      </div>
+      <div class="flex items-center gap-2 mt-4">
+        <button class="btn-primary flex-1">Build my plan ${iconHtml('arrow-up-right', 13)}</button>
+        <button class="btn-outline" title="Save event">${iconHtml('bookmark', 14)}</button>
+      </div>
+    </div>
+    <div class="p-6 flex flex-col gap-7">
+      ${detailSection({
+        icon: 'trending-up',
+        iconColor: 'hsl(258 100% 60%)',
+        title: 'Top 10 people to meet',
+        caption: 'Ranked by relevance to your goals',
+        body: top10.map((p, i) => personRowHtml(p, { rank: i + 1, showWhy: true })).join('') ||
+          `<div class="text-[12.5px] text-mfg">No attendees yet.</div>`
+      })}
+      ${seenBefore.length ? detailSection({
+        icon: 'repeat',
+        iconColor: 'hsl(258 100% 60%)',
+        title: "People you've seen before",
+        caption: `${seenBefore.length} repeat across your events`,
+        body: seenBefore.map(p => personRowHtml(p, { showSeenChip: true })).join('')
+      }) : ''}
+      ${newOnes.length ? detailSection({
+        icon: 'sparkles',
+        iconColor: 'hsl(327 100% 60%)',
+        title: 'New high-signal people',
+        caption: 'First time appearing in a Doss event',
+        body: newOnes.map(p => personRowHtml(p)).join('')
+      }) : ''}
+      ${savedAttending.length ? detailSection({
+        icon: 'bookmark',
+        iconColor: 'hsl(258 100% 60%)',
+        iconFill: true,
+        title: 'Saved people attending',
+        caption: `${savedAttending.length} from your network`,
+        body: savedAttending.map(p => personRowHtml(p)).join('')
+      }) : ''}
+    </div>
+  `;
+}
+
+function detailSection({ icon, iconColor, iconFill, title, caption, body }) {
+  return `
+    <section>
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-[12.5px] font-medium text-fg flex items-center gap-2">
+          <span style="color:${iconColor};">${iconHtml(icon, 14, iconFill ? '!fill-current' : '')}</span>
+          ${escapeHtml(title)}
+        </h3>
+        ${caption ? `<span class="text-[11px] text-mfg">${escapeHtml(caption)}</span>` : ''}
+      </div>
+      <div class="flex flex-col">${body}</div>
+    </section>
+  `;
+}
+
+function personRowHtml(p, opts = {}) {
+  const high = isHighRepeat(p);
+  return `
+    <div class="person-row flex items-start gap-3 px-2 py-2.5 rounded-lg cursor-pointer" data-open-person="${p.id}">
+      ${opts.rank ? `<div class="font-mono tabular text-[11px] mt-1 w-6 text-right" style="color:hsl(258 60% 70%);">${String(opts.rank).padStart(2, '0')}</div>` : ''}
+      ${avatarHtml(p, 38)}
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2">
+          <span class="text-[13.5px] font-medium text-fg truncate">${escapeHtml(p.name)}</span>
+          ${high ? '<span class="signal-dot"></span>' : ''}
+          <span class="score-pill ml-auto shrink-0">${p.score}</span>
+        </div>
+        <div class="text-[12px] text-mfg truncate">${escapeHtml(p.title)} · ${escapeHtml(p.company)}</div>
+        ${opts.showWhy && p.whyMeet ? `<p class="text-[12px] text-mfg mt-1 leading-snug clamp-2">${escapeHtml(p.whyMeet)}</p>` : ''}
+        <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+          ${opts.showSeenChip ? `<span class="tag tag-soft">Seen at ${p.eventIds.length} events</span>` : ''}
+          ${p.tags.slice(0, 3).map(chipTag).join('')}
+        </div>
+      </div>
+      <button class="icon-btn row-save self-center ${isSavedStatus(p.status) ? 'is-saved' : ''}" data-toggle-save="${p.id}" onclick="event.stopPropagation();">
+        ${iconHtml('bookmark', 14, isSavedStatus(p.status) ? '!fill-current' : '')}
+      </button>
+    </div>
+  `;
+}
+
+//
+// ─── PROFILE DRAWER ─────────────────────────────────────────────────────────────
+//
+
+function profileDrawerHtml(p) {
+  if (!p) return '';
+  const high = isHighRepeat(p);
+  const evts = p.eventIds.map(getEvent).filter(Boolean);
+
+  return `
+    <div class="flex items-center justify-between mb-4">
+      <div class="text-[10.5px] uppercase tracking-[0.1em] text-mfg">Profile</div>
+      <button class="icon-btn" data-close-drawer>${iconHtml('x', 16)}</button>
+    </div>
+    <div class="flex items-start gap-4 mb-5">
+      ${avatarHtml(p, 64)}
+      <div class="flex-1 min-w-0">
+        <h2 class="font-serif text-[26px] tracking-tight text-fg leading-tight">${escapeHtml(p.name)}</h2>
+        <div class="text-[13px] text-mfg">${escapeHtml(p.title)} · ${escapeHtml(p.company)}</div>
+        <div class="flex flex-wrap gap-1.5 mt-2">${p.tags.map(chipTag).join('')}</div>
+      </div>
+    </div>
+
+    <div class="surface-soft p-4 mb-6">
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="text-[10.5px] font-medium uppercase tracking-[0.1em] text-mfg">Relevance</span>
+        ${high ? `<span class="inline-flex items-center gap-1.5 text-[11px] font-medium" style="color:hsl(327 100% 50%);"><span class="signal-dot"></span>High repeat signal</span>` : ''}
+      </div>
+      <div class="flex items-baseline gap-3">
+        <span class="font-serif text-[28px] leading-none" style="color:hsl(258 100% 60%);">${p.score}</span>
+        <span class="text-[13px] text-mfg">${tier(p.score)}</span>
+      </div>
+    </div>
+
+    ${profileField('Why meet', p.whyMeet ? `
+      <p class="text-[13.5px] text-fg leading-relaxed">${escapeHtml(p.whyMeet)}</p>
+      ${p.summary ? `<p class="text-[12.5px] text-mfg mt-2 leading-relaxed">${escapeHtml(p.summary)}</p>` : ''}
+    ` : '<p class="text-[12.5px] text-mfg">Add why this person matters to you.</p>')}
+
+    ${profileField('Your status', `
+      <div class="flex flex-wrap gap-1.5">
+        ${Object.keys(STATUSES).map(s => statusPip(s, { active: p.status === s })).join('')}
+        <button class="pip ml-1" style="background:${isSavedStatus(p.status) ? 'hsl(258 100% 96%)' : 'transparent'};color:hsl(258 60% 40%);border-color:hsl(266 65% 92%);" data-pip-save="${p.id}">
+          ${iconHtml('bookmark', 12, isSavedStatus(p.status) ? '!fill-current' : '')}
+          ${isSavedStatus(p.status) ? 'Saved' : 'Save'}
+        </button>
+      </div>
+    `)}
+
+    ${profileField(`Seen at ${evts.length} event${evts.length > 1 ? 's' : ''}`, `
+      ${high ? '<div class="text-[11px] mb-2" style="color:hsl(327 100% 55%);">Appears often in AI / healthcare rooms</div>' : ''}
+      <div class="flex flex-col gap-3">
+        ${evts.map(e => `
+          <div class="flex items-start gap-3">
+            <span class="timeline-dot"></span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <button class="text-[13px] font-medium text-fg hover:underline" data-jump-event="${e.id}">${escapeHtml(e.name)}</button>
+                ${categoryTag(e.category, { short: true, size: 'xs' })}
+              </div>
+              <div class="font-mono tabular text-[11.5px] text-mfg mt-0.5">${escapeHtml(e.date)} · ${escapeHtml(e.time)}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `)}
+
+    ${p.talkingPoint ? profileField('Suggested talking point', `
+      <div class="surface-soft p-3.5 flex items-start gap-2.5">
+        ${iconHtml('message-square-quote', 14, 'shrink-0 mt-0.5')}
+        <p class="text-[13px] text-fg leading-relaxed">${escapeHtml(p.talkingPoint)}</p>
+      </div>
+    `) : ''}
+
+    ${p.introMessage ? profileField('Suggested intro', `
+      <div class="surface p-4">
+        <p class="font-serif italic text-[15px] text-fg leading-relaxed">"${escapeHtml(p.introMessage)}"</p>
+      </div>
+      <div class="flex items-center gap-2 mt-3">
+        <button class="btn-primary flex-1">${iconHtml('linkedin', 13)} Copy &amp; open LinkedIn</button>
+        <button class="btn-outline">${iconHtml('pencil-line', 13)} Edit</button>
+      </div>
+    `) : ''}
+
+    ${profileField('Your notes', `
+      <textarea class="w-full bg-card border border-[hsl(var(--border))] rounded-lg p-3 text-[13px] text-fg placeholder:text-mfg" style="min-height:88px;outline:none;" placeholder="What did you take away last time? What to remember next time you see them?" data-notes="${p.id}">${escapeHtml(state.notes[p.id] || '')}</textarea>
+    `)}
+  `;
+}
+
+function profileField(title, body, captionRight) {
+  return `
+    <section class="mb-6">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[10.5px] font-medium uppercase tracking-[0.1em] text-mfg">${escapeHtml(title)}</span>
+        ${captionRight ? `<span class="text-[11px]" style="color:hsl(327 100% 55%);">${escapeHtml(captionRight)}</span>` : ''}
+      </div>
+      ${body}
+    </section>
+  `;
+}
+
+//
+// ─── MAIN RENDER ────────────────────────────────────────────────────────────────
+//
+
+function render() {
+  // Sidebar mobile state
+  $('#sidebar').classList.toggle('open', state.sidebarOpen);
+
+  renderNav();
+
+  let html = '';
+  if (state.tab === 'dashboard' || state.tab === 'events') html = renderDashboard();
+  else if (state.tab === 'people') html = renderPeople();
+  else if (state.tab === 'saved') html = renderSaved();
+  else if (state.tab === 'settings') html = renderSettings();
+
+  $('#viewRoot').innerHTML = html;
+
+  // Detail panel
+  const showDetail = (state.tab === 'dashboard' || state.tab === 'events') && state.selectedEventId;
+  const detail = showDetail ? eventDetailHtml(getEvent(state.selectedEventId)) : `<div class="p-8 text-center text-mfg text-[13px] flex flex-col items-center justify-center h-full">${iconHtml('arrow-left', 16)}<div class="mt-3">Pick an event to see who to meet.</div></div>`;
+
+  // Desktop column
+  $('#eventDetailDesk').innerHTML = detail;
+  $('#eventDetailDesk').classList.toggle('hidden', !showDetail);
+
+  // Sheet (md and below)
+  const sheet = $('#eventDetailSheet');
+  sheet.classList.toggle('open', state.sheetOpen && !!state.selectedEventId);
+  if (state.sheetOpen) sheet.querySelector('.drawer-panel').innerHTML = detail;
+
+  // Profile drawer
+  const drawer = $('#profileDrawer');
+  drawer.classList.toggle('open', state.profileOpen && !!state.selectedPersonId);
+  if (state.profileOpen && state.selectedPersonId) {
+    drawer.querySelector('.drawer-panel').innerHTML = profileDrawerHtml(getPerson(state.selectedPersonId));
+  }
+
+  bindHandlers();
+  if (window.lucide) window.lucide.createIcons();
+}
+
+//
+// ─── EVENT BINDING ──────────────────────────────────────────────────────────────
+//
+
+function bindHandlers() {
+  // Search inputs
+  $$('input[data-search]').forEach(el => {
+    el.addEventListener('input', e => {
+      const key = e.target.dataset.search;
+      if (key === 'main') state.search = e.target.value;
+      if (key === 'people') state.peopleSearch = e.target.value;
+      // Re-render only the view root, but easiest is full render
+      render();
+      // Restore focus
+      const fresh = $(`input[data-search="${key}"]`);
+      if (fresh) {
+        fresh.focus();
+        const v = fresh.value; fresh.value = ''; fresh.value = v;
+      }
+    });
+  });
+
+  // Category filter chips (dashboard)
+  $$('button[data-cat]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.cat;
+    if (state.activeCategories.has(k)) state.activeCategories.delete(k);
+    else state.activeCategories.add(k);
+    render();
+  }));
+
+  // People filter chips
+  $$('button[data-pfilter]').forEach(b => b.addEventListener('click', () => {
+    state.peopleFilter = b.dataset.pfilter;
+    render();
+  }));
+
+  // Event card clicks
+  $$('button[data-event]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.event;
+    state.selectedEventId = id;
+    if (window.matchMedia('(max-width: 1023px)').matches) state.sheetOpen = true;
+    render();
+  }));
+
+  // Close detail
+  $$('button[data-close-detail]').forEach(b => b.addEventListener('click', () => {
+    state.sheetOpen = false;
+    state.selectedEventId = null;
+    render();
+  }));
+
+  // Open person profile
+  $$('[data-open-person]').forEach(el => el.addEventListener('click', e => {
+    e.stopPropagation();
+    state.selectedPersonId = el.dataset.openPerson;
+    state.profileOpen = true;
+    render();
+  }));
+
+  // Close drawer
+  $$('button[data-close-drawer]').forEach(b => b.addEventListener('click', () => {
+    state.profileOpen = false;
+    render();
+  }));
+
+  // Toggle save
+  $$('[data-toggle-save]').forEach(el => el.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = el.dataset.toggleSave;
+    const p = getPerson(id);
+    if (!p) return;
+    p.status = isSavedStatus(p.status) ? 'not-met' : 'saved';
+    render();
+  }));
+
+  // Pip status change
+  $$('[data-status]').forEach(el => el.addEventListener('click', () => {
+    if (!state.selectedPersonId) return;
+    const p = getPerson(state.selectedPersonId);
+    if (!p) return;
+    p.status = el.dataset.status;
+    render();
+  }));
+
+  // Pip save
+  $$('[data-pip-save]').forEach(el => el.addEventListener('click', () => {
+    const p = getPerson(el.dataset.pipSave);
+    if (!p) return;
+    p.status = isSavedStatus(p.status) ? 'not-met' : 'saved';
+    render();
+  }));
+
+  // Notes (uncontrolled persistence)
+  $$('textarea[data-notes]').forEach(el => el.addEventListener('input', e => {
+    state.notes[e.target.dataset.notes] = e.target.value;
+  }));
+
+  // Jump to event from drawer timeline
+  $$('button[data-jump-event]').forEach(b => b.addEventListener('click', () => {
+    state.selectedEventId = b.dataset.jumpEvent;
+    state.tab = 'dashboard';
+    state.profileOpen = false;
+    render();
+  }));
+}
+
+// Mobile menu
+$('#mobileMenuBtn')?.addEventListener('click', () => {
+  state.sidebarOpen = !state.sidebarOpen;
+  render();
+});
+
+// Backdrop click
+$('#profileDrawer').addEventListener('click', e => {
+  if (e.target.id === 'profileDrawer') {
+    state.profileOpen = false;
+    render();
+  }
+});
+$('#eventDetailSheet').addEventListener('click', e => {
+  if (e.target.id === 'eventDetailSheet') {
+    state.sheetOpen = false;
+    render();
+  }
+});
+
+// Initial
+render();
+</script>
+</body>
+</html>
