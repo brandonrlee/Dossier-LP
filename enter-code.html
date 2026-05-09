@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Dossier — Enter Your Code</title>
+<title>Doss — Enter Your Code</title>
 <meta name="description" content="Enter the verification code we just texted you."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%236750a4%22/><stop offset=%221%22 stop-color=%22%23372068%22/></linearGradient></defs><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23fdf7ff%22/><text y=%22.9em%22 font-size=%2290%22 x=%2222%22 fill=%22url(%23g)%22 font-family=%22monospace%22 font-weight=%22700%22>d</text></svg>"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -39,7 +39,7 @@
 <body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md noise-bg">
 <header class="p-lg md:p-xl w-full max-w-container-max mx-auto flex justify-start items-center">
 <a href="index" class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant">
-<span class="font-headline-md text-headline-md text-on-surface tracking-tight">Dossier</span>
+<span class="font-headline-md text-headline-md text-on-surface tracking-tight">Doss</span>
 </a>
 </header>
 <main class="flex-grow flex items-center justify-center p-md md:p-lg">
@@ -87,7 +87,7 @@ didn't get it? check your spam or <a class="underline hover:text-on-surface tran
     const params = new URLSearchParams(window.location.search);
     let raw = params.get('phone');
     if (!raw) {
-      try { raw = sessionStorage.getItem('dossier_phone'); } catch (_) {}
+      try { raw = sessionStorage.getItem('doss_phone'); } catch (_) {}
     }
     const formatted = formatUS(raw);
     const el = document.getElementById('phoneDisplay');
