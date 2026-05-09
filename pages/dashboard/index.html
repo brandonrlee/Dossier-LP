@@ -521,6 +521,7 @@
     .topnav .nav-tab .label { display: none; }
     .topnav .nav-tab { padding: 7px 10px; }
     .user-chip .user-name { display: none; }
+    .grid-events-2 { grid-template-columns: 1fr !important; }
   }
 </style>
 </head>
@@ -968,14 +969,13 @@ function renderDashboard() {
     });
   });
 
-  const groupOrder = Object.keys(CATEGORIES).sort((a, b) => CATEGORIES[a].order - CATEGORIES[b].order);
-  const grouped = {};
-  filtered.forEach(e => {
-    if (!grouped[e.category]) grouped[e.category] = [];
-    grouped[e.category].push(e);
-  });
+  const daysOut = e => {
+    const m = (e.dayLabel || '').match(/-?\d+/);
+    return m ? parseInt(m[0], 10) : 9999;
+  };
+  const sorted = filtered.slice().sort((a, b) => daysOut(a) - daysOut(b));
 
-  const eventCount = filtered.length;
+  const eventCount = sorted.length;
   const peopleCount = state.people.filter(p => p.score >= 84).length;
 
   const sub = `
@@ -987,26 +987,11 @@ function renderDashboard() {
     ${viewHeader('Dashboard · This week', `Good evening, <em class="not-italic font-serif">${escapeHtml(ME.firstName)}</em>.`, sub, 'hsl(327 100% 68%)')}
     ${searchBar('Search events, people, companies…', state.search, 'main')}
     ${categoryFilters()}
-    ${groupOrder.map(cat => {
-      const events = grouped[cat];
-      if (!events || !events.length) return '';
-      return `
-        <section class="mb-8 rise rise-3">
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="text-[12.5px] font-medium uppercase tracking-[0.1em] text-mfg flex items-center gap-2">
-              ${categoryTag(cat, { short: true })}
-              <span>${escapeHtml(CATEGORIES[cat].label)}</span>
-            </h2>
-            <span class="font-mono tabular text-[11px] text-mfg">${events.length} event${events.length > 1 ? 's' : ''}</span>
-          </div>
-          <div class="grid gap-3" style="grid-template-columns:repeat(auto-fill,minmax(min(360px,100%),1fr));">
-            ${events.map(eventCardHtml).join('')}
-          </div>
-        </section>
-      `;
-    }).join('')}
-    ${filtered.length === 0 ? `
-      <div class="surface-soft px-6 py-10 text-center text-mfg text-[13.5px]">
+    <div class="grid grid-events-2 gap-4 rise rise-3" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+      ${sorted.map(eventCardHtml).join('')}
+    </div>
+    ${sorted.length === 0 ? `
+      <div class="surface-soft px-6 py-10 text-center text-mfg text-[13.5px] mt-4">
         No events match those filters.
       </div>
     ` : ''}
