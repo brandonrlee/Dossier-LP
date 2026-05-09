@@ -106,16 +106,16 @@
     }
   </script>
 </head>
-<body class="bg-background text-on-surface font-body-md antialiased min-h-screen selection:bg-primary-container selection:text-on-primary-container">
-<!-- Top Navigation (Shell suppressed but maintains brand identity as TopAppBar-lite) -->
-<header class="fixed top-0 w-full z-50 h-20 px-gutter flex items-center justify-between">
-<div class="text-on-surface font-headline-md text-[18px] tracking-tight">
-<span class="font-black">Dossier</span>
-<span class="text-on-surface-variant font-light ml-2 text-[14px]">| by Nozomio Labs</span>
-</div>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
+<header class="p-lg md:p-xl w-full max-w-container-max mx-auto flex justify-start items-center">
+<a href="index.html" class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant">
+<span class="font-headline-md text-headline-md text-on-surface tracking-tight">Dossier</span>
+<span class="opacity-50">|</span>
+<span>by Nozomio Labs</span>
+</a>
 </header>
 <!-- Main Content Canvas -->
-<main class="flex flex-col items-center justify-center min-h-screen px-gutter pt-24 pb-12 max-w-2xl mx-auto text-center">
+<main class="flex-grow flex flex-col items-center justify-center px-gutter pb-12 max-w-2xl mx-auto text-center">
 <!-- Hero Section -->
 <div class="mb-xl space-y-md">
 <h1 class="font-display-lg text-display-lg text-on-surface tracking-tighter">text dossier.</h1>
