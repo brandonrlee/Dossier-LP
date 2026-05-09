@@ -134,12 +134,12 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 18px;
+    padding: 10px 20px;
     font-family: var(--font-sans);
     font-size: 14px;
     font-weight: 600;
     letter-spacing: -0.01em;
-    border-radius: 10px;
+    border-radius: 999px;
     border: none;
     cursor: pointer;
     text-decoration: none;
@@ -162,7 +162,7 @@
   }
   .btn-secondary:hover { background: white; border-color: var(--border-strong); transform: translateY(-1px); box-shadow: var(--shadow); }
 
-  .btn-large { padding: 14px 22px; font-size: 14.5px; border-radius: 11px; }
+  .btn-large { padding: 14px 26px; font-size: 14.5px; border-radius: 999px; }
 
   .btn-arrow { display: inline-block; transition: transform 0.2s ease; }
   .btn:hover .btn-arrow { transform: translateX(2px); }
@@ -1375,6 +1375,169 @@
 
   .footer-links a:hover { color: var(--text); }
 
+  /* === Logo brand === */
+  .logo .logo-divider {
+    color: var(--text-soft);
+    font-weight: 300;
+    margin: 0 -2px;
+  }
+
+  .logo .logo-by {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: -0.005em;
+  }
+
+  /* === Hero pill === */
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 14px 6px 11px;
+    background: rgb(255 255 255 / 0.7);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text-2);
+    width: fit-content;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .hero-pill .pill-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--emerald);
+    box-shadow: 0 0 0 3px rgb(16 185 129 / 0.18);
+    animation: pulse 2s infinite;
+  }
+
+  .hero-pill .pill-num {
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  /* === Nav actions === */
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-login {
+    padding: 8px 14px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+    letter-spacing: -0.005em;
+    margin-right: 4px;
+  }
+
+  .nav-login:hover {
+    color: var(--text);
+    background: var(--border-soft);
+  }
+
+  /* === Dark CTA band === */
+  .dark-cta-band-card {
+    background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);
+    border-radius: 28px;
+    padding: 44px 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.05) inset, 0 30px 60px -15px rgb(0 0 0 / 0.3);
+  }
+
+  .dark-cta-band-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(16, 185, 129, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(16, 185, 129, 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 60% 70% at 80% 50%, black, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 60% 70% at 80% 50%, black, transparent 75%);
+    pointer-events: none;
+  }
+
+  .dark-cta-band-text {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .dark-cta-band-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--emerald);
+    width: fit-content;
+  }
+
+  .dark-cta-band-eyebrow::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--emerald);
+    box-shadow: 0 0 0 3px rgb(16 185 129 / 0.2);
+    animation: pulse 2s infinite;
+  }
+
+  .dark-cta-band-headline {
+    font-size: clamp(22px, 2.6vw, 30px);
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    line-height: 1.18;
+    color: white;
+    max-width: 560px;
+  }
+
+  .dark-cta-band-headline em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--emerald);
+  }
+
+  .btn-light {
+    background: white;
+    color: var(--text);
+    border: none;
+    box-shadow: 0 2px 6px -1px rgb(0 0 0 / 0.18);
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-light:hover {
+    background: #f5f5f5;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px -4px rgb(0 0 0 / 0.3);
+  }
+
   /* === Reveal === */
   .reveal {
     opacity: 0;
@@ -1386,11 +1549,279 @@
     transform: translateY(0);
   }
 
+  /* === Phone hero (Dossier iPhone mockup) === */
+  .phone-stage {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 360 / 720;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: phoneRise 0.95s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes phoneRise {
+    0%   { opacity: 0; transform: translateY(28px) scale(0.985); }
+    100% { opacity: 1; transform: translateY(0)   scale(1); }
+  }
+
+  .phone-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #0A0A0A;
+    border-radius: 56px;
+    padding: 9px;
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.04) inset,
+      0 1px 0 rgb(255 255 255 / 0.06) inset,
+      0 50px 90px -28px rgb(0 0 0 / 0.32),
+      0 28px 56px -24px rgb(0 0 0 / 0.18);
+  }
+
+  .phone-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    border-radius: 47px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phone-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 30px;
+    background: #0A0A0A;
+    border-radius: 18px;
+    z-index: 5;
+  }
+
+  .phone-statusbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 26px 0;
+    height: 42px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0A0A0A;
+    flex-shrink: 0;
+  }
+
+  .phone-statusbar .icons {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #0A0A0A;
+  }
+
+  .phone-chat-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 0;
+  }
+
+  .phone-chat-header .pavatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0A0A0A, #2A2A2A);
+    color: #34c759;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: 17px;
+    font-weight: 700;
+    position: relative;
+  }
+  .phone-chat-header .pavatar::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 11px; height: 11px;
+    background: #34c759;
+    border: 2px solid #fff;
+    border-radius: 50%;
+  }
+  .phone-chat-header .pname {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #0A0A0A;
+    letter-spacing: -0.01em;
+  }
+  .phone-chat-header .pstatus {
+    font-size: 10.5px;
+    color: #8E8E93;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .phone-chat {
+    flex: 1;
+    min-height: 0;
+    padding: 14px 14px 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .phone-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4px;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: bubbleIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .phone-row.user  { align-items: flex-end; }
+  .phone-row.agent { align-items: flex-start; }
+
+  .phone-row.b1 { animation-delay: 0.65s; }
+  .phone-row.b2 { animation-delay: 1.30s; }
+  .phone-row.b3 { animation-delay: 2.10s; }
+  .phone-row.b4 { animation-delay: 2.95s; }
+  .phone-row.b5 { animation-delay: 3.85s; }
+  .phone-row.b6 { animation-delay: 4.85s; }
+
+  @keyframes bubbleIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .phone-bubble {
+    max-width: 78%;
+    padding: 8px 13px;
+    font-size: 13.5px;
+    line-height: 1.32;
+    letter-spacing: -0.005em;
+    border-radius: 18px;
+    word-wrap: break-word;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  }
+  .phone-bubble.user {
+    background: #0a84ff;
+    color: #fff;
+    border-bottom-right-radius: 5px;
+    box-shadow: 0 1px 1px rgb(10 132 255 / 0.18);
+  }
+  .phone-bubble.agent {
+    background: #e9e9eb;
+    color: #1c1c1e;
+    border-bottom-left-radius: 5px;
+  }
+  .phone-bubble .lk {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: rgb(255 255 255 / 0.45);
+  }
+
+  .phone-fade {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 110px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #ffffff 70%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Floating app-style icons */
+  .float-icon {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.18) inset,
+      0 18px 30px -12px rgb(0 0 0 / 0.22),
+      0 6px 14px -6px rgb(0 0 0 / 0.12);
+    z-index: 3;
+    will-change: transform;
+  }
+  .float-icon svg { width: 26px; height: 26px; }
+
+  .float-icon.fi-msg {
+    background: linear-gradient(160deg, #4dd86a, #34c759);
+    top: 8%;
+    left: -34px;
+    animation: floatI1 5.4s ease-in-out infinite;
+  }
+  .float-icon.fi-cal {
+    background: linear-gradient(160deg, #8b7cf6, #6750a4);
+    top: 26%;
+    right: -38px;
+    animation: floatI2 6.2s ease-in-out infinite;
+  }
+  .float-icon.fi-link {
+    background: linear-gradient(160deg, #6c8cff, #4f46e5);
+    bottom: 26%;
+    left: -42px;
+    animation: floatI3 5.8s ease-in-out infinite;
+  }
+  .float-icon.fi-send {
+    background: linear-gradient(160deg, #2aa5ff, #0a84ff);
+    bottom: 9%;
+    right: -32px;
+    animation: floatI4 6.6s ease-in-out infinite;
+  }
+
+  @keyframes floatI1 {
+    0%, 100% { transform: translateY(0)    rotate(-6deg); }
+    50%      { transform: translateY(-12px) rotate(4deg); }
+  }
+  @keyframes floatI2 {
+    0%, 100% { transform: translateY(0)    rotate(5deg); }
+    50%      { transform: translateY(-10px) rotate(-3deg); }
+  }
+  @keyframes floatI3 {
+    0%, 100% { transform: translateY(0)    rotate(-4deg); }
+    50%      { transform: translateY(-9px) rotate(6deg); }
+  }
+  @keyframes floatI4 {
+    0%, 100% { transform: translateY(0)    rotate(6deg); }
+    50%      { transform: translateY(-13px) rotate(-4deg); }
+  }
+
+  /* Typing indicator inside phone */
+  .phone-typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 9px 13px;
+    background: #e9e9eb;
+    border-radius: 16px;
+    border-bottom-left-radius: 5px;
+  }
+  .phone-typing span {
+    width: 6px; height: 6px;
+    background: #8E8E93;
+    border-radius: 50%;
+    animation: bounce 1.3s infinite;
+  }
+  .phone-typing span:nth-child(2) { animation-delay: 0.16s; }
+  .phone-typing span:nth-child(3) { animation-delay: 0.32s; }
+
   /* === Responsive === */
   @media (max-width: 1024px) {
     .hero-inner { grid-template-columns: 1fr; gap: 56px; }
     .hero-right { justify-content: flex-start; }
     .terminal { max-width: 460px; margin: 0 auto; }
+    .phone-stage { margin: 0 auto; max-width: 380px; }
     .intel-badge.tl { left: -16px; }
     .intel-badge.br { right: -16px; }
     .final-cta-card { padding: 56px 40px; }
@@ -1400,9 +1831,22 @@
     .person-grid { grid-template-columns: 1fr; }
     .workflow-grid { grid-template-columns: 1fr; gap: 14px; }
     .nav-links { display: none; }
+    .nav-login { display: none; }
     .intel-badge { display: none; }
     .footer-top { flex-direction: column; align-items: flex-start; }
     .hero-deco { display: none; }
+    .phone-stage { max-width: 320px; }
+    .float-icon { width: 46px; height: 46px; border-radius: 13px; }
+    .float-icon svg { width: 22px; height: 22px; }
+    .float-icon.fi-msg  { left: -14px; }
+    .float-icon.fi-cal  { right: -16px; }
+    .float-icon.fi-link { left: -18px; }
+    .float-icon.fi-send { right: -12px; }
+    .dark-cta-band-card {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 36px 28px;
+    }
   }
 
   @media (max-width: 560px) {
@@ -1414,6 +1858,7 @@
     .final-cta-card { padding: 44px 24px; border-radius: 22px; }
     .final-cta-card::after { display: none; }
     .hero-meta { gap: 14px; }
+    .phone-stage { max-width: 280px; }
   }
 </style>
 </head>
@@ -1422,16 +1867,20 @@
 <nav>
   <div class="nav-inner">
     <a href="#" class="logo">
-      Dossier
+      <span>Dossier</span>
     </a>
     <ul class="nav-links">
       <li><a href="#intelligence">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
       <li><a href="#faq">FAQ</a></li>
     </ul>
-    <a href="design3" class="btn btn-primary">
-      Text Dossier
-      <span class="btn-arrow">→</span>
-    </a>
+    <div class="nav-actions">
+      <a href="login.html" class="nav-login">Log in</a>
+      <a href="login.html" class="btn btn-primary">
+        Get Dossier
+        <span class="btn-arrow">→</span>
+      </a>
+    </div>
   </div>
 </nav>
 
@@ -1445,18 +1894,28 @@
   <div class="container">
     <div class="hero-inner">
       <div class="hero-left">
+        <div class="hero-pill">
+          <span class="pill-dot"></span>
+          <span class="pill-num">12,482</span>
+          rooms briefed
+        </div>
+
         <h1 class="hero-headline">
-          Know the room <em>before</em> you enter it.
+          meet dossier. it lives in your texts and <em>reads the room</em> before you do.
         </h1>
 
         <p class="hero-sub">
-          Dossier is a pre-event intelligence agent that texts you who matters, what to say, and what to remember before you walk into a room.
+          connect luma, partiful, and your calendar. dossier quietly finds who matters, what to say, and who you forgot to follow up with.
         </p>
 
         <div class="hero-ctas">
-          <a href="design3" class="btn btn-primary btn-large">
-            Text Dossier
+          <a href="login.html" class="btn btn-primary btn-large">
+            text dossier now
             <span class="btn-arrow">→</span>
+          </a>
+          <a href="#workflow" class="btn btn-secondary btn-large">
+            see what it does
+            <span class="btn-arrow">↓</span>
           </a>
         </div>
 
@@ -1477,90 +1936,67 @@
       </div>
 
       <div class="hero-right">
-        <div class="intel-badge tl green">
-          <span class="lab">// Confidence</span>
-          <span class="val">94.2%</span>
-        </div>
-        <div class="intel-badge br">
-          <span class="lab">// Brief ID</span>
-          <span class="val">DSR-2024-0847</span>
-        </div>
-
-        <div class="terminal">
-          <div class="terminal-header">
-            <div class="term-left">
-              <div class="agent-avatar">D</div>
-              <div class="agent-info">
-                <div class="agent-name">Dossier Agent</div>
-                <div class="agent-status">Active Now</div>
-              </div>
-            </div>
-            <div class="term-right">
-              ENC
-              <div class="signal-bars">
-                <span></span><span></span><span></span><span></span>
-              </div>
-            </div>
+        <div class="phone-stage">
+          <!-- Floating app icons -->
+          <div class="float-icon fi-msg" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </div>
+          <div class="float-icon fi-cal" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="float-icon fi-link" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <div class="float-icon fi-send" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           </div>
 
-          <div class="chat-area">
-            <div class="chat-time">Today · 6:42 PM</div>
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <div class="phone-island"></div>
 
-            <div class="row user">
-              <div class="bubble user">Can you pull context for the AI Founder Party tonight?</div>
-            </div>
+              <div class="phone-statusbar">
+                <span>9:41</span>
+                <span class="icons">
+                  <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="11" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a14 14 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15a6 6 0 0 1 7 0"/><circle cx="12" cy="17" r="1.2" fill="currentColor"/></svg>
+                  <svg width="22" height="11" viewBox="0 0 28 12" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1" y="1" width="22" height="10" rx="2.4"/><rect x="3" y="3" width="16" height="6" rx="1" fill="currentColor"/><rect x="24" y="4" width="2" height="4" rx="0.6" fill="currentColor"/></svg>
+                </span>
+              </div>
 
-            <div class="row agent">
-              <div class="bubble agent rich">
-                <div class="scan-block">
-                  <div class="scan-head">
-                    <span class="ping"></span>
-                    Scanning Attendees
-                  </div>
-                  <div class="scan-text">You have <strong>AI Founder Party</strong> tonight at 8 PM.</div>
-                  <div class="scan-progress"></div>
-                  <div class="scan-stats">
-                    <span>47 / 47 PROCESSED</span>
-                    <span>12.4s</span>
-                  </div>
+              <div class="phone-chat-header">
+                <div class="pavatar">D</div>
+                <div class="pname">Dossier</div>
+                <div class="pstatus">iMessage · Active now</div>
+              </div>
+
+              <div class="phone-chat">
+                <div class="phone-row user b1">
+                  <div class="phone-bubble user">i'm going to this ai founder party tonight</div>
+                </div>
+
+                <div class="phone-row user b2">
+                  <div class="phone-bubble user"><span class="lk">https://lu.ma/ai-founder-party</span></div>
+                </div>
+
+                <div class="phone-row agent b3">
+                  <div class="phone-bubble agent">got it. scanning 47 attendees.</div>
+                </div>
+
+                <div class="phone-row agent b4">
+                  <div class="phone-bubble agent">brief ready. found 5 high-signal people, 2 clout risks, and 1 missed follow-up.</div>
+                </div>
+
+                <div class="phone-row agent b5">
+                  <div class="phone-bubble agent">maya chen — healthcare ai investor. ask her: "are you seeing founders start with workflow wedges or diagnostics?"</div>
+                </div>
+
+                <div class="phone-row agent b6">
+                  <div class="phone-bubble agent">jake — stealth founder. no product link. 14 podcast clips. clout risk: high. talk if bored. do not pitch.</div>
                 </div>
               </div>
-            </div>
 
-            <div class="row agent">
-              <div class="bubble agent rich">
-                <div class="scan-text">I found <strong>5 people worth meeting</strong>, <strong>2 clout risks</strong>, and <strong>1 person</strong> you forgot to follow up with.</div>
-                <div class="stat-grid">
-                  <div class="stat">
-                    <div class="stat-num green">5</div>
-                    <div class="stat-label">Signal</div>
-                  </div>
-                  <div class="stat">
-                    <div class="stat-num orange">2</div>
-                    <div class="stat-label">Risks</div>
-                  </div>
-                  <div class="stat">
-                    <div class="stat-num">1</div>
-                    <div class="stat-label">Memory</div>
-                  </div>
-                </div>
-                <div class="chat-actions">
-                  <a href="#cta" class="chat-action primary">
-                    Send me the brief
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-                  </a>
-                  <a href="#intelligence" class="chat-action">
-                    Show risks
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div class="row agent">
-              <div class="typing">
-                <span></span><span></span><span></span>
-              </div>
+              <div class="phone-fade"></div>
             </div>
           </div>
         </div>
@@ -1688,12 +2124,12 @@
 <section class="workflow-section" id="workflow">
   <div class="container">
     <div class="section-head reveal">
-      <div class="section-eyebrow">// Workflow</div>
+      <div class="section-eyebrow">// How it works</div>
       <h2 class="section-title">
-        The agent runs <em>invisibly.</em>
+        Three steps. <em>No app required.</em>
       </h2>
       <p class="section-sub">
-        No manual data entry. No dashboards to check. Drop a link, and Dossier's background agents compile the room before you arrive.
+        Drop a link. Get the brief. Follow up. Dossier handles the in-between — quietly, in your texts.
       </p>
     </div>
 
@@ -1706,8 +2142,8 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
           </div>
         </div>
-        <h3 class="phase-title">Ingest</h3>
-        <p class="phase-desc">Paste a Luma, Partiful, or calendar link. Dossier extracts the attendee list instantly.</p>
+        <h3 class="phase-title">Text an event link</h3>
+        <p class="phase-desc">Luma, Partiful, Calendar, or a pasted attendee list. Dossier extracts the room instantly.</p>
         <div class="phase-detail">
           <div class="ingest-link">
             <span class="accent">lu.ma/</span>ai-founder-party<span class="cursor"></span>
@@ -1731,24 +2167,12 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           </div>
         </div>
-        <h3 class="phase-title">Agent Run</h3>
-        <p class="phase-desc">Dossier cross-references intel from five sources, weighting recent and personal signals highest.</p>
+        <h3 class="phase-title">Get the room brief</h3>
+        <p class="phase-desc">Who matters, what to say, who to avoid — texted to you one hour before the event.</p>
         <div class="phase-detail">
-          <div class="source-row">
-            <span class="source-name">LinkedIn snippets</span>
-            <span class="source-status">SCAN</span>
-          </div>
-          <div class="source-row">
-            <span class="source-name">Past memory</span>
-            <span class="source-status">SCAN</span>
-          </div>
-          <div class="source-row">
-            <span class="source-name">Public bios</span>
-            <span class="source-status">SCAN</span>
-          </div>
-          <div class="source-row">
-            <span class="source-name">Personal notes</span>
-            <span class="source-status">SCAN</span>
+          <div class="brief-preview">
+            <div class="brief-time">T-60 MIN · INCOMING</div>
+            <div class="brief-msg">5 worth meeting. Open with <strong>Maya</strong> — mutual: Alex. Avoid "stealth Jake."</div>
           </div>
         </div>
       </div>
@@ -1761,12 +2185,12 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
         </div>
-        <h3 class="phase-title">The Brief</h3>
-        <p class="phase-desc">One hour before the event you receive a high-signal text — exactly who matters and what to say.</p>
+        <h3 class="phase-title">Follow up after</h3>
+        <p class="phase-desc">Dossier drafts the messages you should send tomorrow — to the people you actually met.</p>
         <div class="phase-detail">
           <div class="brief-preview">
-            <div class="brief-time">T-60 MIN · INCOMING</div>
-            <div class="brief-msg">5 worth meeting. Open with <strong>Maya</strong> — mutual: Alex. Avoid "stealth Jake."</div>
+            <div class="brief-time">DAY AFTER · DRAFTED</div>
+            <div class="brief-msg">"Great seeing you again, <strong>Sarah</strong> — I still owe you that healthcare AI note. Coffee next week?"</div>
           </div>
         </div>
       </div>
@@ -1774,28 +2198,20 @@
   </div>
 </section>
 
-<!-- ==================== FINAL CTA ==================== -->
+<!-- ==================== DARK CTA BAND ==================== -->
 <section class="final-cta" id="cta">
   <div class="container">
-    <div class="final-cta-card">
-      <div class="final-inner">
-        <div>
-          <div class="final-pill">
-            <span class="dot"></span>
-            T-60 Minutes
-          </div>
-          <h2 class="final-headline">
-            Never walk in <em>blind</em> again.
-          </h2>
-          <p class="final-sub">
-            Find the main characters before you waste your night on NPCs. Dossier texts you the brief — no app, no dashboard.
-          </p>
-          <a href="design3" class="btn btn-primary btn-large">
-            Text Dossier
-            <span class="btn-arrow">→</span>
-          </a>
-        </div>
+    <div class="dark-cta-band-card">
+      <div class="dark-cta-band-text">
+        <div class="dark-cta-band-eyebrow">T-60 Minutes</div>
+        <h2 class="dark-cta-band-headline">
+          one hour before the event, dossier <em>texts you the brief.</em>
+        </h2>
       </div>
+      <a href="login.html" class="btn btn-light btn-large">
+        Get Dossier
+        <span class="btn-arrow">→</span>
+      </a>
     </div>
   </div>
 </section>
@@ -1808,15 +2224,15 @@
         <p class="footer-tagline">
           The context layer for <em>real-world</em> networking.
         </p>
-        <a href="design3" class="btn btn-primary">
-          Text Dossier
+        <a href="login.html" class="btn btn-primary">
+          Get Dossier
           <span class="btn-arrow">→</span>
         </a>
       </div>
       <div class="footer-bottom">
         <div class="footer-brand">
           <a href="#" class="logo" style="font-size: 19px;">
-            Dossier
+            <span>Dossier</span>
           </a>
           <span class="footer-copy">© 2024 · Actionable Intelligence</span>
         </div>

@@ -112,8 +112,6 @@
 <header class="p-lg md:p-xl w-full max-w-container-max mx-auto flex justify-start items-center">
 <div class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant">
 <span class="font-headline-md text-headline-md text-on-surface tracking-tight">Dossier</span>
-<span class="opacity-50">|</span>
-<span>by Nozomio Labs</span>
 </div>
 </header>
 <main class="flex-grow flex items-center justify-center p-md md:p-lg">
@@ -129,19 +127,10 @@
 <span>+1</span>
 <span class="material-symbols-outlined text-[16px] text-on-surface-variant ml-xs" data-icon="expand_more">expand_more</span>
 </button>
-<input class="flex-grow bg-transparent border-none focus:ring-0 px-md py-md text-on-surface placeholder:text-outline font-body-lg w-full outline-none" placeholder="(201) 555-0123" type="tel"/>
+<input id="phoneInput" class="flex-grow bg-transparent border-none focus:ring-0 px-md py-md text-on-surface placeholder:text-outline font-body-lg w-full outline-none" placeholder="(201) 555-0123" type="tel"/>
 </div>
-<a href="enter-code" class="w-full bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm py-md rounded-full hover:opacity-90 transition-opacity flex justify-center items-center gap-sm">
+<a href="enter-code" id="continueBtn" class="w-full bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm py-md rounded-full hover:opacity-90 transition-opacity flex justify-center items-center gap-sm">
 continue with phone
-</a>
-<div class="flex items-center gap-md">
-<div class="h-px bg-outline-variant flex-grow"></div>
-<span class="font-label-sm text-label-sm text-on-surface-variant tracking-widest">OR</span>
-<div class="h-px bg-outline-variant flex-grow"></div>
-</div>
-<a href="enter-code" class="w-full bg-surface border border-outline-variant text-on-surface font-label-sm text-label-sm py-md rounded-full hover:bg-surface-container-low transition-colors flex justify-center items-center gap-sm">
-<span class="material-symbols-outlined text-[18px]" data-icon="send">send</span>
-continue with telegram
 </a>
 </div>
 <div class="text-center mt-lg">
@@ -151,5 +140,27 @@ by continuing you agree to our <a class="underline hover:text-on-surface transit
 </div>
 </div>
 </main>
+<script>
+  (function () {
+    const input = document.getElementById('phoneInput');
+    const btn = document.getElementById('continueBtn');
+    if (!input || !btn) return;
+
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      const raw = (input.value || '').replace(/\D/g, '');
+      if (raw) {
+        try { sessionStorage.setItem('dossier_phone', raw); } catch (_) {}
+        window.location.href = 'enter-code?phone=' + encodeURIComponent(raw);
+      } else {
+        window.location.href = 'enter-code';
+      }
+    });
+
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); btn.click(); }
+    });
+  })();
+</script>
 </body>
 </html>

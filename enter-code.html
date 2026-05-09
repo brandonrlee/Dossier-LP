@@ -40,15 +40,13 @@
 <header class="p-lg md:p-xl w-full max-w-container-max mx-auto flex justify-start items-center">
 <a href="index" class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant">
 <span class="font-headline-md text-headline-md text-on-surface tracking-tight">Dossier</span>
-<span class="opacity-50">|</span>
-<span>by Nozomio Labs</span>
 </a>
 </header>
 <main class="flex-grow flex items-center justify-center p-md md:p-lg">
 <div class="w-full max-w-[440px] flex flex-col gap-xl">
 <div class="text-center flex flex-col gap-sm">
 <h1 class="font-display-lg text-display-lg text-on-surface">enter your code.</h1>
-<p class="font-body-md text-body-md text-on-surface-variant">we texted a 6-digit code to <span class="text-on-surface font-medium">+1 (201) 555-0123</span></p>
+<p class="font-body-md text-body-md text-on-surface-variant">we texted a 6-digit code to <span id="phoneDisplay" class="text-on-surface font-medium">+1 (201) 555-0123</span></p>
 </div>
 <form id="codeForm" class="flex flex-col gap-lg" autocomplete="one-time-code">
 <div class="flex justify-between gap-sm" id="codeBoxes">
@@ -78,6 +76,24 @@ didn't get it? check your spam or <a class="underline hover:text-on-surface tran
 </div>
 </main>
 <script>
+  (function () {
+    function formatUS(d) {
+      d = (d || '').replace(/\D/g, '');
+      if (d.length === 11 && d[0] === '1') d = d.slice(1);
+      if (d.length === 10) return '+1 (' + d.slice(0, 3) + ') ' + d.slice(3, 6) + '-' + d.slice(6);
+      if (d.length > 0) return '+1 ' + d;
+      return null;
+    }
+    const params = new URLSearchParams(window.location.search);
+    let raw = params.get('phone');
+    if (!raw) {
+      try { raw = sessionStorage.getItem('dossier_phone'); } catch (_) {}
+    }
+    const formatted = formatUS(raw);
+    const el = document.getElementById('phoneDisplay');
+    if (el && formatted) el.textContent = formatted;
+  })();
+
   const inputs = document.querySelectorAll('.code-input');
   inputs.forEach((input, i) => {
     input.addEventListener('input', e => {
