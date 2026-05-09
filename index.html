@@ -1215,15 +1215,15 @@
 
   .final-cta-card {
     background:
-      radial-gradient(ellipse at top right, rgb(16 185 129 / 0.18), transparent 55%),
-      radial-gradient(ellipse at bottom left, rgb(16 185 129 / 0.06), transparent 50%),
-      linear-gradient(135deg, var(--bg-dark), #161616);
+      radial-gradient(ellipse at top right, rgba(233, 221, 255, 0.7), transparent 55%),
+      radial-gradient(ellipse at bottom left, rgba(225, 212, 253, 0.5), transparent 50%),
+      linear-gradient(135deg, #fdf7ff, #ffffff);
     border-radius: 28px;
     padding: 72px 64px;
-    color: white;
+    color: var(--text);
     position: relative;
     overflow: hidden;
-    border: 1px solid #1F1F1F;
+    border: 1px solid #ECE6EE;
   }
 
   .final-cta-card::before {
@@ -1231,8 +1231,8 @@
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+      linear-gradient(to right, rgba(79, 55, 138, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(79, 55, 138, 0.05) 1px, transparent 1px);
     background-size: 48px 48px;
     mask-image: radial-gradient(ellipse 70% 70% at 30% 50%, black, transparent 75%);
     -webkit-mask-image: radial-gradient(ellipse 70% 70% at 30% 50%, black, transparent 75%);
@@ -1246,7 +1246,7 @@
     right: 28px;
     font-family: var(--font-mono);
     font-size: 10px;
-    color: rgb(255 255 255 / 0.25);
+    color: rgba(79, 55, 138, 0.45);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     font-weight: 600;
@@ -1254,9 +1254,15 @@
 
   .final-inner {
     position: relative;
-    display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: 48px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .final-inner > div {
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
   }
 
@@ -1293,19 +1299,19 @@
     letter-spacing: -0.032em;
     line-height: 1.02;
     margin-bottom: 18px;
-    color: white;
+    color: var(--text);
   }
 
   .final-headline em {
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
-    color: var(--emerald);
+    color: var(--emerald-deep);
   }
 
   .final-sub {
     font-size: 17px;
-    color: rgb(255 255 255 / 0.62);
+    color: var(--text-secondary);
     line-height: 1.55;
     margin-bottom: 28px;
     max-width: 460px;
@@ -1453,7 +1459,6 @@
     .terminal { max-width: 460px; margin: 0 auto; }
     .intel-badge.tl { left: -16px; }
     .intel-badge.br { right: -16px; }
-    .final-inner { grid-template-columns: 1fr; gap: 40px; }
     .final-cta-card { padding: 56px 40px; }
   }
 
@@ -1483,13 +1488,11 @@
 <nav>
   <div class="nav-inner">
     <a href="#" class="logo">
-      <span class="logo-mark">D</span>
       Dossier
     </a>
     <ul class="nav-links">
-      <li><a href="#intelligence">Intelligence</a></li>
-      <li><a href="#workflow">Workflow</a></li>
-      <li><a href="#intelligence">Risk Analysis</a></li>
+      <li><a href="#intelligence">Features</a></li>
+      <li><a href="#faq">FAQ</a></li>
     </ul>
     <a href="login.html" class="btn btn-primary">
       Get Briefed
@@ -1508,11 +1511,6 @@
   <div class="container">
     <div class="hero-inner">
       <div class="hero-left">
-        <div class="status-pill">
-          <span class="dot"></span>
-          Secure Connection Established
-        </div>
-
         <h1 class="hero-headline">
           Know the room <em>before</em> you enter it.
         </h1>
@@ -1863,20 +1861,10 @@
           <p class="final-sub">
             Find the main characters before you waste your night on NPCs. Dossier texts you the brief — no app, no dashboard.
           </p>
-          <a href="#" class="btn btn-emerald btn-large">
-            Get Briefed
+          <a href="design3.html" class="btn btn-emerald btn-large">
+            Text Dossier
             <span class="btn-arrow">→</span>
           </a>
-        </div>
-
-        <div class="final-preview">
-          <div class="final-preview-head">
-            <span class="left">Tonight's Brief</span>
-            <span>Dossier Agent</span>
-          </div>
-          <div class="final-preview-msg">
-            <strong>AI Founder Party</strong> — 8 PM. Scanned 47. Open with <strong>Maya Chen</strong> (Healthcare AI). Avoid <strong>"stealth" Jake</strong>. Owe <strong>Sam R.</strong> an intro — bring it up.
-          </div>
         </div>
       </div>
     </div>
@@ -1899,7 +1887,6 @@
       <div class="footer-bottom">
         <div class="footer-brand">
           <a href="#" class="logo" style="font-size: 19px;">
-            <span class="logo-mark" style="width: 22px; height: 22px; font-size: 11px; border-radius: 6px;">D</span>
             Dossier
           </a>
           <span class="footer-copy">© 2024 · Actionable Intelligence</span>
