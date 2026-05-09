@@ -517,71 +517,38 @@
   }
   @media (max-width: 767px) {
     .md-only { display: none !important; }
-    .sidebar-shell {
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      transform: translateX(-100%);
-      transition: transform 200ms ease;
-      z-index: 60;
-      width: 280px !important;
-    }
-    .sidebar-shell.open { transform: translateX(0); }
+    .topbar-inner { padding: 12px 16px; gap: 10px; }
+    .topnav .nav-tab .label { display: none; }
+    .topnav .nav-tab { padding: 7px 10px; }
+    .user-chip .user-name { display: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="flex min-h-screen">
-  <!-- Sidebar -->
-  <aside id="sidebar" class="sidebar-shell w-[240px] flex-shrink-0 flex flex-col">
-    <div class="px-5 pt-6 pb-3 flex items-center gap-2">
-      <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg" style="background: linear-gradient(135deg, hsl(258 100% 68%), hsl(327 100% 68%));">
-        <i data-lucide="folder-open" class="text-white" style="width:16px;height:16px;"></i>
-      </span>
-      <span class="font-serif text-[20px] tracking-tight text-fg">Doss</span>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="#" class="brand">
+      <span class="brand-mark"><i data-lucide="folder-open" style="width:15px;height:15px;"></i></span>
+      <span class="brand-name">Doss</span>
+    </a>
+    <nav class="topnav" id="nav"></nav>
+    <div class="user-chip">
+      <span class="avatar" style="width:24px;height:24px;font-size:10.5px;background:linear-gradient(135deg, hsl(258 80% 88%), hsl(288 80% 78%));color:hsl(258 60% 28%);">B</span>
+      <span class="user-name text-[12.5px] font-medium text-fg">Brandon</span>
     </div>
-    <nav class="px-3 mt-2 flex flex-col gap-1" id="nav"></nav>
-    <div class="mt-auto px-4 pb-5 flex flex-col gap-3">
-      <div class="surface-soft p-3.5">
-        <div class="flex items-center gap-2 mb-2">
-          <i data-lucide="sparkles" style="width:14px;height:14px;color:hsl(327 100% 60%);"></i>
-          <span class="text-[10.5px] font-medium uppercase tracking-wider text-mfg">This week</span>
-        </div>
-        <p class="text-[12.5px] leading-snug text-fg">
-          <span class="font-mono tabular">3</span> high-signal events,
-          <span class="font-mono tabular">42</span> people worth meeting.
-        </p>
-      </div>
-      <div class="flex items-center gap-2 px-1">
-        <span class="avatar w-8 h-8 text-[12px]" style="background: linear-gradient(135deg, hsl(258 80% 88%), hsl(288 80% 78%)); color: hsl(258 60% 28%);">B</span>
-        <div class="leading-tight">
-          <div class="text-[12.5px] font-medium text-fg">Brandon</div>
-          <div class="text-[10.5px] text-mfg">Tract · SF</div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Mobile top bar -->
-  <div class="lg-hide md:hidden fixed top-0 inset-x-0 h-14 z-40 bg-white/85 backdrop-blur border-b1 flex items-center px-4 justify-between">
-    <button id="mobileMenuBtn" class="icon-btn"><i data-lucide="menu" style="width:18px;height:18px;"></i></button>
-    <span class="font-serif text-[18px] text-fg">Doss</span>
-    <span class="w-[30px]"></span>
   </div>
+</header>
 
-  <!-- Main + detail -->
-  <div class="flex-1 flex min-w-0">
-    <main class="flex-1 min-w-0 overflow-y-auto scrollbar" style="max-height:100vh;">
-      <div class="max-w-[1100px] mx-auto px-6 lg:px-10 pt-8 pb-16 md:pt-10" id="viewRoot"></div>
-    </main>
+<main>
+  <div class="max-w-[1100px] mx-auto px-6 lg:px-10 pt-10 pb-16" id="viewRoot"></div>
+</main>
 
-    <aside id="eventDetailDesk" class="hidden lg:flex w-[440px] flex-shrink-0 border-l border-[hsl(var(--border))] bg-card overflow-y-auto scrollbar" style="max-height:100vh;"></aside>
+<!-- Event modal (centered, blurred backdrop) -->
+<div id="eventModal" class="modal-overlay">
+  <div class="modal-panel">
+    <div class="modal-body" id="eventModalBody"></div>
   </div>
-</div>
-
-<!-- Event detail sheet (md and below) -->
-<div id="eventDetailSheet" class="sheet-overlay">
-  <div class="drawer-panel"></div>
 </div>
 
 <!-- Person profile drawer -->
@@ -791,11 +758,10 @@ const state = {
   peopleSearch: '',
   activeCategories: new Set(),
   peopleFilter: 'all',
-  selectedEventId: 'e_ai_founder_dinner',
+  selectedEventId: null,
   selectedPersonId: null,
   profileOpen: false,
-  sidebarOpen: false,
-  sheetOpen: false,
+  modalOpen: false,
   people: PEOPLE.map(p => ({ ...p })),
   notes: {},
 };
@@ -873,16 +839,15 @@ function renderNav() {
     { id: 'settings',  label: 'Settings',  icon: 'settings-2' },
   ];
   $('#nav').innerHTML = items.map(it => `
-    <button class="nav-item ${state.tab === it.id ? 'active' : ''}" data-tab="${it.id}">
-      ${iconHtml(it.icon, 16)}
-      <span class="flex-1">${it.label}</span>
-      ${it.badge ? `<span class="font-mono tabular text-[10.5px] text-mfg">${it.badge}</span>` : ''}
+    <button class="nav-tab ${state.tab === it.id ? 'active' : ''}" data-tab="${it.id}">
+      ${iconHtml(it.icon, 14)}
+      <span class="label">${it.label}</span>
+      ${it.badge ? `<span class="count">${it.badge}</span>` : ''}
     </button>
   `).join('');
-  $$('#nav .nav-item').forEach(b => {
+  $$('#nav .nav-tab').forEach(b => {
     b.addEventListener('click', () => {
       state.tab = b.dataset.tab;
-      state.sidebarOpen = false;
       render();
     });
   });
@@ -1432,9 +1397,6 @@ function profileField(title, body, captionRight) {
 //
 
 function render() {
-  // Sidebar mobile state
-  $('#sidebar').classList.toggle('open', state.sidebarOpen);
-
   renderNav();
 
   let html = '';
@@ -1445,18 +1407,14 @@ function render() {
 
   $('#viewRoot').innerHTML = html;
 
-  // Detail panel
-  const showDetail = (state.tab === 'dashboard' || state.tab === 'events') && state.selectedEventId;
-  const detail = showDetail ? eventDetailHtml(getEvent(state.selectedEventId)) : `<div class="p-8 text-center text-mfg text-[13px] flex flex-col items-center justify-center h-full">${iconHtml('arrow-left', 16)}<div class="mt-3">Pick an event to see who to meet.</div></div>`;
-
-  // Desktop column
-  $('#eventDetailDesk').innerHTML = detail;
-  $('#eventDetailDesk').classList.toggle('hidden', !showDetail);
-
-  // Sheet (md and below)
-  const sheet = $('#eventDetailSheet');
-  sheet.classList.toggle('open', state.sheetOpen && !!state.selectedEventId);
-  if (state.sheetOpen) sheet.querySelector('.drawer-panel').innerHTML = detail;
+  // Event modal (centered popup, blurred backdrop)
+  const modal = $('#eventModal');
+  const modalOpen = state.modalOpen && !!state.selectedEventId;
+  modal.classList.toggle('open', modalOpen);
+  if (modalOpen) {
+    $('#eventModalBody').innerHTML = eventDetailHtml(getEvent(state.selectedEventId));
+  }
+  document.body.style.overflow = (modalOpen || state.profileOpen) ? 'hidden' : '';
 
   // Profile drawer
   const drawer = $('#profileDrawer');
@@ -1505,18 +1463,16 @@ function bindHandlers() {
     render();
   }));
 
-  // Event card clicks
+  // Event card clicks → open centered modal
   $$('button[data-event]').forEach(b => b.addEventListener('click', () => {
-    const id = b.dataset.event;
-    state.selectedEventId = id;
-    if (window.matchMedia('(max-width: 1023px)').matches) state.sheetOpen = true;
+    state.selectedEventId = b.dataset.event;
+    state.modalOpen = true;
     render();
   }));
 
-  // Close detail
+  // Close modal
   $$('button[data-close-detail]').forEach(b => b.addEventListener('click', () => {
-    state.sheetOpen = false;
-    state.selectedEventId = null;
+    state.modalOpen = false;
     render();
   }));
 
@@ -1575,24 +1531,25 @@ function bindHandlers() {
   }));
 }
 
-// Mobile menu
-$('#mobileMenuBtn')?.addEventListener('click', () => {
-  state.sidebarOpen = !state.sidebarOpen;
-  render();
-});
-
-// Backdrop click
+// Backdrop clicks (close on outside click)
 $('#profileDrawer').addEventListener('click', e => {
   if (e.target.id === 'profileDrawer') {
     state.profileOpen = false;
     render();
   }
 });
-$('#eventDetailSheet').addEventListener('click', e => {
-  if (e.target.id === 'eventDetailSheet') {
-    state.sheetOpen = false;
+$('#eventModal').addEventListener('click', e => {
+  if (e.target.id === 'eventModal') {
+    state.modalOpen = false;
     render();
   }
+});
+
+// Esc closes modal / drawer
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (state.profileOpen) { state.profileOpen = false; render(); return; }
+  if (state.modalOpen) { state.modalOpen = false; render(); }
 });
 
 // Initial
