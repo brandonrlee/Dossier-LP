@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossier — Connect your rooms.</title>
+<meta name="description" content="Link the places where your plans live. Dossier will text you before anything important.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Inter:wght@400;500;600;700&display=swap">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          background: '#fdf7ff',
+          surface: '#fdf7ff',
+          'surface-container-lowest': '#ffffff',
+          'surface-container-low': '#f8f2fa',
+          'surface-container': '#f2ecf4',
+          'surface-container-high': '#ece6ee',
+          'surface-container-highest': '#e6e0e9',
+          'on-surface': '#1d1b20',
+          'on-surface-variant': '#494551',
+          outline: '#7a7582',
+          'outline-variant': '#cbc4d2',
+          primary: '#4f378a',
+          'primary-deep': '#372068',
+          'on-primary': '#ffffff',
+          'primary-container': '#e9ddff',
+          'on-primary-container': '#22005d',
+          secondary: '#63597c',
+          'on-secondary': '#ffffff',
+          'secondary-container': '#e1d4fd',
+          'on-secondary-container': '#1f1635',
+          tertiary: '#765b00',
+          'tertiary-container': '#ffdf93',
+        },
+        fontFamily: {
+          display: ['"Bricolage Grotesque"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+        },
+        boxShadow: {
+          soft: '0 1px 2px rgba(79, 55, 138, 0.04), 0 4px 12px rgba(79, 55, 138, 0.04)',
+          lift: '0 4px 12px rgba(79, 55, 138, 0.08), 0 12px 24px rgba(79, 55, 138, 0.06)',
+          phone: '0 28px 56px rgba(34, 0, 93, 0.18), 0 8px 16px rgba(34, 0, 93, 0.08)',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html { font-family: Inter, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  body { font-family: Inter, sans-serif; }
+  .font-display { font-family: 'Bricolage Grotesque', sans-serif; font-optical-sizing: auto; }
+
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  ::selection { background: #e9ddff; color: #22005d; }
+
+  /* Bouncing dots (typing) */
+  @keyframes ds-bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40% { transform: translateY(-4px); opacity: 1; }
+  }
+  .dot { animation: ds-bounce 1.3s infinite ease-in-out; }
+  .dot:nth-child(2) { animation-delay: 0.18s; }
+  .dot:nth-child(3) { animation-delay: 0.36s; }
+
+  @keyframes ds-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(79, 55, 138, 0.35); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 8px rgba(79, 55, 138, 0); }
+  }
+  .pulse { animation: ds-pulse 2.2s infinite; }
+
+  @keyframes ds-fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .anim-up { animation: ds-fade-up 0.7s cubic-bezier(0.4, 0, 0.2, 1) both; }
+
+  /* Decorative aurora behind phone */
+  .aurora {
+    position: absolute;
+    inset: -40px -40px -40px -40px;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(207, 188, 255, 0.55), transparent 50%),
+      radial-gradient(circle at 75% 70%, rgba(231, 195, 101, 0.32), transparent 55%),
+      radial-gradient(circle at 50% 100%, rgba(225, 212, 253, 0.55), transparent 60%);
+    filter: blur(36px);
+    z-index: 0;
+    border-radius: 60px;
+  }
+
+  /* Phone notch */
+  .notch {
+    position: absolute;
+    top: 9px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 26px;
+    background: #0a0a0a;
+    border-radius: 999px;
+    z-index: 5;
+  }
+</style>
+</head>
+
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+
+<!-- ================== NAV ================== -->
+<nav class="bg-background/75 backdrop-blur-md border-b border-outline-variant/50 sticky top-0 z-50">
+  <div class="flex justify-between items-center w-full px-6 md:px-12 py-4 max-w-[1200px] mx-auto">
+    <a href="#" class="flex items-center gap-2.5">
+      <span class="w-7 h-7 rounded-lg bg-primary text-on-primary grid place-items-center font-display text-sm font-bold shadow-sm">D</span>
+      <span class="font-display text-2xl tracking-tight font-medium text-on-surface">Dossier</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#" class="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">Intelligence</a>
+      <a href="#" class="text-sm font-semibold text-primary border-b-2 border-primary pb-1">Workflow</a>
+      <a href="#" class="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">Risk Analysis</a>
+    </div>
+    <div class="flex items-center gap-3 md:gap-4">
+      <button class="hidden md:block text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">Login</button>
+      <button class="bg-primary text-on-primary text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-primary-deep transition-all active:scale-95 shadow-soft">
+        Get Started
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ================== MAIN ================== -->
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-6 md:px-12 py-12 md:py-20">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+
+    <!-- ===== Left Column ===== -->
+    <div class="lg:col-span-7 flex flex-col gap-10">
+
+      <!-- Step indicator -->
+      <div class="flex items-center gap-3 anim-up" style="animation-delay: 0s;">
+        <div class="flex items-center gap-1.5">
+          <span class="w-7 h-1.5 rounded-full bg-primary"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+        </div>
+        <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-[0.14em]">Step 1 of 3 · Connect</span>
+      </div>
+
+      <header class="flex flex-col gap-4 anim-up" style="animation-delay: 0.05s;">
+        <h1 class="font-display text-5xl md:text-6xl font-semibold tracking-tight leading-[1.02] text-on-surface">
+          connect your rooms.
+        </h1>
+        <p class="text-lg text-on-surface-variant max-w-md leading-relaxed">
+          link the places where your plans live. dossier will text you before anything important.
+        </p>
+      </header>
+
+      <!-- Direct Integrations -->
+      <div class="flex flex-col gap-3 anim-up" style="animation-delay: 0.15s;">
+        <div class="flex items-center justify-between mb-1">
+          <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.14em]">Direct Integrations</p>
+          <span class="text-[11px] font-semibold text-tertiary uppercase tracking-wider">Recommended</span>
+        </div>
+
+        <button class="group flex items-center justify-between p-5 bg-surface-container-low border border-outline-variant/60 rounded-2xl text-left w-full shadow-soft hover:border-primary hover:shadow-lift hover:-translate-y-0.5 transition-all duration-200">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors flex-shrink-0">
+              <span class="material-symbols-outlined" style="font-size: 22px;">event_available</span>
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <span class="text-[15px] font-semibold text-on-surface">Connect Luma</span>
+              <span class="text-xs text-on-surface-variant">Sync RSVPs and attendee lists in real time</span>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-outline group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
+        </button>
+
+        <button class="group flex items-center justify-between p-5 bg-surface-container-low border border-outline-variant/60 rounded-2xl text-left w-full shadow-soft hover:border-primary hover:shadow-lift hover:-translate-y-0.5 transition-all duration-200">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors flex-shrink-0">
+              <span class="material-symbols-outlined" style="font-size: 22px;">celebration</span>
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <span class="text-[15px] font-semibold text-on-surface">Connect Partiful</span>
+              <span class="text-xs text-on-surface-variant">Pull guest lists and event context</span>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-outline group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
+        </button>
+
+        <button class="group flex items-center justify-between p-5 bg-surface-container-low border border-outline-variant/60 rounded-2xl text-left w-full shadow-soft hover:border-primary hover:shadow-lift hover:-translate-y-0.5 transition-all duration-200">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors flex-shrink-0">
+              <span class="material-symbols-outlined" style="font-size: 22px;">calendar_month</span>
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <span class="text-[15px] font-semibold text-on-surface">Connect Google Calendar</span>
+              <span class="text-xs text-on-surface-variant">Auto-brief on every meeting that matters</span>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-outline group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- Manual Entry -->
+      <div class="flex flex-col gap-3 anim-up" style="animation-delay: 0.25s;">
+        <div class="flex items-center gap-3 mb-1">
+          <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.14em]">Manual Entry</p>
+          <span class="flex-1 h-px bg-outline-variant/60"></span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button class="group flex items-center gap-3 p-4 bg-transparent border border-outline-variant/60 rounded-2xl text-left w-full hover:border-primary hover:bg-primary-container/30 transition-colors">
+            <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary" style="font-size: 22px;">link</span>
+            <span class="text-[14px] text-on-surface-variant group-hover:text-on-surface font-medium">Paste event link</span>
+          </button>
+
+          <button class="group flex items-center gap-3 p-4 bg-transparent border border-outline-variant/60 rounded-2xl text-left w-full hover:border-primary hover:bg-primary-container/30 transition-colors">
+            <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary" style="font-size: 22px;">upload_file</span>
+            <span class="text-[14px] text-on-surface-variant group-hover:text-on-surface font-medium">Upload attendee list</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Trust footer -->
+      <div class="flex items-center gap-3 pt-2 anim-up" style="animation-delay: 0.35s;">
+        <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 18px;">lock</span>
+        <p class="text-xs text-on-surface-variant">
+          Read-only access. Revoke anytime. <a href="#" class="text-primary font-medium underline-offset-2 hover:underline">Privacy details</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== Right Column: Phone Preview ===== -->
+    <div class="lg:col-span-5 hidden lg:flex items-center justify-center pt-4 anim-up" style="animation-delay: 0.2s;">
+      <div class="relative w-full max-w-[360px]">
+        <div class="aurora"></div>
+
+        <!-- Phone outer frame -->
+        <div class="relative w-full h-[680px] bg-on-surface rounded-[48px] p-2 shadow-phone z-10">
+          <!-- Inner screen -->
+          <div class="relative w-full h-full bg-surface-container-lowest rounded-[40px] overflow-hidden flex flex-col">
+            <div class="notch"></div>
+
+            <!-- Status bar -->
+            <div class="h-12 w-full flex justify-between items-center px-7 pt-3 bg-surface-container-lowest">
+              <span class="text-xs font-semibold text-on-surface tabular-nums">9:41</span>
+              <div class="flex gap-1.5 items-center text-on-surface">
+                <!-- Cell signal bars -->
+                <svg width="16" height="10" viewBox="0 0 18 12" fill="none" aria-hidden="true">
+                  <rect x="0" y="8" width="3" height="4" rx="0.5" fill="currentColor"/>
+                  <rect x="5" y="5" width="3" height="7" rx="0.5" fill="currentColor"/>
+                  <rect x="10" y="2" width="3" height="10" rx="0.5" fill="currentColor"/>
+                  <rect x="15" y="0" width="3" height="12" rx="0.5" fill="currentColor"/>
+                </svg>
+                <!-- WiFi -->
+                <svg width="14" height="10" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+                  <path d="M8 11.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm-5-5L4.5 8A4.95 4.95 0 0 1 8 6.5 4.95 4.95 0 0 1 11.5 8L13 6.5A6.97 6.97 0 0 0 8 4.5 6.97 6.97 0 0 0 3 6.5ZM0 3.5 1.5 5A8.94 8.94 0 0 1 8 2.5a8.94 8.94 0 0 1 6.5 2.5L16 3.5A10.92 10.92 0 0 0 8 .5 10.92 10.92 0 0 0 0 3.5Z" fill="currentColor"/>
+                </svg>
+                <!-- Battery -->
+                <svg width="22" height="10" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+                  <rect x="0.5" y="0.5" width="20" height="11" rx="2.5" stroke="currentColor" fill="none"/>
+                  <rect x="2" y="2" width="17" height="8" rx="1" fill="currentColor"/>
+                  <rect x="21" y="3.5" width="2" height="5" rx="1" fill="currentColor"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- App header -->
+            <div class="flex flex-col items-center justify-center pt-3 pb-4 border-b border-outline-variant/40 bg-surface-container-lowest">
+              <div class="relative w-12 h-12 mb-1.5">
+                <div class="absolute inset-0 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md">
+                  <span class="font-display text-lg font-bold">D</span>
+                </div>
+                <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-surface-container-lowest pulse"></span>
+              </div>
+              <span class="text-sm font-semibold text-on-surface">Dossier</span>
+              <span class="text-[10px] text-on-surface-variant font-medium tracking-wide">Social Intelligence · Active</span>
+            </div>
+
+            <!-- Messages canvas -->
+            <div class="flex-1 bg-surface-container-lowest flex flex-col p-4 gap-3 overflow-hidden">
+              <div class="w-full text-center my-2">
+                <span class="text-[10px] font-semibold text-outline uppercase tracking-widest">Today 9:41 AM</span>
+              </div>
+
+              <!-- Welcome message -->
+              <div class="flex items-end gap-2">
+                <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-primary flex-shrink-0">
+                  <span class="material-symbols-outlined" style="font-size: 18px; font-variation-settings: 'FILL' 1, 'wght' 500;">auto_awesome</span>
+                </div>
+                <div class="bg-surface-container rounded-[20px] rounded-bl-md px-4 py-2.5 max-w-[80%] shadow-sm border border-outline-variant/20">
+                  <p class="text-[13.5px] text-on-surface leading-snug">
+                    send me a luma or partiful link and i'll build your room brief.
+                  </p>
+                </div>
+              </div>
+
+              <!-- User reply -->
+              <div class="flex justify-end mt-1">
+                <div class="bg-primary text-on-primary rounded-[20px] rounded-br-md px-4 py-2.5 max-w-[78%] shadow-sm">
+                  <p class="text-[13.5px] leading-snug">lu.ma/ai-founder-party</p>
+                </div>
+              </div>
+
+              <!-- Agent acknowledgement -->
+              <div class="flex items-end gap-2 mt-1">
+                <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-primary flex-shrink-0">
+                  <span class="material-symbols-outlined" style="font-size: 18px; font-variation-settings: 'FILL' 1, 'wght' 500;">auto_awesome</span>
+                </div>
+                <div class="bg-surface-container rounded-[20px] rounded-bl-md px-4 py-2.5 max-w-[80%] shadow-sm border border-outline-variant/20">
+                  <p class="text-[13.5px] text-on-surface leading-snug">
+                    got it. scanning <span class="font-semibold">47 attendees</span>...
+                  </p>
+                </div>
+              </div>
+
+              <!-- Typing indicator -->
+              <div class="flex items-end gap-2 mt-1">
+                <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-primary flex-shrink-0">
+                  <span class="material-symbols-outlined" style="font-size: 18px; font-variation-settings: 'FILL' 1, 'wght' 500;">auto_awesome</span>
+                </div>
+                <div class="bg-surface-container rounded-[20px] rounded-bl-md px-4 py-3 shadow-sm border border-outline-variant/20">
+                  <div class="flex items-center gap-1">
+                    <span class="dot w-1.5 h-1.5 bg-on-surface-variant rounded-full inline-block"></span>
+                    <span class="dot w-1.5 h-1.5 bg-on-surface-variant rounded-full inline-block"></span>
+                    <span class="dot w-1.5 h-1.5 bg-on-surface-variant rounded-full inline-block"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Input bar -->
+            <div class="bg-surface-container-lowest border-t border-outline-variant/40 px-3 pt-3 pb-2 flex flex-col gap-2">
+              <div class="flex items-center gap-2">
+                <button class="w-9 h-9 rounded-full text-on-surface-variant flex items-center justify-center hover:bg-surface-container-high transition-colors flex-shrink-0">
+                  <span class="material-symbols-outlined" style="font-size: 22px;">add</span>
+                </button>
+                <div class="flex-1 h-10 bg-surface-container-low border border-outline-variant/60 rounded-full flex items-center px-4">
+                  <span class="text-sm text-outline">Message</span>
+                </div>
+                <button class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md hover:bg-primary-deep transition-all active:scale-90 flex-shrink-0">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">arrow_upward</span>
+                </button>
+              </div>
+              <div class="h-1 w-32 bg-on-surface/15 rounded-full mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ================== FOOTER ================== -->
+<footer class="bg-surface-container border-t border-outline-variant/40 mt-auto">
+  <div class="flex flex-col md:flex-row justify-between items-center w-full px-6 md:px-12 py-10 max-w-[1200px] mx-auto gap-6">
+    <div class="flex items-center gap-2.5">
+      <span class="w-6 h-6 rounded-md bg-primary text-on-primary grid place-items-center font-display text-xs font-bold">D</span>
+      <span class="font-display text-xl font-medium text-on-surface tracking-tight">Dossier</span>
+    </div>
+    <div class="flex flex-wrap justify-center gap-6">
+      <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Privacy Policy</a>
+      <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Terms of Service</a>
+      <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Contact Support</a>
+      <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Journal</a>
+    </div>
+    <div class="text-sm text-on-surface-variant text-center md:text-right">
+      © 2024 Dossier. Social Intelligence for the modern era.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
