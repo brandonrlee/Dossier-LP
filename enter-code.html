@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dossier — Enter Your Code</title>
+<meta name="description" content="Enter the verification code we just texted you."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230A0A0A%22/><text y=%22.92em%22 font-size=%2278%22 x=%2224%22 fill=%22%2310B981%22 font-family=%22monospace%22 font-weight=%22700%22>D</text></svg>"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&amp;family=Inter:wght@400..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="assets/theme.js"></script>
+<style>
+  .noise-bg {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+  .code-input {
+    width: 56px;
+    height: 64px;
+    text-align: center;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: #1d1b20;
+    background: #f8f2fa;
+    border: 1px solid #cbc4d2;
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .code-input:focus {
+    border-color: #4f378a;
+    background: #ffffff;
+  }
+  .code-input::-webkit-inner-spin-button,
+  .code-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+</style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md noise-bg">
+<header class="p-lg md:p-xl w-full max-w-container-max mx-auto flex justify-start items-center">
+<a href="index.html" class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant">
+<span class="font-headline-md text-headline-md text-on-surface tracking-tight">Dossier</span>
+<span class="opacity-50">|</span>
+<span>by Nozomio Labs</span>
+</a>
+</header>
+<main class="flex-grow flex items-center justify-center p-md md:p-lg">
+<div class="w-full max-w-[440px] flex flex-col gap-xl">
+<div class="text-center flex flex-col gap-sm">
+<h1 class="font-display-lg text-display-lg text-on-surface">enter your code.</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">we texted a 6-digit code to <span class="text-on-surface font-medium">+1 (201) 555-0123</span></p>
+</div>
+<form id="codeForm" class="flex flex-col gap-lg" autocomplete="one-time-code">
+<div class="flex justify-between gap-sm" id="codeBoxes">
+<input class="code-input" type="text" inputmode="numeric" maxlength="1" autofocus />
+<input class="code-input" type="text" inputmode="numeric" maxlength="1" />
+<input class="code-input" type="text" inputmode="numeric" maxlength="1" />
+<input class="code-input" type="text" inputmode="numeric" maxlength="1" />
+<input class="code-input" type="text" inputmode="numeric" maxlength="1" />
+<input class="code-input" type="text" inputmode="numeric" maxlength="1" />
+</div>
+<a href="design3.html" id="verifyBtn" class="w-full bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm py-md rounded-full hover:opacity-90 transition-opacity flex justify-center items-center gap-sm">
+verify and continue
+</a>
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<a href="login.html" class="text-on-surface-variant hover:text-on-surface flex items-center gap-xs transition-colors">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+change number
+</a>
+<button type="button" id="resendBtn" class="text-on-surface-variant hover:text-on-surface transition-colors">resend code</button>
+</div>
+</form>
+<div class="text-center mt-lg">
+<p class="font-label-sm text-[11px] text-on-surface-variant leading-relaxed">
+didn't get it? check your spam or <a class="underline hover:text-on-surface transition-colors" href="#">contact support</a>.
+</p>
+</div>
+</div>
+</main>
+<script>
+  const inputs = document.querySelectorAll('.code-input');
+  inputs.forEach((input, i) => {
+    input.addEventListener('input', e => {
+      e.target.value = e.target.value.replace(/\D/g, '');
+      if (e.target.value && i < inputs.length - 1) inputs[i + 1].focus();
+    });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !input.value && i > 0) inputs[i - 1].focus();
+    });
+    input.addEventListener('paste', e => {
+      e.preventDefault();
+      const digits = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, inputs.length);
+      digits.split('').forEach((d, j) => { if (inputs[j]) inputs[j].value = d; });
+      const next = Math.min(digits.length, inputs.length - 1);
+      inputs[next].focus();
+    });
+  });
+</script>
+</body>
+</html>
