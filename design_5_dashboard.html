@@ -1,276 +1,248 @@
 <!DOCTYPE html>
-
-<html lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Dossier - Event Brief Dashboard</title>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title>Dossier — good to see you.</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;600&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-primary-fixed": "#22005d",
-                        "on-surface-variant": "#494551",
-                        "on-secondary-fixed-variant": "#4b4263",
-                        "primary-fixed": "#e9ddff",
-                        "surface": "#fdf7ff",
-                        "error-container": "#ffdad6",
-                        "surface-bright": "#fdf7ff",
-                        "surface-container-high": "#ece6ee",
-                        "surface-container-lowest": "#ffffff",
-                        "on-tertiary-fixed": "#241a00",
-                        "secondary-container": "#e1d4fd",
-                        "on-primary-fixed-variant": "#4f378a",
-                        "tertiary-container": "#c9a74d",
-                        "on-surface": "#1d1b20",
-                        "inverse-on-surface": "#f5eff7",
-                        "background": "#fdf7ff",
-                        "tertiary-fixed-dim": "#e7c365",
-                        "secondary-fixed-dim": "#cdc0e9",
-                        "inverse-surface": "#322f35",
-                        "on-primary": "#ffffff",
-                        "primary-container": "#6750a4",
-                        "secondary-fixed": "#e9ddff",
-                        "error": "#ba1a1a",
-                        "on-secondary-container": "#645a7d",
-                        "secondary": "#63597c",
-                        "outline-variant": "#cbc4d2",
-                        "on-tertiary-fixed-variant": "#594400",
-                        "surface-container": "#f2ecf4",
-                        "surface-container-low": "#f8f2fa",
-                        "on-tertiary": "#ffffff",
-                        "on-secondary-fixed": "#1f1635",
-                        "tertiary": "#765b00",
-                        "on-tertiary-container": "#503d00",
-                        "on-error": "#ffffff",
-                        "tertiary-fixed": "#ffdf93",
-                        "on-background": "#1d1b20",
-                        "surface-dim": "#ded8e0",
-                        "surface-container-highest": "#e6e0e9",
-                        "surface-tint": "#6750a4",
-                        "inverse-primary": "#cfbcff",
-                        "on-primary-container": "#e0d2ff",
-                        "primary": "#4f378a",
-                        "outline": "#7a7582",
-                        "surface-variant": "#e6e0e9",
-                        "on-secondary": "#ffffff",
-                        "on-error-container": "#93000a",
-                        "primary-fixed-dim": "#cfbcff"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "1rem",
-                        "lg": "2rem",
-                        "xl": "3rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "xxl": "80px",
-                        "xs": "4px",
-                        "container-max": "1200px",
-                        "unit": "4px",
-                        "lg": "24px",
-                        "gutter": "24px",
-                        "md": "16px",
-                        "xl": "48px",
-                        "sm": "8px"
-                    },
-                    "fontFamily": {
-                        "label-sm": ["Inter"],
-                        "body-md": ["Inter"],
-                        "headline-md": ["Bricolage Grotesque"],
-                        "body-lg": ["Inter"],
-                        "headline-lg": ["Bricolage Grotesque"],
-                        "display-lg": ["Bricolage Grotesque"],
-                        "headline-lg-mobile": ["Bricolage Grotesque"]
-                    },
-                    "fontSize": {
-                        "label-sm": ["13px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "600"}],
-                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
-                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
-                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "500"}],
-                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
-                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "500"}]
-                    }
-                }
-            }
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "on-surface-variant": "#494551",
+          "primary-fixed": "#e9ddff",
+          "surface": "#fdf7ff",
+          "surface-container-high": "#ece6ee",
+          "surface-container-lowest": "#ffffff",
+          "on-primary-fixed-variant": "#4f378a",
+          "on-surface": "#1d1b20",
+          "background": "#fdf7ff",
+          "secondary-fixed-dim": "#cdc0e9",
+          "on-primary": "#ffffff",
+          "secondary-fixed": "#e9ddff",
+          "outline-variant": "#cbc4d2",
+          "surface-container": "#f2ecf4",
+          "surface-container-low": "#f8f2fa",
+          "tertiary": "#765b00",
+          "tertiary-fixed": "#ffdf93",
+          "primary": "#4f378a",
+          "outline": "#7a7582",
+          "primary-fixed-dim": "#cfbcff"
+        },
+        borderRadius: {
+          DEFAULT: "1rem",
+          lg: "1.5rem",
+          xl: "2rem",
+          full: "9999px"
+        },
+        fontFamily: {
+          "label-sm": ["Inter"],
+          "body-md": ["Inter"],
+          "headline-md": ["Bricolage Grotesque"],
+          "headline-lg": ["Bricolage Grotesque"],
+          "display-lg": ["Bricolage Grotesque"]
         }
-    </script>
+      }
+    }
+  };
+</script>
+<style>
+  html, body { height: 100%; }
+  body {
+    background:
+      radial-gradient(900px 360px at 50% -120px, #e9ddff80, transparent 60%),
+      #fdf7ff;
+    overflow: hidden;
+  }
+  .top-rule {
+    background: linear-gradient(90deg, transparent 0%, #cdc0e9 20%, #cfbcff 50%, #cdc0e9 80%, transparent 100%);
+  }
+  .pill-shadow {
+    box-shadow: 0 1px 2px rgba(29, 27, 32, 0.04), 0 6px 16px -10px rgba(79, 55, 138, 0.18);
+  }
+  .card {
+    background: #ffffff;
+    border: 1px solid #ece6ee;
+    border-radius: 1.25rem;
+    box-shadow: 0 1px 2px rgba(29, 27, 32, 0.03), 0 8px 28px -20px rgba(79, 55, 138, 0.16);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 1px 2px rgba(29, 27, 32, 0.04), 0 16px 40px -22px rgba(79, 55, 138, 0.26);
+  }
+  .card-arrow {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: #7a7582;
+    transition: color 200ms ease, transform 200ms ease;
+    font-size: 16px;
+  }
+  .card:hover .card-arrow {
+    color: #4f378a;
+    transform: translate(2px, -2px);
+  }
+  .gradient-canvas {
+    background:
+      radial-gradient(60% 80% at 85% 50%, #cfbcff 0%, transparent 60%),
+      radial-gradient(50% 70% at 65% 30%, #ffd9b3 0%, transparent 55%),
+      radial-gradient(50% 60% at 30% 70%, #ffc8d5 0%, transparent 55%),
+      radial-gradient(40% 60% at 10% 50%, #ffe9c2 0%, transparent 55%),
+      #fdf7ff;
+    filter: saturate(1.05);
+  }
+  .stat {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    color: #1d1b20;
+  }
+  .label {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    font-weight: 600;
+    color: #7a7582;
+    text-transform: uppercase;
+  }
+  .bar { background: #ece6ee; border-radius: 3px; }
+  .bar-fill { background: #4f378a; border-radius: 3px; }
+  .check {
+    width: 14px; height: 14px; border-radius: 999px;
+    background: #e9ddff; color: #4f378a;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .check .material-symbols-outlined { font-size: 10px; font-variation-settings: 'wght' 700; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+</style>
 </head>
-<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md antialiased">
-<!-- TopNavBar -->
-<header class="bg-surface border-b border-outline-variant w-full sticky top-0 z-50">
-<div class="flex justify-between items-center w-full px-xxl py-md max-w-container-max mx-auto">
-<div class="flex items-center gap-xl">
-<span class="font-headline-md text-headline-md text-on-surface tracking-tight">Dossier</span>
-<nav class="hidden md:flex gap-lg">
-<a class="text-primary font-bold border-b-2 border-primary pb-xs" href="#">Intelligence</a>
-<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 pb-xs" href="#">Workflow</a>
-<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 pb-xs" href="#">Risk Analysis</a>
-</nav>
-</div>
-<div class="flex items-center gap-md">
-<button class="text-on-surface-variant hover:text-primary transition-colors duration-300">
-<span class="material-symbols-outlined">search</span>
-</button>
-<button class="font-label-sm text-label-sm text-on-surface-variant border border-outline-variant rounded-full px-md py-sm hover:text-primary transition-colors duration-300">Login</button>
-<button class="font-label-sm text-label-sm bg-on-background text-on-primary rounded-full px-md py-sm hover:opacity-90 transition-opacity">Get Started</button>
-</div>
-</div>
+<body class="text-on-surface flex flex-col font-[Inter] antialiased">
+
+<div class="top-rule h-[2px] w-full shrink-0"></div>
+
+<header class="w-full max-w-[1240px] mx-auto px-6 pt-4 flex justify-between items-center shrink-0">
+  <a href="/" class="bg-surface-container-lowest pill-shadow rounded-full px-4 py-2 inline-flex items-center gap-2">
+    <span class="text-[18px] tracking-tight" style="font-family: 'Bricolage Grotesque'; font-weight: 600;">dossier</span>
+  </a>
+  <div class="flex items-center gap-2">
+    <button class="bg-surface-container-lowest pill-shadow rounded-full px-4 py-2 inline-flex items-center gap-1.5 text-[14px] text-on-surface hover:text-primary transition-colors">
+      <span>text dossier</span>
+      <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+    </button>
+    <button aria-label="Settings" class="bg-surface-container-lowest pill-shadow rounded-full w-9 h-9 inline-flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+      <span class="material-symbols-outlined text-[18px]">settings</span>
+    </button>
+  </div>
 </header>
-<!-- Main Layout -->
-<div class="flex-grow w-full max-w-container-max mx-auto flex px-lg md:px-xxl py-xl gap-xxl">
-<!-- Left Sidebar (App Navigation) -->
-<aside class="hidden md:flex flex-col w-64 shrink-0 gap-xl border-r border-outline-variant pr-lg">
-<div class="flex flex-col gap-sm">
-<h3 class="font-label-sm text-label-sm text-outline mb-sm uppercase tracking-wider">Dashboard</h3>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg bg-surface-container-high text-on-surface font-medium" href="#">
-<span class="material-symbols-outlined text-[20px]">calendar_today</span>
-                    Upcoming
-                </a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
-<span class="material-symbols-outlined text-[20px]">description</span>
-                    Briefs
-                </a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
-<span class="material-symbols-outlined text-[20px]">group</span>
-                    People
-                </a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
-<span class="material-symbols-outlined text-[20px]">Brain</span>
-                    Memory
-                </a>
-</div>
-</aside>
-<!-- Main Content Area -->
-<main class="flex-grow flex flex-col gap-xl">
-<!-- Event Header Card -->
-<section class="bg-surface-container-low rounded-xl border border-outline-variant p-lg md:p-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
-<div>
-<div class="flex items-center gap-sm mb-sm">
-<span class="bg-primary/10 text-primary font-label-sm text-label-sm px-sm py-xs rounded-full flex items-center gap-xs">
-<span class="material-symbols-outlined text-[16px]">check_circle</span>
-                            Brief ready
-                        </span>
-</div>
-<h1 class="font-display-lg text-display-lg text-on-surface mb-xs">AI Founder Party</h1>
-<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-sm">
-                        Tonight · 8:00 PM · 47 attendees scanned
-                    </p>
-</div>
-<div class="shrink-0">
-<img alt="Abstract networking event visualization" class="w-24 h-24 md:w- md:h-32 object-cover rounded-lg border border-outline-variant shadow-sm" data-alt="A warm, abstract photograph capturing the atmosphere of a sophisticated evening networking event. Soft, out-of-focus lights blur in the background, creating a bokeh effect that suggests a lively, crowded room. The color palette features deep near-blacks and off-whites, infused with subtle golden and amber tones typical of folk-inspired, premium settings. The mood is conversational, elegant, and modern, fitting a high-end social intelligence interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMHMT1MywExyH4h8r4Zcib1ioBm4wOXszfDfbdR5LMeMeQhbdJErGhfzJkVU3jmNpOdnr28cf11vorrmG6xT4xNg_Y74Xi5qEVz9tlHZ1P1yXN3dhleUJjNTxIGuUJs6cxV0jL5NHRHYyGSQdvmj-CRw--_vsX_Yn5w_foH50vaLSF7xz_Uu_Tp5AQP1Zu5Y612-82rXaAxVF4tjgYDksmj8FDYaP26icQhxuMbFBGu4H7k4c-v-tA5CIcRgK0kC7NxG2QpQnTEbY"/>
-</div>
-</section>
-<!-- Intelligence Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-<!-- Talk to First -->
-<section class="flex flex-col gap-md">
-<h2 class="font-headline-md text-headline-md border-b border-outline-variant pb-xs flex items-center gap-sm">
-<span class="material-symbols-outlined text-primary">priority</span>
-                        Talk to first
-                    </h2>
-<div class="bg-surface rounded-lg border border-outline-variant p-md hover:shadow-[0_4px_20px_rgba(26,26,26,0.04)] transition-shadow">
-<div class="flex justify-between items-start mb-md">
-<div class="flex items-center gap-md">
-<div class="w-12 h-12 rounded-full border-2 border-emerald-500/30 overflow-hidden relative">
-<img alt="Maya Chen Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a confident woman with dark hair, wearing a stylish, understated blazer. The background is a soft, warm off-white, reflecting an editorial, modern aesthetic. The lighting is natural and flattering, emphasizing a trustworthy and approachable demeanor. The image feels authentic and high-quality, fitting for a premium social intelligence platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeLOElQGd-jof7WDEnbYeLpyFADIz4gATQgJBQ5lJsfEZ2zYWeMmtyzfbafZUuzx4jTAyYnS2JfKj5HPP-C5b5cHHpKzKg9WpIh_oZ0DFJ5Sav527VErqJpYheu6-tzV8Lguh779WzhqH5bW1UrC5fObNghLX0q9vtRGu4Iv0OCYSqU_NsQ5dys_iFggmSpq61dG3wTmqq0RR4uPQgkLA9JHJjjWG1MRUDWvxZW4YmQ0wNvd74989u8H8XqyLc1aVXoY0-8dQYBRk"/>
-</div>
-<div>
-<h3 class="font-headline-md text-[20px] leading-tight">Maya Chen</h3>
-<p class="font-body-md text-sm text-on-surface-variant">Healthcare AI investor</p>
-</div>
-</div>
-<span class="bg-emerald-100 text-emerald-800 font-label-sm text-label-sm px-sm py-xs rounded-full flex items-center gap-xs">
-                                94 Greenlight
-                            </span>
-</div>
-<div class="bg-surface-container-low p-sm rounded-lg border border-outline-variant border-dashed">
-<p class="font-body-md text-sm italic text-on-surface-variant">
-                                "Are you seeing more healthcare AI founders start with workflow wedges or diagnostics?"
-                            </p>
-</div>
-</div>
-</section>
-<!-- Clout Risks -->
-<section class="flex flex-col gap-md">
-<h2 class="font-headline-md text-headline-md border-b border-outline-variant pb-xs flex items-center gap-sm">
-<span class="material-symbols-outlined text-error">warning</span>
-                        Clout risks
-                    </h2>
-<div class="bg-surface rounded-lg border border-outline-variant p-md hover:shadow-[0_4px_20px_rgba(26,26,26,0.04)] transition-shadow">
-<div class="flex justify-between items-start mb-md">
-<div class="flex items-center gap-md">
-<div class="w-12 h-12 rounded-full border-2 border-amber-500/30 overflow-hidden relative">
-<div class="w-full h-full bg-surface-variant flex items-center justify-center text-on-surface-variant font-bold">J</div>
-</div>
-<div>
-<h3 class="font-headline-md text-[20px] leading-tight">Jake</h3>
-<p class="font-body-md text-sm text-on-surface-variant">Stealth founder</p>
-</div>
-</div>
-<span class="bg-amber-100 text-amber-800 font-label-sm text-label-sm px-sm py-xs rounded-full flex items-center gap-xs">
-                                31 Clout Risk
-                            </span>
-</div>
-<div class="bg-surface-container-low p-sm rounded-lg border border-outline-variant border-dashed">
-<p class="font-body-md text-sm text-on-surface-variant">
-                                Talk if bored. Do not pitch.
-                            </p>
-</div>
-</div>
-</section>
-<!-- Warm Intros / Follow-up -->
-<section class="flex flex-col gap-md md:col-span-2">
-<h2 class="font-headline-md text-headline-md border-b border-outline-variant pb-xs flex items-center gap-sm">
-<span class="material-symbols-outlined text-tertiary">handshake</span>
-                        Warm intros &amp; Follow-ups
-                    </h2>
-<div class="bg-surface rounded-lg border border-outline-variant p-md hover:shadow-[0_4px_20px_rgba(26,26,26,0.04)] transition-shadow">
-<div class="flex justify-between items-start mb-md">
-<div class="flex items-center gap-md">
-<div class="w-12 h-12 rounded-full border-2 border-primary/30 overflow-hidden relative">
-<img alt="Sarah Lee Profile" class="w-full h-full object-cover" data-alt="A warm, engaging portrait of a woman with a gentle smile, shot against a clean, off-white background. She has a relaxed, approachable look, wearing casual professional attire. The lighting is soft and ambient, reinforcing a calm, premium aesthetic. The image conveys trust and connection, ideal for a social networking application interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7FTCGmzZ-F_JSVjiwIFrU1EOsDEfwTDE6P18PZOEINbwMdDB0Ull-VYl35R4Br9mt0f5hwJm2bQwSxZLyecF7EVeswd0ANfCc_kAX0y5BcTCpV4HJoySgEbkTSWfvgFYxh7-fU2M6tZmWy4UKtQfiJHyxCUf5m_NotSWCPYcWoq0vDnCLq15ndOgqhkXh5B0h2XtYB-pHw5WxGBFX9-7Iy5YwJAveTex0sEJIm0km6dqTziSnrdb682CMhZkPYSZaj7WCsZTbPhk"/>
-</div>
-<div>
-<h3 class="font-headline-md text-[20px] leading-tight">Sarah Lee</h3>
-<p class="font-body-md text-sm text-on-surface-variant">Met at AI Summit</p>
-</div>
-</div>
-<span class="bg-primary-container/20 text-primary font-label-sm text-label-sm px-sm py-xs rounded-full flex items-center gap-xs">
-                                88 Warm Follow-up
-                            </span>
-</div>
-<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant">
-<p class="font-label-sm text-label-sm text-outline mb-xs uppercase tracking-wider">Draft Message</p>
-<p class="font-body-md text-on-surface">
-                                "great seeing you again — I still owe you the healthcare AI note I mentioned."
-                            </p>
-<div class="mt-md flex gap-sm">
-<button class="font-label-sm text-label-sm bg-on-background text-on-primary rounded-full px-md py-sm hover:opacity-90 transition-opacity">Copy to clipboard</button>
-<button class="font-label-sm text-label-sm text-on-surface border border-outline-variant rounded-full px-md py-sm hover:bg-surface-container-high transition-colors">Edit</button>
-</div>
-</div>
-</div>
-</section>
-</div>
+
+<main class="flex-1 w-full max-w-[1240px] mx-auto px-6 pt-4 pb-4 flex flex-col min-h-0">
+
+  <h1 class="text-[34px] tracking-tight text-on-surface mb-3 lowercase" style="font-family: 'Bricolage Grotesque'; font-weight: 600; letter-spacing: -0.025em;">
+    good to see you, brandon.
+  </h1>
+
+  <div class="grid grid-cols-3 grid-rows-2 gap-3 flex-1 min-h-0">
+
+    <!-- BRIEFS — gradient hero, spans 2 cols -->
+    <a href="#" class="card col-span-2 p-5 flex flex-col justify-between gradient-canvas">
+      <div class="flex justify-between items-start">
+        <span class="label">briefs</span>
+        <span class="card-arrow material-symbols-outlined">north_east</span>
+      </div>
+      <div>
+        <div class="flex items-end gap-2">
+          <span class="stat text-[56px]">2</span>
+          <span class="text-[18px] text-on-surface mb-1.5" style="font-family: 'Bricolage Grotesque'; font-weight: 500;">tonight</span>
+        </div>
+        <p class="text-[13px] text-on-surface-variant mt-2">last brief sent 55m ago · ai founder party at 8pm</p>
+      </div>
+    </a>
+
+    <!-- ON A SCHEDULE -->
+    <a href="#" class="card p-5 flex flex-col justify-between">
+      <div class="flex justify-between items-start">
+        <span class="label">on a schedule</span>
+        <span class="card-arrow material-symbols-outlined">north_east</span>
+      </div>
+      <div>
+        <div class="flex items-end gap-2">
+          <span class="stat text-[44px]">3</span>
+          <span class="text-[16px] text-on-surface-variant mb-1" style="font-family: 'Bricolage Grotesque'; font-weight: 500;">running</span>
+        </div>
+        <p class="text-[12px] text-on-surface-variant mt-1.5">next in 18h · morning_recap</p>
+      </div>
+    </a>
+
+    <!-- MEMORY -->
+    <a href="#" class="card p-5 flex flex-col justify-between">
+      <div class="flex justify-between items-start">
+        <span class="label">memory</span>
+        <span class="card-arrow material-symbols-outlined">north_east</span>
+      </div>
+      <div>
+        <h3 class="text-[20px] text-on-surface lowercase" style="font-family: 'Bricolage Grotesque'; font-weight: 600; letter-spacing: -0.02em;">nothing pending</h3>
+        <p class="text-[12px] text-on-surface-variant mt-1">ask dossier to remember someone after a chat</p>
+      </div>
+    </a>
+
+    <!-- RECENTLY -->
+    <a href="#" class="card p-5 flex flex-col justify-between">
+      <div class="flex justify-between items-start">
+        <span class="label">recently</span>
+        <span class="card-arrow material-symbols-outlined">north_east</span>
+      </div>
+      <div class="flex items-end gap-1 h-[44px] my-2">
+        <div class="bar bar-fill flex-1" style="height: 22%"></div>
+        <div class="bar bar-fill flex-1" style="height: 38%"></div>
+        <div class="bar flex-1" style="height: 18%"></div>
+        <div class="bar bar-fill flex-1" style="height: 60%"></div>
+        <div class="bar bar-fill flex-1" style="height: 30%"></div>
+        <div class="bar bar-fill flex-1" style="height: 75%"></div>
+        <div class="flex-1 bg-on-surface" style="height: 90%; border-radius: 3px;"></div>
+      </div>
+      <div class="flex items-end gap-2">
+        <span class="stat text-[32px]">12</span>
+        <span class="text-[12px] text-on-surface-variant mb-1">msgs this wk</span>
+      </div>
+    </a>
+
+    <!-- PLAN -->
+    <div class="card p-5 flex flex-col">
+      <div class="flex justify-between items-start">
+        <span class="label">plan</span>
+        <span class="inline-flex items-center gap-1 bg-tertiary-fixed/60 text-on-surface px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wider uppercase">
+          <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          trial
+        </span>
+      </div>
+      <div class="mt-2">
+        <h3 class="text-[20px] text-on-surface lowercase" style="font-family: 'Bricolage Grotesque'; font-weight: 600; letter-spacing: -0.02em;">trial · 3d</h3>
+        <a href="#" class="inline-flex items-center gap-0.5 text-[12px] text-on-surface-variant underline underline-offset-2 mt-0.5">
+          ends may 12 <span class="material-symbols-outlined text-[12px]">north_east</span>
+        </a>
+      </div>
+      <ul class="flex flex-col gap-1.5 mt-2.5 text-[12px] text-on-surface">
+        <li class="flex items-center gap-1.5"><span class="check"><span class="material-symbols-outlined">check</span></span>all of pro, free for now</li>
+        <li class="flex items-center gap-1.5"><span class="check"><span class="material-symbols-outlined">check</span></span>switch plans anytime</li>
+        <li class="flex items-center gap-1.5"><span class="check"><span class="material-symbols-outlined">check</span></span>no card to start</li>
+      </ul>
+      <button class="mt-auto">
+        <span class="bg-on-surface text-on-primary text-[13px] rounded-full w-full inline-flex items-center justify-center gap-1.5 py-2.5 hover:bg-primary transition-colors">
+          subscribe <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </span>
+      </button>
+    </div>
+
+  </div>
 </main>
-</div>
-<!-- Footer -->
-<footer class="bg-surface-contaer-low border-t border-outline-variant w-full mt-auto">
-<div class="flex flex-col md:flex-row justify-between items-center w-full px-xxl py-xl max-w-container-max mx-auto gap-md">
-<span class="font-headline-sm text-headline-sm text-on-surface">© 2024 Dossier. Social Intelligence for the modern era.</span>
-<nav class="flex flex-wrap justify-center gap-md">
-<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Privacy Policy</a>
-<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Terms of Service</a>
-<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Contact Support</a>
-<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Journal</a>
-</nav>
-</div>
-</footer>
-</body></html>
+
+</body>
+</html>

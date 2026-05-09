@@ -127,146 +127,88 @@
 </style>
 </head>
 
-<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<body class="bg-background text-on-surface h-screen flex flex-col overflow-hidden">
 
-<!-- ================== NAV ================== -->
-<nav class="bg-background/75 backdrop-blur-md border-b border-outline-variant/50 sticky top-0 z-50">
-  <div class="flex justify-between items-center w-full px-6 md:px-12 py-4 max-w-[1200px] mx-auto">
-    <a href="#" class="flex items-center gap-2.5">
-      <span class="w-7 h-7 rounded-lg bg-primary text-on-primary grid place-items-center font-display text-sm font-bold shadow-sm">D</span>
-      <span class="font-display text-2xl tracking-tight font-medium text-on-surface">Dossier</span>
-    </a>
-    <div class="hidden md:flex items-center gap-8">
-      <a href="#" class="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">Intelligence</a>
-      <a href="#" class="text-sm font-semibold text-primary border-b-2 border-primary pb-1">Workflow</a>
-      <a href="#" class="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">Risk Analysis</a>
-    </div>
-    <div class="flex items-center gap-3 md:gap-4">
-      <button class="hidden md:block text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">Login</button>
-      <button class="bg-primary text-on-primary text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-primary-deep transition-all active:scale-95 shadow-soft">
-        Get Started
-      </button>
-    </div>
+<!-- ================== HEADER ================== -->
+<header class="w-full px-6 md:px-12 pt-6 pb-2 flex-shrink-0">
+  <div class="max-w-[1200px] mx-auto flex items-center gap-3">
+    <span class="font-display text-xl font-bold tracking-tight text-on-surface">Dossier</span>
+    <span class="text-outline-variant">|</span>
+    <span class="text-sm font-medium text-on-surface-variant">by Nozomio Labs</span>
   </div>
-</nav>
+</header>
 
 <!-- ================== MAIN ================== -->
-<main class="flex-grow w-full max-w-[1200px] mx-auto px-6 md:px-12 py-12 md:py-20">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+<main class="flex-1 w-full max-w-[1200px] mx-auto px-6 md:px-12 py-4 md:py-6 min-h-0">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center h-full">
 
     <!-- ===== Left Column ===== -->
-    <div class="lg:col-span-7 flex flex-col gap-10">
+    <div class="lg:col-span-7 flex flex-col gap-5">
 
-      <!-- Step indicator -->
-      <div class="flex items-center gap-3 anim-up" style="animation-delay: 0s;">
-        <div class="flex items-center gap-1.5">
-          <span class="w-7 h-1.5 rounded-full bg-primary"></span>
-          <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
-          <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
-        </div>
-        <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-[0.14em]">Step 1 of 3 · Connect</span>
-      </div>
-
-      <header class="flex flex-col gap-4 anim-up" style="animation-delay: 0.05s;">
-        <h1 class="font-display text-5xl md:text-6xl font-semibold tracking-tight leading-[1.02] text-on-surface">
+      <header class="flex flex-col gap-3 anim-up" style="animation-delay: 0.05s;">
+        <h1 class="font-display text-4xl md:text-5xl font-semibold tracking-tight leading-[1.02] text-on-surface">
           connect your rooms.
         </h1>
-        <p class="text-lg text-on-surface-variant max-w-md leading-relaxed">
+        <p class="text-base text-on-surface-variant max-w-md leading-relaxed">
           link the places where your plans live. dossier will text you before anything important.
         </p>
       </header>
 
       <!-- Direct Integrations -->
-      <div class="flex flex-col gap-3 anim-up" style="animation-delay: 0.15s;">
-        <div class="flex items-center justify-between mb-1">
+      <div class="flex flex-col gap-2 anim-up" style="animation-delay: 0.15s;">
+        <div class="flex items-center justify-between mb-0.5">
           <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.14em]">Direct Integrations</p>
           <span class="text-[11px] font-semibold text-tertiary uppercase tracking-wider">Recommended</span>
         </div>
 
-        <button class="group flex items-center justify-between p-5 bg-surface-container-low border border-outline-variant/60 rounded-2xl text-left w-full shadow-soft hover:border-primary hover:shadow-lift hover:-translate-y-0.5 transition-all duration-200">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors flex-shrink-0">
-              <span class="material-symbols-outlined" style="font-size: 22px;">event_available</span>
+        <button class="group flex items-center justify-between px-4 py-3 bg-surface-container-low border border-outline-variant/60 rounded-2xl text-left w-full shadow-soft hover:border-primary hover:shadow-lift hover:-translate-y-0.5 transition-all duration-200">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors flex-shrink-0">
+              <span class="material-symbols-outlined" style="font-size: 20px;">event_available</span>
             </div>
             <div class="flex flex-col gap-0.5">
-              <span class="text-[15px] font-semibold text-on-surface">Connect Luma</span>
+              <span class="text-[14px] font-semibold text-on-surface">Connect Luma</span>
               <span class="text-xs text-on-surface-variant">Sync RSVPs and attendee lists in real time</span>
             </div>
           </div>
           <span class="material-symbols-outlined text-outline group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
         </button>
 
-        <button class="group flex items-center justify-between p-5 bg-surface-container-low border border-outline-variant/60 rounded-2xl text-left w-full shadow-soft hover:border-primary hover:shadow-lift hover:-translate-y-0.5 transition-all duration-200">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors flex-shrink-0">
-              <span class="material-symbols-outlined" style="font-size: 22px;">celebration</span>
+        <button class="group flex items-center justify-between px-4 py-3 bg-surface-container-low border border-outline-variant/60 rounded-2xl text-left w-full shadow-soft hover:border-primary hover:shadow-lift hover:-translate-y-0.5 transition-all duration-200">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors flex-shrink-0">
+              <span class="material-symbols-outlined" style="font-size: 20px;">celebration</span>
             </div>
             <div class="flex flex-col gap-0.5">
-              <span class="text-[15px] font-semibold text-on-surface">Connect Partiful</span>
+              <span class="text-[14px] font-semibold text-on-surface">Connect Partiful</span>
               <span class="text-xs text-on-surface-variant">Pull guest lists and event context</span>
             </div>
           </div>
           <span class="material-symbols-outlined text-outline group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
         </button>
 
-        <button class="group flex items-center justify-between p-5 bg-surface-container-low border border-outline-variant/60 rounded-2xl text-left w-full shadow-soft hover:border-primary hover:shadow-lift hover:-translate-y-0.5 transition-all duration-200">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors flex-shrink-0">
-              <span class="material-symbols-outlined" style="font-size: 22px;">calendar_month</span>
-            </div>
-            <div class="flex flex-col gap-0.5">
-              <span class="text-[15px] font-semibold text-on-surface">Connect Google Calendar</span>
-              <span class="text-xs text-on-surface-variant">Auto-brief on every meeting that matters</span>
-            </div>
-          </div>
-          <span class="material-symbols-outlined text-outline group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
-        </button>
       </div>
 
-      <!-- Manual Entry -->
-      <div class="flex flex-col gap-3 anim-up" style="animation-delay: 0.25s;">
-        <div class="flex items-center gap-3 mb-1">
-          <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-[0.14em]">Manual Entry</p>
-          <span class="flex-1 h-px bg-outline-variant/60"></span>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button class="group flex items-center gap-3 p-4 bg-transparent border border-outline-variant/60 rounded-2xl text-left w-full hover:border-primary hover:bg-primary-container/30 transition-colors">
-            <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary" style="font-size: 22px;">link</span>
-            <span class="text-[14px] text-on-surface-variant group-hover:text-on-surface font-medium">Paste event link</span>
-          </button>
-
-          <button class="group flex items-center gap-3 p-4 bg-transparent border border-outline-variant/60 rounded-2xl text-left w-full hover:border-primary hover:bg-primary-container/30 transition-colors">
-            <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary" style="font-size: 22px;">upload_file</span>
-            <span class="text-[14px] text-on-surface-variant group-hover:text-on-surface font-medium">Upload attendee list</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Trust footer -->
-      <div class="flex items-center gap-3 pt-2 anim-up" style="animation-delay: 0.35s;">
-        <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 18px;">lock</span>
-        <p class="text-xs text-on-surface-variant">
-          Read-only access. Revoke anytime. <a href="#" class="text-primary font-medium underline-offset-2 hover:underline">Privacy details</a>
-        </p>
-      </div>
-
-      <!-- Continue CTA -->
-      <div class="pt-3 anim-up" style="animation-delay: 0.4s;">
-        <a href="design_5_dashboard.html" class="inline-flex items-center gap-2 bg-primary text-on-primary text-sm font-semibold px-6 py-3 rounded-full hover:bg-primary-deep transition-all active:scale-95 shadow-soft">
-          Continue to dashboard
-          <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+      <!-- Continue / Skip CTA row -->
+      <div class="flex items-center gap-3 anim-up pt-1" style="animation-delay: 0.25s;">
+        <a href="design_5_dashboard.html" class="group flex-1 inline-flex items-center justify-center gap-2 bg-on-surface text-on-primary text-[14px] font-semibold rounded-full px-5 py-3 hover:bg-primary transition-colors">
+          continue
+          <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        </a>
+        <a href="design_5_dashboard.html" class="text-[13px] font-semibold text-on-surface-variant hover:text-primary transition-colors px-3 py-3 underline-offset-4 hover:underline">
+          skip, integrate later
         </a>
       </div>
+
     </div>
 
     <!-- ===== Right Column: Phone Preview ===== -->
-    <div class="lg:col-span-5 hidden lg:flex items-center justify-center pt-4 anim-up" style="animation-delay: 0.2s;">
-      <div class="relative w-full max-w-[360px]">
+    <div class="lg:col-span-5 hidden lg:flex items-center justify-center anim-up" style="animation-delay: 0.2s;">
+      <div class="relative w-full max-w-[300px]">
         <div class="aurora"></div>
 
         <!-- Phone outer frame -->
-        <div class="relative w-full h-[680px] bg-on-surface rounded-[48px] p-2 shadow-phone z-10">
+        <div class="relative w-full h-[600px] bg-on-surface rounded-[42px] p-2 shadow-phone z-10">
           <!-- Inner screen -->
           <div class="relative w-full h-full bg-surface-container-lowest rounded-[40px] overflow-hidden flex flex-col">
             <div class="notch"></div>
@@ -381,25 +323,6 @@
 
   </div>
 </main>
-
-<!-- ================== FOOTER ================== -->
-<footer class="bg-surface-container border-t border-outline-variant/40 mt-auto">
-  <div class="flex flex-col md:flex-row justify-between items-center w-full px-6 md:px-12 py-10 max-w-[1200px] mx-auto gap-6">
-    <div class="flex items-center gap-2.5">
-      <span class="w-6 h-6 rounded-md bg-primary text-on-primary grid place-items-center font-display text-xs font-bold">D</span>
-      <span class="font-display text-xl font-medium text-on-surface tracking-tight">Dossier</span>
-    </div>
-    <div class="flex flex-wrap justify-center gap-6">
-      <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Privacy Policy</a>
-      <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Terms of Service</a>
-      <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Contact Support</a>
-      <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Journal</a>
-    </div>
-    <div class="text-sm text-on-surface-variant text-center md:text-right">
-      © 2024 Dossier. Social Intelligence for the modern era.
-    </div>
-  </div>
-</footer>
 
 </body>
 </html>
