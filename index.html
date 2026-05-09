@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230A0A0A%22/><text y=%22.92em%22 font-size=%2278%22 x=%2224%22 fill=%22%2310B981%22 font-family=%22monospace%22 font-weight=%22700%22>D</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%23ec4899%22/><stop offset=%221%22 stop-color=%22%238b5cf6%22/></linearGradient></defs><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23fdf7ff%22/><text y=%22.9em%22 font-size=%2290%22 x=%2222%22 fill=%22url(%23g)%22 font-family=%22monospace%22 font-weight=%22700%22>d</text></svg>">
 
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -111,29 +111,6 @@
     text-decoration: none;
   }
 
-  .logo-mark {
-    width: 26px;
-    height: 26px;
-    border-radius: 7px;
-    background: linear-gradient(135deg, #0A0A0A, #1F1F1F);
-    display: grid;
-    place-items: center;
-    color: var(--emerald);
-    font-family: var(--font-mono);
-    font-size: 13px;
-    font-weight: 700;
-    box-shadow: 0 2px 6px -2px rgb(0 0 0 / 0.25), inset 0 1px 0 rgb(255 255 255 / 0.07);
-    position: relative;
-  }
-
-  .logo-mark::after {
-    content: '';
-    position: absolute;
-    inset: 4px;
-    border-radius: 4px;
-    border: 1px solid rgb(16 185 129 / 0.3);
-  }
-
   .nav-links {
     display: flex;
     gap: 2px;
@@ -184,13 +161,6 @@
     box-shadow: var(--shadow-sm);
   }
   .btn-secondary:hover { background: white; border-color: var(--border-strong); transform: translateY(-1px); box-shadow: var(--shadow); }
-
-  .btn-emerald {
-    background: var(--emerald);
-    color: var(--bg-dark);
-    box-shadow: 0 1px 0 rgb(255 255 255 / 0.25) inset, 0 8px 24px -8px rgb(16 185 129 / 0.5);
-  }
-  .btn-emerald:hover { background: #14C495; transform: translateY(-1px); box-shadow: 0 1px 0 rgb(255 255 255 / 0.25) inset, 0 12px 32px -8px rgb(16 185 129 / 0.6); }
 
   .btn-large { padding: 14px 22px; font-size: 14.5px; border-radius: 11px; }
 
@@ -251,32 +221,6 @@
     animation: fadeUp 0.8s 0.05s ease both;
   }
 
-  .status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 12px 6px 10px;
-    background: var(--emerald-bg);
-    border: 1px solid rgb(16 185 129 / 0.22);
-    border-radius: 999px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--emerald-darker);
-    width: fit-content;
-  }
-
-  .status-pill .dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--emerald);
-    box-shadow: 0 0 0 3px rgb(16 185 129 / 0.18);
-    animation: pulse 2s infinite;
-  }
-
   @keyframes pulse {
     0%, 100% { opacity: 1; box-shadow: 0 0 0 3px rgb(16 185 129 / 0.18); }
     50% { opacity: 0.65; box-shadow: 0 0 0 7px rgb(16 185 129 / 0); }
@@ -305,16 +249,6 @@
     max-width: 480px;
     font-weight: 400;
     letter-spacing: -0.005em;
-  }
-
-  .hero-tagline {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 19px;
-    color: var(--text);
-    margin-top: -10px;
-    line-height: 1.3;
-    letter-spacing: -0.01em;
   }
 
   .hero-ctas {
@@ -1494,8 +1428,8 @@
       <li><a href="#intelligence">Features</a></li>
       <li><a href="#faq">FAQ</a></li>
     </ul>
-    <a href="login.html" class="btn btn-primary">
-      Get Briefed
+    <a href="design3.html" class="btn btn-primary">
+      Text Dossier
       <span class="btn-arrow">→</span>
     </a>
   </div>
@@ -1519,15 +1453,10 @@
           Dossier is a pre-event intelligence agent that texts you who matters, what to say, and what to remember before you walk into a room.
         </p>
 
-        <p class="hero-tagline">A CIA briefing for your social life.</p>
-
         <div class="hero-ctas">
-          <a href="login.html" class="btn btn-primary btn-large">
-            Start Scan
+          <a href="design3.html" class="btn btn-primary btn-large">
+            Text Dossier
             <span class="btn-arrow">→</span>
-          </a>
-          <a href="#intelligence" class="btn btn-secondary btn-large">
-            View Sample Brief
           </a>
         </div>
 
@@ -1861,7 +1790,7 @@
           <p class="final-sub">
             Find the main characters before you waste your night on NPCs. Dossier texts you the brief — no app, no dashboard.
           </p>
-          <a href="design3.html" class="btn btn-emerald btn-large">
+          <a href="design3.html" class="btn btn-primary btn-large">
             Text Dossier
             <span class="btn-arrow">→</span>
           </a>
@@ -1879,8 +1808,8 @@
         <p class="footer-tagline">
           The context layer for <em>real-world</em> networking.
         </p>
-        <a href="#cta" class="btn btn-secondary">
-          Get Briefed
+        <a href="design3.html" class="btn btn-primary">
+          Text Dossier
           <span class="btn-arrow">→</span>
         </a>
       </div>
