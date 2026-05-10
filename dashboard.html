@@ -500,10 +500,6 @@
         <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
         <span class="nav-label">Dashboard</span>
       </button>
-      <button class="nav-item" data-tab="events">
-        <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <span class="nav-label">Events</span>
-      </button>
       <button class="nav-item" data-tab="people">
         <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span class="nav-label">People</span>
@@ -543,7 +539,7 @@
 
   <!-- Main scroll area -->
   <main class="overflow-y-auto" style="height: 100vh;">
-    <div class="px-6 md:px-8 py-7 md:py-9 max-w-[1100px]">
+    <div class="px-6 md:px-8 py-7 md:py-9 max-w-[1100px] mx-auto">
 
       <!-- DASHBOARD / EVENTS view -->
       <section id="view-dashboard" class="view">
@@ -690,13 +686,14 @@ const ME = { firstName: 'Brandon', goal: 'Surface the best rooms: VCs, founders,
 
 const CATEGORIES = {
   'private':       { label: 'Private / Invite-only', tagBg: 'rgba(22,20,28,0.05)', tagText: '#16141C',  dot: '#16141C' },
+  'hackathon':     { label: 'Hackathon',             tagBg: '#FFF2E8',             tagText: '#C2410C',  dot: '#EA580C' },
   'ai-tech':       { label: 'AI / Tech',             tagBg: '#EFF7FF',             tagText: '#1E5BBF',  dot: '#1E5BBF' },
   'startup-vc':    { label: 'Startup / VC',          tagBg: '#F1ECFF',             tagText: '#5B3DCC',  dot: '#5B3DCC' },
   'healthcare':    { label: 'Healthcare',            tagBg: '#EAF8F1',             tagText: '#1F7A4F',  dot: '#1F7A4F' },
   'university':    { label: 'University / Student',  tagBg: '#FFF7E6',             tagText: '#9A6B0A',  dot: '#9A6B0A' },
   'creator-social':{ label: 'Creator / Social',      tagBg: '#FFF0F8',             tagText: '#B83085',  dot: '#B83085' }
 };
-const CATEGORY_ORDER = ['private', 'ai-tech', 'startup-vc', 'healthcare', 'university', 'creator-social'];
+const CATEGORY_ORDER = ['private', 'hackathon', 'ai-tech', 'startup-vc', 'healthcare', 'university', 'creator-social'];
 
 const STATUSES = {
   'not-met':      { label: 'Not met',      dot: '#9CA3AF', text: '#6F687A', bg: '#F3F4F6', border: '#E5E7EB' },
@@ -721,10 +718,47 @@ const PEOPLE = [
   { id: 'p_felix_ng',        name: 'Felix Ng',        title: 'General Partner',          company: 'HF0 Fellowship',      tags: ['Accelerator','Founders'],         score: 89, status: 'want-to-meet',  eventIds: ['e_ai_founder_dinner','e_cerebral_valley'], initials: 'FN', hue: 250, whyMeet: "Runs HF0 — 12-week residency for technical founders. Backs early." },
   { id: 'p_marina_solo',     name: 'Marina Solo',     title: 'Founder',                  company: 'Stitch',              tags: ['Devtools','OSS'],                 score: 85, status: 'not-met',       eventIds: ['e_ai_founder_dinner'], initials: 'MS', hue: 160, whyMeet: "Stitch is OSS UI primitives gaining traction in next-gen agent IDEs." },
   { id: 'p_aaron_vasquez',   name: 'Aaron Vasquez',   title: 'Surgeon & Founder',        company: 'UCSF / Stealth',      tags: ['Healthcare','Operator'],          score: 86, status: 'not-met',       eventIds: ['e_healthcare_roundtable'], initials: 'AV', hue: 130, whyMeet: "Practicing cardiothoracic surgeon spinning out a clinical decision support tool." },
-  { id: 'p_mira_patel',      name: 'Mira Patel',      title: "Stanford GSB '26",         company: 'Stanford',            tags: ['Student','Founders'],             score: 79, status: 'not-met',       eventIds: ['e_cerebral_valley'], initials: 'MP', hue: 290, whyMeet: "Stanford GSB '26. Deep ML background, looking for cofounder for healthcare GTM." }
+  { id: 'p_mira_patel',      name: 'Mira Patel',      title: "Stanford GSB '26",         company: 'Stanford',            tags: ['Student','Founders'],             score: 79, status: 'not-met',       eventIds: ['e_cerebral_valley'], initials: 'MP', hue: 290, whyMeet: "Stanford GSB '26. Deep ML background, looking for cofounder for healthcare GTM." },
+
+  /* --- Nozomio Hackathon attendees --- */
+  { id: 'p_arlan_rakhmetzhanov', name: 'Arlan Rakhmetzhanov', title: 'Founder & CEO',            company: 'Nozomio / Nia',           tags: ['AI','Agents','Founders','Infra'],     score: 99, status: 'want-to-meet', eventIds: ['e_nozomio_hackathon'], initials: 'AR', hue: 270, whyMeet: "Central figure for Nozomio/Nia and AI-agent context infrastructure.", talkingPoint: "Ask what context layer agents still miss and how Doss could index event/social data.", introMessage: "Arlan — Brandon here. Building Doss, a context layer for human networks at events. Would love your read on how Nia thinks about context for agents. 15 minutes this week?", summary: "Founder of Nozomio/Nia, building context infrastructure for AI agents." },
+  { id: 'p_conor_brennan_burke', name: 'Conor Brennan-Burke', title: 'Co-founder & CEO',         company: 'Hyperspell',              tags: ['AI','Infra','Founders'],              score: 97, status: 'want-to-meet', eventIds: ['e_nozomio_hackathon'], initials: 'CB', hue: 200, whyMeet: "Strong AI infra founder building company-memory and context tools for agents.", talkingPoint: "Ask how he distinguishes useful context from noise for agents.", introMessage: "Conor — saw Hyperspell's recent demo. We're working on a context layer for human networks at events — would love to compare notes.", summary: "Building Hyperspell: AI infra for company memory and agent context." },
+  { id: 'p_junfan_zhu',          name: 'JunFan Zhu',          title: 'AI Researcher / Engineer', company: 'Saturday Robotics',       tags: ['AI','Research','Robotics'],           score: 92, status: 'want-to-meet', eventIds: ['e_nozomio_hackathon'], initials: 'JZ', hue: 30,  whyMeet: "Deep AI / robotics / world-model background; strong potential technical collaborator.", talkingPoint: "Ask what he's most excited about in world models or physical AI right now." },
+  { id: 'p_sam_siavoshian',      name: 'Sam Siavoshian',      title: 'Software Engineer / AI Builder', company: 'ReacherApp',         tags: ['AI','Engineer','Builder'],            score: 90, status: 'not-met',      eventIds: ['e_nozomio_hackathon'], initials: 'SS', hue: 220, whyMeet: "Fast full-stack AI builder with hackathon and public project signal.", talkingPoint: "Ask what makes a hackathon project actually stand out from the noise." },
+  { id: 'p_tatiana_sf',          name: 'TatianaSF.com',       title: 'Founder / Hackathon Organizer / Codex Ambassador', company: 'HackathonSF', tags: ['Operator','Community','SF'],   score: 88, status: 'saved',        eventIds: ['e_nozomio_hackathon'], initials: 'TS', hue: 320, whyMeet: "Strong SF hackathon connector; useful for distribution, sponsors, and event intelligence.", talkingPoint: "Ask what signals tell her an attendee list is actually high quality." },
+  { id: 'p_james_unsworth',      name: 'James Unsworth',      title: 'AI Community Organizer',   company: 'AI Nexus',                tags: ['Operator','AI','Community'],          score: 86, status: 'not-met',      eventIds: ['e_nozomio_hackathon'], initials: 'JU', hue: 180, whyMeet: "AI Nexus host with repeated event activity; good connector to builders and backers.", talkingPoint: "Ask how AI Nexus filters for the best builders at events." },
+  { id: 'p_diana_munoz',         name: 'Diana Munoz',         title: 'AI Product / Founder',     company: 'Stealth',                 tags: ['AI','Founders'],                      score: 84, status: 'not-met',      eventIds: ['e_nozomio_hackathon'], initials: 'DM', hue: 340, whyMeet: "Visible attendee with AI/product signal; worth meeting if public profile matches.", talkingPoint: "Ask what AI workflow she's building or most interested in right now." },
+  { id: 'p_alex_denuzzo',        name: 'Alex DeNuzzo',        title: 'Community / Event Host',   company: 'SF Builder Scene',        tags: ['Operator','Community'],               score: 82, status: 'not-met',      eventIds: ['e_nozomio_hackathon'], initials: 'AD', hue: 50,  whyMeet: "High Luma activity and likely connected to the SF/AI event circuit.", talkingPoint: "Ask what event formats create the best founder collisions." },
+  { id: 'p_alex_b',              name: 'Alex B',              title: 'Host',                     company: 'AI Nexus',                tags: ['Operator'],                           score: 65, status: 'not-met',      eventIds: ['e_nozomio_hackathon'], initials: 'AB', hue: 280, whyMeet: "Useful for event logistics and AI Nexus relationship building.", talkingPoint: "Ask what Doss could automate for AI Nexus before or during events." },
+  { id: 'p_andrei_rizea',        name: 'Andrei Rizea',        title: 'Host',                     company: 'AI Nexus',                tags: ['Operator','Student'],                 score: 62, status: 'not-met',      eventIds: ['e_nozomio_hackathon'], initials: 'AN', hue: 250, whyMeet: "Potential logistics/community contact, but public context is thin.", talkingPoint: "Ask what he's building and how he got involved with the hackathon." },
+  { id: 'p_ethan_park',          name: 'Ethan Park',          title: 'Host',                     company: 'Unknown',                 tags: ['Operator'],                           score: 50, status: 'not-met',      eventIds: ['e_nozomio_hackathon'], initials: 'EP', hue: 100, whyMeet: "Meet only if naturally nearby; not enough public info for a targeted intro.", talkingPoint: "Ask which part of the hackathon he's helping with." },
+  { id: 'p_leo',                 name: 'Leo',                 title: 'Host',                     company: 'Unknown',                 tags: ['Operator'],                           score: 45, status: 'not-met',      eventIds: ['e_nozomio_hackathon'], initials: 'L',  hue: 160, whyMeet: "Meet only if naturally nearby; public context is too thin.", talkingPoint: "Ask what he's building or organizing at the event." }
 ];
 
 const EVENTS = [
+  {
+    id: 'e_nozomio_hackathon',
+    name: 'Nozomio Hackathon',
+    category: 'hackathon',
+    date: 'Sat, May 9',
+    dayLabel: 'Today',
+    time: '8:00 AM–8:00 PM',
+    location: 'EF Office',
+    city: 'San Francisco',
+    summary: "Hackathon for builders working on AI agents, context infrastructure, coding agents, and applied AI tools.",
+    topSignal: "High concentration of AI agent builders, infra founders, hackathon operators, and sponsor teams.",
+    attendingPersonIds: ['p_arlan_rakhmetzhanov','p_conor_brennan_burke','p_junfan_zhu','p_sam_siavoshian','p_tatiana_sf','p_james_unsworth','p_diana_munoz','p_alex_denuzzo','p_alex_b','p_andrei_rizea','p_ethan_park','p_leo'],
+    organizer: 'AI Nexus',
+    privacy: 'Public Luma · approval required',
+    attendeeCount: 811,
+    eventQualityScore: 88,
+    worthAttending: true,
+    bestFor: ['AI agent builders','Technical founders','Startup hackers','AI infra companies','Sponsor / tooling intros'],
+    whyGo: "Strong sponsor density, 800+ attendees, AI-agent focus, and multiple public hosts with repeated SF/AI event activity.",
+    skipReason: "Full attendee list isn't publicly visible — ranking is based on hosts, visible attendee teasers, and public profiles only.",
+    eventTags: ['AI agents','Hackathon','Nozomio','Nia','AI Nexus','SF builders'],
+    sourceUrl: 'https://luma.com/rshibq6i?tk=N7vVrD'
+  },
   { id: 'e_ai_founder_dinner', name: 'AI Founder Dinner – Mission', category: 'private',        date: 'Fri, Nov 14', dayLabel: 'In 5 days',  time: '7:00 PM', location: 'Mission District',         city: 'San Francisco', summary: "Invite-only dinner for founders building agent infrastructure and applied AI. Curated by HF0.", topSignal: "High concentration of seed investors writing first checks in agent infra.", attendingPersonIds: ['p_sarah_chen','p_marcus_webb','p_priya_raman','p_daniel_park','p_elena_rodriguez','p_lila_brown','p_felix_ng','p_jordan_reeves','p_marina_solo'] },
   { id: 'e_cerebral_valley',   name: 'Cerebral Valley Demo Night',  category: 'ai-tech',        date: 'Tue, Nov 18', dayLabel: 'In 9 days',  time: '6:30 PM', location: 'Shack15, Ferry Building',  city: 'San Francisco', summary: "Demo night for newly-funded AI startups across infra, agents, and vertical apps.", topSignal: "Frontier-model VCs sharing a room with operator-led healthcare AI startups.", attendingPersonIds: ['p_sarah_chen','p_marcus_webb','p_priya_raman','p_daniel_park','p_elena_rodriguez','p_lila_brown','p_felix_ng','p_aisha_kapoor','p_tomas_acuna','p_kenji_tanaka','p_mira_patel'] },
   { id: 'e_yc_demo',           name: 'Y Combinator Fall Demo Day',  category: 'startup-vc',     date: 'Wed, Nov 19', dayLabel: 'In 10 days', time: '9:00 AM', location: 'YC HQ, Mountain View',     city: 'San Francisco', summary: "YC's Fall Demo Day. Half-AI half-everything. Seed investors swarm.", topSignal: "Top-decile seed VCs concentrated in two hours.", attendingPersonIds: ['p_priya_raman','p_lila_brown','p_tomas_acuna'] },
@@ -912,7 +946,10 @@ function renderEvents() {
     return;
   }
   const daysOut = ev => {
-    const m = (ev.dayLabel || '').match(/-?\d+/);
+    const label = (ev.dayLabel || '').toLowerCase();
+    if (label.includes('today')) return 0;
+    if (label.includes('tomorrow')) return 1;
+    const m = label.match(/-?\d+/);
     return m ? parseInt(m[0], 10) : 9999;
   };
   const sorted = [...filtered].sort((a, b) => daysOut(a) - daysOut(b));
@@ -980,7 +1017,11 @@ function renderDetail(targetEl) {
     <!-- Header -->
     <div class="border-b border-border pb-5 mb-5">
       <div class="flex items-start justify-between gap-3 mb-3">
-        ${categoryTag(ev.category)}
+        <div class="flex items-center gap-2 flex-wrap">
+          ${categoryTag(ev.category)}
+          ${ev.organizer ? `<span class="text-[11.5px] text-muted-foreground">by ${escapeHtml(ev.organizer)}</span>` : ''}
+          ${ev.privacy ? `<span class="text-[11px] text-muted-foreground">· ${escapeHtml(ev.privacy)}</span>` : ''}
+        </div>
         <button class="btn-icon" data-close-detail aria-label="Close">${xSVG()}</button>
       </div>
       <h2 class="font-serif text-[26px]" style="line-height: 1.1; letter-spacing: -0.01em;">${escapeHtml(ev.name)}</h2>
@@ -1005,11 +1046,44 @@ function renderDetail(targetEl) {
         </div>
       </div>
 
-      <div class="flex items-center gap-2 mt-4">
+      ${(ev.attendeeCount || ev.eventQualityScore) ? `
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        ${ev.attendeeCount ? `
+        <div class="surface px-3 py-3">
+          <div class="font-serif text-[22px] tabular" style="line-height: 1;">${ev.attendeeCount.toLocaleString()}</div>
+          <div class="text-[10.5px] uppercase tracking-wider text-muted-foreground mt-1">RSVPs total</div>
+        </div>` : ''}
+        ${ev.eventQualityScore ? `
+        <div class="surface px-3 py-3" style="background: hsl(327 100% 98%); border-color: hsl(327 60% 90%);">
+          <div class="font-serif text-[22px] tabular" style="line-height: 1; color: hsl(327 70% 45%);">${ev.eventQualityScore}<span class="text-[12px] text-muted-foreground" style="font-family: ui-sans-serif;">/100</span></div>
+          <div class="text-[10.5px] uppercase tracking-wider mt-1" style="color: hsl(327 50% 45%);">Event quality</div>
+        </div>` : ''}
+      </div>` : ''}
+
+      <div class="flex items-center gap-2 mt-4 flex-wrap">
         <button class="btn-primary">Build my plan ${arrowUpRightSVG()}</button>
         <button class="btn-outline">${bookmarkSVG(false)} Save event</button>
+        ${ev.sourceUrl ? `<a href="${escapeHtml(ev.sourceUrl)}" target="_blank" rel="noopener noreferrer" class="btn-outline">View on Luma ${arrowUpRightSVG()}</a>` : ''}
       </div>
     </div>
+
+    ${ev.whyGo ? `
+    <section class="mb-6">
+      <h3 class="text-[12.5px] font-medium uppercase tracking-wider flex items-center gap-2 mb-2" style="color: hsl(var(--foreground));">
+        <span style="color: hsl(258 80% 55%);">${sparkleSVG()}</span>
+        Why go
+      </h3>
+      <p class="text-[13.5px]" style="color: hsl(258 10% 28%); line-height: 1.55;">${escapeHtml(ev.whyGo)}</p>
+      ${ev.skipReason ? `<p class="text-[12px] mt-2 text-muted-foreground" style="line-height: 1.5;"><span class="font-medium" style="color: hsl(258 8% 30%);">Caveat:</span> ${escapeHtml(ev.skipReason)}</p>` : ''}
+    </section>` : ''}
+
+    ${ev.bestFor && ev.bestFor.length ? `
+    <section class="mb-6">
+      <h3 class="text-[12.5px] font-medium uppercase tracking-wider mb-2" style="color: hsl(var(--foreground));">Best for</h3>
+      <div class="flex flex-wrap gap-1.5">
+        ${ev.bestFor.map(b => `<span class="ctag" style="background:hsl(258 100% 97%);color:hsl(258 50% 38%);">${escapeHtml(b)}</span>`).join('')}
+      </div>
+    </section>` : ''}
 
     <!-- Sections -->
     <div class="flex flex-col gap-7">
@@ -1393,15 +1467,15 @@ function rerenderEverything() {
 function switchTab(tab) {
   state.tab = tab;
   $$('.view').forEach(v => v.classList.add('hidden'));
-  $('#view-' + (tab === 'events' ? 'dashboard' : tab)).classList.remove('hidden');
+  $('#view-' + tab).classList.remove('hidden');
   $$('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
 
   if (tab === 'people') renderPeople();
   if (tab === 'saved') renderSaved();
   if (tab === 'settings') renderSettings();
 
-  // Detail panel only in Dashboard/Events
-  if (tab !== 'dashboard' && tab !== 'events') {
+  // Detail panel only in Dashboard
+  if (tab !== 'dashboard') {
     $('#detailCol').classList.remove('open');
     $('#appGrid').classList.remove('with-detail');
   } else if (state.selectedEventId && window.matchMedia('(min-width: 1280px)').matches) {
@@ -1429,7 +1503,6 @@ function closeSidebar() {
 function renderMobileNav() {
   const items = [
     { tab: 'dashboard', label: 'Dashboard' },
-    { tab: 'events',    label: 'Events' },
     { tab: 'people',    label: 'People' },
     { tab: 'saved',     label: 'Saved' },
     { tab: 'settings',  label: 'Settings' }
