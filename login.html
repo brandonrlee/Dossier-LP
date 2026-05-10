@@ -129,7 +129,7 @@
 </button>
 <input id="phoneInput" class="flex-grow bg-transparent border-none focus:ring-0 px-md py-md text-on-surface placeholder:text-outline font-body-lg w-full outline-none" placeholder="(201) 555-0123" type="tel"/>
 </div>
-<a href="./logincode.html" id="continueBtn" class="w-full bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm py-md rounded-full hover:opacity-90 transition-opacity flex justify-center items-center gap-sm">
+<a href="./logincode" id="continueBtn" class="w-full bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm py-md rounded-full hover:opacity-90 transition-opacity flex justify-center items-center gap-sm">
 continue with phone
 </a>
 </div>
@@ -151,9 +151,9 @@ by continuing you agree to our <a class="underline hover:text-on-surface transit
       const raw = (input.value || '').replace(/\D/g, '');
       if (raw) {
         try { sessionStorage.setItem('doss_phone', raw); } catch (_) {}
-        window.location.href = './logincode.html?phone=' + encodeURIComponent(raw);
+        window.location.href = './logincode?phone=' + encodeURIComponent(raw);
       } else {
-        window.location.href = './logincode.html';
+        window.location.href = './logincode';
       }
     });
 

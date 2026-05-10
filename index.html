@@ -170,7 +170,11 @@
   /* === HERO === */
   .hero {
     position: relative;
-    padding: 56px 0 100px;
+    min-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 40px 0 48px;
     overflow: hidden;
   }
 
@@ -209,7 +213,7 @@
     position: relative;
     display: grid;
     grid-template-columns: 0.95fr 1.05fr;
-    gap: 64px;
+    gap: 48px;
     align-items: center;
     z-index: 1;
   }
@@ -283,6 +287,19 @@
     justify-content: center;
     animation: fadeUp 0.8s 0.25s ease both;
   }
+
+  .hero-demo {
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 390 / 844;
+    max-height: calc(100vh - 140px);
+    border: none;
+    background: transparent;
+    display: block;
+  }
+  @media (max-width: 1024px) { .hero-demo { max-width: 320px; max-height: 70vh; } }
+  @media (max-width: 768px)  { .hero-demo { max-width: 280px; } }
+  @media (max-width: 560px)  { .hero-demo { max-width: 240px; } }
 
   .terminal {
     position: relative;
@@ -1737,66 +1754,6 @@
     z-index: 2;
   }
 
-  /* Floating app-style icons */
-  .float-icon {
-    position: absolute;
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    display: grid;
-    place-items: center;
-    color: #fff;
-    box-shadow:
-      0 1px 0 rgb(255 255 255 / 0.18) inset,
-      0 18px 30px -12px rgb(0 0 0 / 0.22),
-      0 6px 14px -6px rgb(0 0 0 / 0.12);
-    z-index: 3;
-    will-change: transform;
-  }
-  .float-icon svg { width: 26px; height: 26px; }
-
-  .float-icon.fi-msg {
-    background: linear-gradient(160deg, #4dd86a, #34c759);
-    top: 8%;
-    left: -34px;
-    animation: floatI1 5.4s ease-in-out infinite;
-  }
-  .float-icon.fi-cal {
-    background: linear-gradient(160deg, #8b7cf6, #6750a4);
-    top: 26%;
-    right: -38px;
-    animation: floatI2 6.2s ease-in-out infinite;
-  }
-  .float-icon.fi-link {
-    background: linear-gradient(160deg, #6c8cff, #4f46e5);
-    bottom: 26%;
-    left: -42px;
-    animation: floatI3 5.8s ease-in-out infinite;
-  }
-  .float-icon.fi-send {
-    background: linear-gradient(160deg, #2aa5ff, #0a84ff);
-    bottom: 9%;
-    right: -32px;
-    animation: floatI4 6.6s ease-in-out infinite;
-  }
-
-  @keyframes floatI1 {
-    0%, 100% { transform: translateY(0)    rotate(-6deg); }
-    50%      { transform: translateY(-12px) rotate(4deg); }
-  }
-  @keyframes floatI2 {
-    0%, 100% { transform: translateY(0)    rotate(5deg); }
-    50%      { transform: translateY(-10px) rotate(-3deg); }
-  }
-  @keyframes floatI3 {
-    0%, 100% { transform: translateY(0)    rotate(-4deg); }
-    50%      { transform: translateY(-9px) rotate(6deg); }
-  }
-  @keyframes floatI4 {
-    0%, 100% { transform: translateY(0)    rotate(6deg); }
-    50%      { transform: translateY(-13px) rotate(-4deg); }
-  }
-
   /* Typing indicator inside phone */
   .phone-typing {
     display: inline-flex;
@@ -1818,8 +1775,9 @@
 
   /* === Responsive === */
   @media (max-width: 1024px) {
-    .hero-inner { grid-template-columns: 1fr; gap: 56px; }
-    .hero-right { justify-content: flex-start; }
+    .hero { min-height: 0; padding: 40px 0 56px; }
+    .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+    .hero-right { justify-content: center; }
     .terminal { max-width: 460px; margin: 0 auto; }
     .phone-stage { margin: 0 auto; max-width: 380px; }
     .intel-badge.tl { left: -16px; }
@@ -1836,12 +1794,6 @@
     .footer-top { flex-direction: column; align-items: flex-start; }
     .hero-deco { display: none; }
     .phone-stage { max-width: 320px; }
-    .float-icon { width: 46px; height: 46px; border-radius: 13px; }
-    .float-icon svg { width: 22px; height: 22px; }
-    .float-icon.fi-msg  { left: -14px; }
-    .float-icon.fi-cal  { right: -16px; }
-    .float-icon.fi-link { left: -18px; }
-    .float-icon.fi-send { right: -12px; }
     .dark-cta-band-card {
       flex-direction: column;
       align-items: flex-start;
@@ -1874,8 +1826,7 @@
       <li><a href="#faq">FAQ</a></li>
     </ul>
     <div class="nav-actions">
-      <a href="./login.html" class="nav-login">Log in</a>
-      <a href="./login.html" class="btn btn-primary">
+      <a href="./login" class="btn btn-primary">
         Get Doss
         <span class="btn-arrow">→</span>
       </a>
@@ -1908,7 +1859,7 @@
         </p>
 
         <div class="hero-ctas">
-          <a href="./login.html" class="btn btn-primary btn-large">
+          <a href="./login" class="btn btn-primary btn-large">
             text doss now
             <span class="btn-arrow">→</span>
           </a>
@@ -1931,70 +1882,7 @@
       </div>
 
       <div class="hero-right">
-        <div class="phone-stage">
-          <!-- Floating app icons -->
-          <div class="float-icon fi-msg" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          </div>
-          <div class="float-icon fi-cal" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          </div>
-          <div class="float-icon fi-link" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          </div>
-          <div class="float-icon fi-send" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          </div>
-
-          <div class="phone-frame">
-            <div class="phone-screen">
-              <div class="phone-island"></div>
-
-              <div class="phone-statusbar">
-                <span>9:41</span>
-                <span class="icons">
-                  <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
-                  <svg width="16" height="11" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a14 14 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15a6 6 0 0 1 7 0"/><circle cx="12" cy="17" r="1.2" fill="currentColor"/></svg>
-                  <svg width="22" height="11" viewBox="0 0 28 12" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1" y="1" width="22" height="10" rx="2.4"/><rect x="3" y="3" width="16" height="6" rx="1" fill="currentColor"/><rect x="24" y="4" width="2" height="4" rx="0.6" fill="currentColor"/></svg>
-                </span>
-              </div>
-
-              <div class="phone-chat-header">
-                <div class="pavatar">D</div>
-                <div class="pname">Doss</div>
-                <div class="pstatus">iMessage · Active now</div>
-              </div>
-
-              <div class="phone-chat">
-                <div class="phone-row user b1">
-                  <div class="phone-bubble user">i'm going to this ai founder party tonight</div>
-                </div>
-
-                <div class="phone-row user b2">
-                  <div class="phone-bubble user"><span class="lk">https://lu.ma/ai-founder-party</span></div>
-                </div>
-
-                <div class="phone-row agent b3">
-                  <div class="phone-bubble agent">got it. scanning 47 attendees.</div>
-                </div>
-
-                <div class="phone-row agent b4">
-                  <div class="phone-bubble agent">brief ready. found 5 high-signal people, 2 clout risks, and 1 missed follow-up.</div>
-                </div>
-
-                <div class="phone-row agent b5">
-                  <div class="phone-bubble agent">maya chen — healthcare ai investor. ask her: "are you seeing founders start with workflow wedges or diagnostics?"</div>
-                </div>
-
-                <div class="phone-row agent b6">
-                  <div class="phone-bubble agent">jake — stealth founder. no product link. 14 podcast clips. clout risk: high. talk if bored. do not pitch.</div>
-                </div>
-              </div>
-
-              <div class="phone-fade"></div>
-            </div>
-          </div>
-        </div>
+        <iframe class="hero-demo" src="assets/doss-demo.html" title="Doss demo" loading="eager" allow="autoplay" frameborder="0"></iframe>
       </div>
     </div>
   </div>
@@ -2202,7 +2090,7 @@
           before the event, doss <em>texts you the brief.</em>
         </h2>
       </div>
-      <a href="./login.html" class="btn btn-light btn-large">
+      <a href="./login" class="btn btn-light btn-large">
         Get Doss
         <span class="btn-arrow">→</span>
       </a>
@@ -2218,7 +2106,7 @@
         <p class="footer-tagline">
           The context layer for <em>real-world</em> networking.
         </p>
-        <a href="./login.html" class="btn btn-primary">
+        <a href="./login" class="btn btn-primary">
           Get Doss
           <span class="btn-arrow">→</span>
         </a>

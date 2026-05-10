@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Doss — Product Demo</title>
+<style>
+  :root {
+    /* Brand */
+    --doss-purple: #7C3AED;
+    --doss-purple-2: #A78BFA;
+    --doss-purple-soft: #F1ECFE;
+    --doss-purple-line: rgba(124, 58, 237, 0.14);
+
+    /* iMessage */
+    --imsg-blue: #1B8CFF;
+    --imsg-blue-2: #007AFF;
+    --imsg-gray: #E9E9EB;
+    --imsg-text: #000;
+    --imsg-secondary: #8E8E93;
+
+    /* Surfaces */
+    --frame: #0A0A0A;
+    --bg: #FFFFFF;
+    --chrome: rgba(247, 247, 247, 0.92);
+
+    /* Motion tokens */
+    --ease-out-quart: cubic-bezier(.165, .84, .44, 1);
+    --ease-out-quint: cubic-bezier(.23, 1, .32, 1);
+    --ease-in-out-cubic: cubic-bezier(.645, .045, .355, 1);
+
+    --dur-1: 120ms;
+    --dur-2: 180ms;
+    --dur-3: 240ms;
+    --dur-4: 320ms;
+    --dur-5: 480ms;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #FFFFFF;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: #000;
+    overflow: hidden;
+  }
+
+  .stage {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(ellipse at top, #FAF7FF 0%, #FFFFFF 55%);
+  }
+
+  /* ===================== iPhone frame ===================== */
+  .phone {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    background: #fff;
+    border: 11px solid var(--frame);
+    border-radius: 58px;
+    overflow: hidden;
+    box-shadow:
+      0 40px 80px rgba(20, 10, 60, 0.12),
+      0 12px 28px rgba(0, 0, 0, 0.08);
+    transform-origin: center center;
+    transform: scale(min(calc(100vw / 390), calc(100vh / 844)));
+    flex-shrink: 0;
+  }
+
+  /* Dynamic Island */
+  .island {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 34px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 30;
+  }
+
+  /* Status bar */
+  .status {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 32px 0;
+    font-size: 16px;
+    font-weight: 600;
+    z-index: 25;
+    color: #000;
+  }
+  .status .clock { letter-spacing: -0.2px; }
+  .status .right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Signal bars */
+  .signal {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 11px;
+  }
+  .signal span {
+    width: 3px;
+    background: #000;
+    border-radius: 1px;
+  }
+  .signal span:nth-child(1) { height: 4px; }
+  .signal span:nth-child(2) { height: 6px; }
+  .signal span:nth-child(3) { height: 8px; }
+  .signal span:nth-child(4) { height: 11px; }
+
+  /* Battery */
+  .battery {
+    position: relative;
+    width: 24px;
+    height: 11px;
+    border: 1px solid #000;
+    border-radius: 3px;
+    padding: 1px;
+  }
+  .battery::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    right: -3px;
+    width: 2px;
+    height: 5px;
+    background: #000;
+    border-radius: 0 1px 1px 0;
+  }
+  .battery i {
+    display: block;
+    width: 80%;
+    height: 100%;
+    background: #000;
+    border-radius: 1px;
+  }
+
+  /* Header (contact info) */
+  .header {
+    position: absolute;
+    top: 54px;
+    left: 0;
+    right: 0;
+    height: 92px;
+    background: var(--chrome);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 6px;
+    z-index: 12;
+  }
+
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 30%, #C4B5FD 0%, #7C3AED 70%, #5B21B6 100%);
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.32);
+    margin-bottom: 4px;
+  }
+  .avatar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+    pointer-events: none;
+  }
+
+  .contact-name {
+    font-size: 11px;
+    font-weight: 500;
+    color: #000;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    letter-spacing: -0.1px;
+  }
+  .chevron {
+    color: var(--imsg-secondary);
+    font-size: 9px;
+    margin-left: 2px;
+    margin-top: -1px;
+  }
+
+  /* Back arrow */
+  .back {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    color: var(--imsg-blue-2);
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  /* Messages */
+  .messages {
+    position: absolute;
+    top: 146px;
+    bottom: 84px;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 14px 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  .messages::-webkit-scrollbar { display: none; }
+
+  .row { display: flex; }
+  .row.user { justify-content: flex-end; }
+  .row.doss { justify-content: flex-start; }
+
+  /* Sender label (only for first Doss bubble in a group) */
+  .sender-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--imsg-secondary);
+    margin: 6px 0 2px 18px;
+    align-self: flex-start;
+    opacity: 0;
+    transition: opacity var(--dur-3) var(--ease-out-quart);
+  }
+  .sender-label.show { opacity: 1; }
+
+  /* Bubble */
+  .bubble {
+    max-width: 78%;
+    padding: 9px 14px 10px;
+    border-radius: 20px;
+    font-size: 15.5px;
+    line-height: 1.32;
+    letter-spacing: -0.24px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    opacity: 0;
+    transform: scale(0.85) translateY(6px);
+    transition:
+      transform var(--dur-4) var(--ease-out-quart),
+      opacity var(--dur-3) var(--ease-out-quart);
+  }
+  .bubble.show {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  .bubble.user {
+    background: linear-gradient(180deg, #1B8CFF 0%, #047CFE 100%);
+    color: white;
+    border-bottom-right-radius: 6px;
+    transform-origin: bottom right;
+    box-shadow: 0 1px 2px rgba(0, 86, 199, 0.18);
+  }
+  .bubble.doss {
+    background: var(--imsg-gray);
+    color: var(--imsg-text);
+    border-bottom-left-radius: 6px;
+    transform-origin: bottom left;
+  }
+  .bubble.doss strong { color: var(--doss-purple); font-weight: 600; }
+
+  /* Stack-of-bubbles spacing */
+  .row + .row { margin-top: 2px; }
+  .row.same-sender { margin-top: 1px; }
+  .row.same-sender .bubble.user { border-top-right-radius: 6px; }
+  .row.same-sender .bubble.doss { border-top-left-radius: 6px; }
+  .row.continues .bubble.user { border-bottom-right-radius: 6px; }
+  .row.continues .bubble.doss { border-bottom-left-radius: 6px; }
+
+  /* Typing indicator */
+  .typing {
+    align-self: flex-start;
+    background: var(--imsg-gray);
+    padding: 12px 14px;
+    border-radius: 20px;
+    border-bottom-left-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transform: scale(0.8);
+    transform-origin: bottom left;
+    transition:
+      transform var(--dur-3) var(--ease-out-quart),
+      opacity var(--dur-2) var(--ease-out-quart);
+  }
+  .typing.show { opacity: 1; transform: scale(1); }
+  .typing span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #A0A0A6;
+    animation: dot 1.25s infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.18s; }
+  .typing span:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes dot {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+    30% { transform: translateY(-3px); opacity: 1; }
+  }
+
+  /* Quote-style ask line inside bubbles */
+  .quote {
+    display: block;
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.55);
+    border-left: 2px solid var(--doss-purple);
+    border-radius: 4px;
+    font-size: 14.5px;
+    color: #1a1a1a;
+    font-style: italic;
+  }
+
+  /* Score chip inside bubbles */
+  .score-line {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .score-num {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    color: var(--doss-purple);
+  }
+
+  /* Input bar */
+  .input-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 84px;
+    background: var(--chrome);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    padding: 10px 14px 24px;
+    gap: 8px;
+    z-index: 11;
+  }
+  .ib-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #E5E5EA;
+    display: grid;
+    place-items: center;
+    color: #8E8E93;
+    font-size: 16px;
+    flex: none;
+  }
+  .ib-field {
+    flex: 1;
+    height: 32px;
+    background: #fff;
+    border: 0.5px solid rgba(0, 0, 0, 0.15);
+    border-radius: 18px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    color: var(--imsg-secondary);
+    font-size: 14px;
+  }
+  .ib-mic {
+    width: 26px;
+    height: 26px;
+    color: var(--imsg-secondary);
+    margin-right: 4px;
+  }
+
+  /* Home indicator */
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: #000;
+    border-radius: 3px;
+    z-index: 12;
+  }
+
+  /* ===================== Product UI cards ===================== */
+  .card {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 92px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow:
+      0 18px 48px rgba(124, 58, 237, 0.22),
+      0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--doss-purple-line);
+    padding: 14px 14px 12px;
+    opacity: 0;
+    transform: translateY(28px) scale(0.96);
+    transition:
+      transform var(--dur-5) var(--ease-out-quart),
+      opacity var(--dur-4) var(--ease-out-quart);
+    z-index: 14;
+    pointer-events: none;
+  }
+  .card.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .card-logo {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%);
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: -0.4px;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+  }
+  .card-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: #0F0F12;
+    letter-spacing: -0.3px;
+  }
+  .card-meta {
+    margin-left: auto;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--imsg-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .card-meta .dot {
+    width: 6px; height: 6px;
+    background: #34C759;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .row-item {
+    display: grid;
+    grid-template-columns: 18px 1fr auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.05);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition:
+      transform 360ms var(--ease-out-quart),
+      opacity 280ms var(--ease-out-quart);
+  }
+  .row-item:last-child { border-bottom: none; }
+  .card.show .row-item { opacity: 1; transform: translateX(0); }
+
+  .row-rank {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--doss-purple);
+    font-variant-numeric: tabular-nums;
+  }
+  .row-info { display: flex; flex-direction: column; min-width: 0; }
+  .row-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0F0F12;
+    letter-spacing: -0.2px;
+  }
+  .row-role {
+    font-size: 10.5px;
+    color: var(--imsg-secondary);
+    margin-top: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tag {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 3px 7px;
+    border-radius: 9px;
+    background: var(--doss-purple-soft);
+    color: var(--doss-purple);
+    letter-spacing: 0.2px;
+  }
+  .relevance {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--doss-purple);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Summary card (Scene 5) */
+  .sum-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .sum-cell {
+    background: var(--doss-purple-soft);
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+  .sum-cell.full { grid-column: 1 / -1; }
+  .sum-label {
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--doss-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 2px;
+  }
+  .sum-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0F0F12;
+    letter-spacing: -0.3px;
+  }
+  .sum-val small {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--imsg-secondary);
+    margin-left: 4px;
+    letter-spacing: 0;
+  }
+  .sum-foot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    color: var(--imsg-secondary);
+    margin-top: 4px;
+  }
+  .saved-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background: var(--doss-purple-soft);
+    color: var(--doss-purple);
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  /* ===================== End screen ===================== */
+  .end-screen {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transition:
+      opacity 700ms var(--ease-out-quart);
+    z-index: 50;
+    pointer-events: none;
+  }
+  .end-screen.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .end-inner {
+    text-align: center;
+    transform: translateY(8px);
+    opacity: 0;
+    transition:
+      transform 700ms var(--ease-out-quart),
+      opacity 700ms var(--ease-out-quart);
+    transition-delay: 200ms;
+  }
+  .end-screen.show .end-inner {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .end-logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%);
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.8px;
+    margin: 0 auto 18px;
+    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+  }
+  .end-name {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+    color: #0A0A0A;
+    margin-bottom: 18px;
+  }
+  .end-line {
+    font-size: 17px;
+    font-weight: 500;
+    color: #2A2A2E;
+    letter-spacing: -0.3px;
+    line-height: 1.55;
+  }
+  .end-line + .end-line { margin-top: 4px; }
+  .end-line strong { color: var(--doss-purple); font-weight: 700; }
+
+  /* Replay button */
+  .replay {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: var(--doss-purple);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0;
+    transition:
+      transform 360ms var(--ease-out-quart),
+      opacity 360ms var(--ease-out-quart),
+      background var(--dur-2) ease;
+    box-shadow: 0 8px 22px rgba(124, 58, 237, 0.32);
+    z-index: 100;
+    font-family: inherit;
+    letter-spacing: -0.1px;
+  }
+  .replay.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .replay:hover { background: #6D28D9; }
+  .replay:active { transform: translateX(-50%) translateY(0) scale(0.98); }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="phone" id="phone">
+
+    <div class="island"></div>
+
+    <div class="status">
+      <div class="clock">9:41</div>
+      <div class="right">
+        <div class="signal"><span></span><span></span><span></span><span></span></div>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+          <path d="M8 2.5C5.5 2.5 3.2 3.4 1.5 5L0 3.5C2.1 1.4 5 0 8 0C11 0 13.9 1.4 16 3.5L14.5 5C12.8 3.4 10.5 2.5 8 2.5Z" fill="black"/>
+          <path d="M8 5.5C6.4 5.5 4.9 6.1 3.7 7.2L5.2 8.7C5.9 8 6.9 7.5 8 7.5C9.1 7.5 10.1 8 10.8 8.7L12.3 7.2C11.1 6.1 9.6 5.5 8 5.5Z" fill="black"/>
+          <circle cx="8" cy="10" r="1" fill="black"/>
+        </svg>
+        <div class="battery"><i></i></div>
+      </div>
+    </div>
+
+    <div class="header">
+      <div class="back">‹</div>
+      <div class="avatar">D</div>
+      <div class="contact-name">Doss <span class="chevron">›</span></div>
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="card" id="card-people">
+      <div class="card-head">
+        <div class="card-logo">D</div>
+        <div class="card-title">Top 10 to Meet</div>
+        <div class="card-meta"><span class="dot"></span> Live</div>
+      </div>
+      <div class="row-item" style="transition-delay: 60ms;">
+        <div class="row-rank">01</div>
+        <div class="row-info">
+          <div class="row-name">Arlan</div>
+          <div class="row-role">Founder · Nozomio</div>
+        </div>
+        <div class="tag">founder</div>
+        <div class="relevance">98</div>
+      </div>
+      <div class="row-item" style="transition-delay: 120ms;">
+        <div class="row-rank">02</div>
+        <div class="row-info">
+          <div class="row-name">Conor</div>
+          <div class="row-role">Founder · Hyperspell</div>
+        </div>
+        <div class="tag">founder</div>
+        <div class="relevance">94</div>
+      </div>
+      <div class="row-item" style="transition-delay: 180ms;">
+        <div class="row-rank">03</div>
+        <div class="row-info">
+          <div class="row-name">JunFan</div>
+          <div class="row-role">AI / robotics builder</div>
+        </div>
+        <div class="tag">builder</div>
+        <div class="relevance">91</div>
+      </div>
+      <div class="row-item" style="transition-delay: 240ms;">
+        <div class="row-rank">04</div>
+        <div class="row-info">
+          <div class="row-name">Tatiana</div>
+          <div class="row-role">Hackathon connector</div>
+        </div>
+        <div class="tag">operator</div>
+        <div class="relevance">89</div>
+      </div>
+      <div class="row-item" style="transition-delay: 300ms;">
+        <div class="row-rank">05</div>
+        <div class="row-info">
+          <div class="row-name">Sam</div>
+          <div class="row-role">Technical builder</div>
+        </div>
+        <div class="tag">builder</div>
+        <div class="relevance">86</div>
+      </div>
+    </div>
+
+    <div class="card" id="card-summary">
+      <div class="card-head">
+        <div class="card-logo">D</div>
+        <div class="card-title">Nozomio Hackathon</div>
+        <div class="card-meta saved-pill">★ Saved</div>
+      </div>
+      <div class="sum-grid">
+        <div class="sum-cell">
+          <div class="sum-label">Event Score</div>
+          <div class="sum-val">88<small>/100</small></div>
+        </div>
+        <div class="sum-cell">
+          <div class="sum-label">Top People</div>
+          <div class="sum-val">10<small>matched</small></div>
+        </div>
+        <div class="sum-cell full">
+          <div class="sum-label">Suggested Openers</div>
+          <div class="sum-val" style="font-size:12px; font-weight:600; color:#0F0F12;">2 conversation starters ready</div>
+        </div>
+      </div>
+      <div class="sum-foot">
+        <span>Seen by 3 founders you know</span>
+      </div>
+    </div>
+
+    <div class="input-bar">
+      <div class="ib-circle">+</div>
+      <div class="ib-field">iMessage</div>
+      <svg class="ib-mic" viewBox="0 0 24 24" fill="none">
+        <path d="M12 14a3 3 0 003-3V6a3 3 0 10-6 0v5a3 3 0 003 3z" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M19 11a7 7 0 01-14 0M12 18v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="home-indicator"></div>
+
+    <div class="end-screen" id="endScreen">
+      <div class="end-inner">
+        <div class="end-logo">D</div>
+        <div class="end-name">Doss</div>
+        <div class="end-line">Know which events <strong>matter</strong>.</div>
+        <div class="end-line">Know who to <strong>meet</strong>.</div>
+        <div class="end-line">Know what to <strong>say</strong>.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="replay" id="replay">↻ Replay</button>
+
+<script>
+(() => {
+  const messagesEl = document.getElementById('messages');
+  const cardPeople = document.getElementById('card-people');
+  const cardSummary = document.getElementById('card-summary');
+  const endScreen = document.getElementById('endScreen');
+  const replayBtn = document.getElementById('replay');
+
+  const timers = [];
+  const schedule = (ms, fn) => timers.push(setTimeout(fn, ms));
+  const clearAll = () => { timers.forEach(clearTimeout); timers.length = 0; };
+
+  // ---- Helpers ----
+  function scrollToBottom() {
+    messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
+  }
+
+  function makeBubble(sender, html, opts = {}) {
+    const row = document.createElement('div');
+    row.className = `row ${sender}`;
+    if (opts.sameSender) row.classList.add('same-sender');
+    if (opts.continues) row.classList.add('continues');
+
+    const bubble = document.createElement('div');
+    bubble.className = `bubble ${sender}`;
+    bubble.innerHTML = html;
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+
+    // trigger animation + scroll
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        bubble.classList.add('show');
+        scrollToBottom();
+      });
+    });
+    return { row, bubble };
+  }
+
+  function showTyping() {
+    const row = document.createElement('div');
+    row.className = 'row doss typing-row';
+    const t = document.createElement('div');
+    t.className = 'typing';
+    t.innerHTML = '<span></span><span></span><span></span>';
+    row.appendChild(t);
+    messagesEl.appendChild(row);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        t.classList.add('show');
+        scrollToBottom();
+      });
+    });
+    return row;
+  }
+
+  function hideTyping(row) {
+    if (!row) return;
+    const t = row.querySelector('.typing');
+    if (t) {
+      t.classList.remove('show');
+      setTimeout(() => row.remove(), 200);
+    } else {
+      row.remove();
+    }
+  }
+
+  function showCard(card) {
+    card.classList.add('show');
+  }
+  function hideCard(card) {
+    card.classList.remove('show');
+  }
+
+  function reset() {
+    clearAll();
+    messagesEl.innerHTML = '';
+    cardPeople.classList.remove('show');
+    cardSummary.classList.remove('show');
+    endScreen.classList.remove('show');
+    replayBtn.classList.remove('show');
+  }
+
+  // ---- Demo timeline ----
+  function play() {
+    reset();
+    let typingRow = null;
+
+    // ===== Scene 1 — Opening =====
+    schedule(600, () => {
+      makeBubble('user', 'Should I go to the Nozomio Hackathon?');
+    });
+
+    schedule(1500, () => { typingRow = showTyping(); });
+
+    schedule(2400, () => {
+      hideTyping(typingRow);
+      makeBubble('doss', 'Yes — strong event for AI founders and builders.');
+    });
+
+    schedule(3100, () => {
+      makeBubble('doss',
+        '<span class="score-line">Event score: <span class="score-num">88</span><span style="color:#8E8E93;font-size:13px;">/100</span></span>',
+        { sameSender: true });
+    });
+
+    schedule(3800, () => {
+      makeBubble('doss',
+        'Best for: AI agents, infra, founders, sponsor intros.',
+        { sameSender: true });
+    });
+
+    // ===== Scene 2 — Who to meet =====
+    schedule(5800, () => {
+      makeBubble('user', 'Who should I meet?');
+    });
+
+    schedule(6600, () => { typingRow = showTyping(); });
+
+    schedule(7500, () => {
+      hideTyping(typingRow);
+      makeBubble('doss',
+`Top people:
+1. Arlan — Nozomio founder
+2. Conor — Hyperspell founder
+3. JunFan — AI/robotics builder
+4. Tatiana — hackathon connector
+5. Sam — technical builder`);
+    });
+
+    schedule(9000, () => showCard(cardPeople));
+    schedule(12200, () => hideCard(cardPeople));
+
+    // ===== Scene 3 — Why =====
+    schedule(12700, () => {
+      makeBubble('user', 'Why Arlan?');
+    });
+
+    schedule(13400, () => { typingRow = showTyping(); });
+
+    schedule(14200, () => {
+      hideTyping(typingRow);
+      makeBubble('doss', "He's building context infrastructure for AI agents.");
+    });
+
+    schedule(14900, () => {
+      makeBubble('doss',
+        'High-signal founder. Strong on product, infra, and sponsor insight.',
+        { sameSender: true });
+    });
+
+    // ===== Scene 4 — What to say =====
+    schedule(16800, () => {
+      makeBubble('user', 'What should I say?');
+    });
+
+    schedule(17500, () => { typingRow = showTyping(); });
+
+    schedule(18300, () => {
+      hideTyping(typingRow);
+      makeBubble('doss',
+        'Try:<span class="quote">"What context layer do agents still miss?"</span>');
+    });
+
+    schedule(20300, () => {
+      makeBubble('user', 'What about Tatiana?');
+    });
+
+    schedule(21000, () => { typingRow = showTyping(); });
+
+    schedule(21800, () => {
+      hideTyping(typingRow);
+      makeBubble('doss',
+        'Ask:<span class="quote">"What signals tell you an attendee list is actually high quality?"</span>');
+    });
+
+    // ===== Scene 5 — Close =====
+    schedule(24200, () => showCard(cardSummary));
+    schedule(26800, () => hideCard(cardSummary));
+
+    schedule(27200, () => {
+      makeBubble('doss', 'Never walk into a room cold.');
+    });
+
+    schedule(28800, () => {
+      endScreen.classList.add('show');
+    });
+
+    schedule(31200, () => {
+      replayBtn.classList.add('show');
+    });
+
+    schedule(33000, () => play());
+  }
+
+  replayBtn.addEventListener('click', () => {
+    play();
+  });
+
+  // Auto-play
+  play();
+})();
+</script>
+
+</body>
+</html>
