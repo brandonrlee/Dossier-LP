@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Doss — Dashboard</title>
+<meta name="description" content="A calm, premium intelligence tool for event networking." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%238B5CFF%22/><stop offset=%221%22 stop-color=%22%235B3DCC%22/></linearGradient></defs><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23FEFCFF%22/><text y=%22.9em%22 font-size=%2290%22 x=%2222%22 fill=%22url(%23g)%22 font-family=%22monospace%22 font-weight=%22700%22>d</text></svg>" />
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          background: 'hsl(285 100% 99%)',
+          card:       'hsl(0 0% 100%)',
+          secondary:  'hsl(258 100% 97%)',
+          muted:      'hsl(258 100% 97%)',
+          'muted-foreground': 'hsl(258 8% 44%)',
+          border:     'hsl(266 65% 91%)',
+          'border-strong': 'hsl(266 50% 82%)',
+          primary:    'hsl(258 100% 68%)',
+          'primary-deep': 'hsl(258 80% 52%)',
+          accent:     'hsl(327 100% 68%)',
+          foreground: 'hsl(258 14% 9%)',
+          surface:    'hsl(258 100% 98%)',
+        },
+        fontFamily: {
+          sans:  ['Geist', 'ui-sans-serif', 'system-ui'],
+          mono:  ['Geist Mono', 'ui-monospace', 'monospace'],
+          serif: ['Instrument Serif', 'ui-serif', 'Georgia']
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  :root {
+    --background: 285 100% 99%;
+    --card: 0 0% 100%;
+    --secondary: 258 100% 97%;
+    --muted: 258 100% 97%;
+    --muted-foreground: 258 8% 44%;
+    --border: 266 65% 91%;
+    --primary: 258 100% 68%;
+    --primary-deep: 258 80% 52%;
+    --accent: 327 100% 68%;
+    --foreground: 258 14% 9%;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    color: hsl(var(--foreground));
+    background:
+      radial-gradient(1200px 600px at 85% -10%, hsl(258 100% 95% / 0.55), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, hsl(327 100% 95% / 0.35), transparent 55%),
+      hsl(var(--background));
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  .font-mono { font-family: 'Geist Mono', ui-monospace, monospace; font-feature-settings: 'tnum', 'ss01'; }
+  .font-serif { font-family: 'Instrument Serif', ui-serif, Georgia, serif; font-style: normal; }
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  .surface {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 14px;
+    box-shadow: 0 1px 0 0 hsl(258 30% 95% / 0.6), 0 1px 3px 0 hsl(258 30% 60% / 0.04);
+  }
+  .surface-soft {
+    border-radius: 14px;
+    background: hsl(258 100% 98%);
+    border: 1px solid hsl(266 65% 93%);
+  }
+  .score-pill {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 7px;
+    background: hsl(258 100% 96%);
+    color: hsl(258 60% 40%);
+    border: 1px solid hsl(266 65% 92%);
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+  }
+  .signal-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: hsl(327 100% 68%);
+    box-shadow: 0 0 0 3px hsl(327 100% 92% / 0.7);
+    flex-shrink: 0;
+  }
+  .pip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 9px;
+    border-radius: 999px;
+    border: 1px solid;
+    line-height: 1.6;
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+    white-space: nowrap;
+  }
+  .pip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Subtle entrance animation only */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .rise   { animation: rise 0.4s ease-out both; }
+  .rise-1 { animation-delay: 0.05s; }
+  .rise-2 { animation-delay: 0.10s; }
+  .rise-3 { animation-delay: 0.15s; }
+
+  /* Slim lavender scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: hsl(266 60% 85% / 0.6); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(266 60% 75% / 0.8); border: 2px solid transparent; background-clip: padding-box; }
+  * { scrollbar-color: hsl(266 60% 85% / 0.6) transparent; scrollbar-width: thin; }
+
+  /* Sidebar nav link active */
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    color: hsl(var(--muted-foreground));
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease;
+    width: 100%;
+    text-align: left;
+    border: 0;
+    background: transparent;
+  }
+  .nav-item:hover { background: hsl(258 100% 98%); color: hsl(var(--foreground)); }
+  .nav-item.active {
+    background: hsl(258 100% 96%);
+    color: hsl(var(--foreground));
+    font-weight: 500;
+  }
+  .nav-item.active .nav-icon { color: hsl(258 60% 50%); }
+  .nav-icon { color: hsl(258 8% 60%); flex-shrink: 0; }
+
+  /* Filter chip */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: hsl(var(--muted-foreground));
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+    white-space: nowrap;
+  }
+  .chip:hover { border-color: hsl(266 60% 80%); color: hsl(var(--foreground)); }
+  .chip.active {
+    background: hsl(258 14% 9%);
+    border-color: hsl(258 14% 9%);
+    color: white;
+  }
+  .chip .chip-count { font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; opacity: 0.7; font-size: 11px; }
+
+  /* Event card */
+  .event-card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 16px;
+    padding: 20px;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .event-card:hover {
+    border-color: #C9B4ED;
+    box-shadow: 0 8px 24px -16px hsl(258 60% 50% / 0.18);
+  }
+  .event-card.selected {
+    box-shadow: 0 0 0 2px hsl(258 100% 68% / 0.30), 0 8px 24px -16px hsl(258 60% 50% / 0.18);
+    border-color: hsl(258 100% 68% / 0.4);
+  }
+  .event-card .chev {
+    position: absolute;
+    top: 18px; right: 18px;
+    color: hsl(266 50% 70%);
+    transition: transform 160ms ease, color 160ms ease;
+  }
+  .event-card:hover .chev { transform: translateX(2px); color: hsl(258 80% 55%); }
+
+  .ctag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 6px;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  /* Stacked avatars */
+  .avstack { display: inline-flex; }
+  .avstack > * + * { margin-left: -7px; }
+
+  /* Person row save button */
+  .save-btn {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: hsl(var(--muted-foreground));
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease;
+    flex-shrink: 0;
+  }
+  .save-btn:hover { background: hsl(258 100% 96%); color: hsl(258 60% 50%); }
+  .save-btn.saved { color: hsl(258 80% 55%); }
+  .person-row:hover .save-btn { opacity: 1; }
+  .person-row .save-btn { opacity: 0.5; transition: opacity 120ms ease, background 120ms ease, color 120ms ease; }
+
+  /* Sheets / drawers */
+  .scrim {
+    position: fixed; inset: 0;
+    background: hsl(258 14% 9% / 0.18);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+    z-index: 60;
+  }
+  .scrim.open { opacity: 1; pointer-events: auto; }
+
+  .sheet-right {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 100%;
+    max-width: 480px;
+    background: hsl(var(--card));
+    border-left: 1px solid hsl(var(--border));
+    box-shadow: -24px 0 60px -28px hsl(258 60% 30% / 0.18);
+    transform: translateX(100%);
+    transition: transform 260ms cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 70;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .sheet-right.open { transform: translateX(0); }
+
+  .sheet-left {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 280px;
+    background: hsl(var(--card));
+    border-right: 1px solid hsl(var(--border));
+    transform: translateX(-100%);
+    transition: transform 240ms ease;
+    z-index: 70;
+  }
+  .sheet-left.open { transform: translateX(0); }
+
+  /* Subtle focus ring */
+  .focus-ring:focus { outline: none; box-shadow: 0 0 0 3px hsl(258 100% 68% / 0.20); border-color: hsl(258 100% 68%); }
+
+  /* Tooltip */
+  .tt { position: relative; }
+  .tt:hover .tt-bubble { opacity: 1; transform: translateY(0); }
+  .tt-bubble {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translate(-50%, 4px);
+    background: hsl(258 14% 9%);
+    color: white;
+    font-size: 11px;
+    padding: 5px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 160ms ease, transform 160ms ease;
+    z-index: 5;
+  }
+
+  /* Layout */
+  .app-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    height: 100vh;
+  }
+  @media (min-width: 1280px) {
+    .app-grid.with-detail { grid-template-columns: 240px 1fr 440px; }
+  }
+  @media (max-width: 1023px) {
+    .app-grid { grid-template-columns: 1fr; }
+    .sidebar-fixed { display: none !important; }
+    .mobile-bar { display: flex !important; }
+  }
+
+  .clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Event detail (inline column on xl+) */
+  .detail-col {
+    border-left: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+    overflow-y: auto;
+    padding: 24px;
+    display: none;
+  }
+  @media (min-width: 1280px) {
+    .detail-col.open { display: block; }
+  }
+
+  .timeline-line {
+    background: linear-gradient(to bottom, hsl(266 65% 88%), transparent);
+    width: 1px;
+  }
+
+  /* dim a list when empty state shown */
+  .empty-state { color: hsl(var(--muted-foreground)); font-size: 13px; padding: 14px 0; }
+
+  kbd {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    background: hsl(258 100% 96%);
+    border: 1px solid hsl(var(--border));
+    padding: 2px 5px;
+    border-radius: 4px;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .btn-primary {
+    background: hsl(258 100% 68%);
+    color: white;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 120ms ease;
+  }
+  .btn-primary:hover { background: hsl(258 90% 60%); }
+  .btn-outline {
+    background: white;
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 120ms ease, border-color 120ms ease;
+  }
+  .btn-outline:hover { background: hsl(258 100% 98%); border-color: hsl(266 60% 80%); }
+  .btn-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: transparent;
+    border: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: hsl(var(--muted-foreground));
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease;
+  }
+  .btn-icon:hover { background: hsl(258 100% 96%); color: hsl(var(--foreground)); }
+</style>
+</head>
+<body>
+
+<!-- Mobile top bar -->
+<div class="mobile-bar hidden items-center justify-between px-4 sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-border" style="height: 56px;">
+  <button class="btn-icon" id="open-sidebar" aria-label="Open menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="flex items-center gap-2">
+    <span class="font-serif text-[20px]" style="letter-spacing: -0.01em;">Doss</span>
+  </div>
+  <div style="width: 32px;"></div>
+</div>
+
+<div class="app-grid" id="appGrid">
+
+  <!-- Sidebar (lg+) -->
+  <aside class="sidebar-fixed border-r border-border bg-white/60 backdrop-blur-md flex flex-col" style="height: 100vh;">
+    <div class="flex items-center gap-2 px-5 pt-5 pb-4">
+      <span class="inline-flex items-center justify-center" style="width: 26px; height: 26px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="hsl(258 80% 55%)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      </span>
+      <span class="font-serif text-[20px] tracking-tight">Doss</span>
+    </div>
+
+    <nav class="px-3 flex flex-col gap-0.5">
+      <button class="nav-item active" data-tab="dashboard">
+        <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-tab="events">
+        <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Events</span>
+      </button>
+      <button class="nav-item" data-tab="people">
+        <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>People</span>
+      </button>
+      <button class="nav-item" data-tab="saved">
+        <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <span class="flex-1">Saved</span>
+        <span id="savedCount" class="font-mono tabular text-[11px] text-muted-foreground"></span>
+      </button>
+      <button class="nav-item" data-tab="settings">
+        <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+
+    <div class="px-4 mt-5">
+      <div class="surface-soft p-3.5 flex flex-col gap-1.5">
+        <div class="flex items-center gap-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="hsl(327 80% 55%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.5 5L18 8l-4.5 1L12 14l-1.5-5L6 8l4.5-1z"/><path d="M5 16l.8 2.7L8 19l-2.2.3L5 22l-.8-2.7L2 19l2.2-.3z"/><path d="M19 14l.5 1.7 1.7.3-1.7.3L19 18l-.5-1.7-1.7-.3 1.7-.3z"/></svg>
+          <span class="text-[11px] font-medium uppercase tracking-wider" style="color: hsl(258 60% 45%);">This week</span>
+        </div>
+        <div class="text-[12.5px]" style="color: hsl(var(--foreground)); line-height: 1.45;">
+          <span class="font-mono tabular font-medium">3</span> high-signal events,
+          <span class="font-mono tabular font-medium">42</span> people worth meeting.
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-auto px-4 py-4 border-t border-border flex items-center gap-2.5">
+      <div class="rounded-full" style="width: 32px; height: 32px; background: linear-gradient(135deg, hsl(258 80% 88%), hsl(290 80% 78%)); color: hsl(258 60% 28%); display: grid; place-items: center; font-size: 12px; font-weight: 600; border: 1px solid hsl(0 0% 100% / 0.6);">B</div>
+      <div class="flex flex-col leading-tight min-w-0">
+        <span class="text-[13px] font-medium truncate">Brandon</span>
+        <span class="text-[11px] text-muted-foreground truncate">Tract · SF</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main scroll area -->
+  <main class="overflow-y-auto" style="height: 100vh;">
+    <div class="px-6 md:px-8 py-7 md:py-9 max-w-[1100px]">
+
+      <!-- DASHBOARD / EVENTS view -->
+      <section id="view-dashboard" class="view">
+        <div class="flex flex-col gap-1.5 rise rise-1">
+          <div class="text-[11px] font-medium uppercase tracking-wider flex items-center gap-2" style="color: hsl(var(--muted-foreground));">
+            <span class="signal-dot" style="width: 6px; height: 6px;"></span>
+            <span>Tonight</span>
+          </div>
+          <h1 class="font-serif text-[44px] md:text-[48px]" style="line-height: 1.05; letter-spacing: -0.012em;" id="greeting">Good evening, Brandon.</h1>
+          <p class="text-[15px]" style="color: hsl(var(--muted-foreground));">
+            <span class="font-mono tabular text-foreground" id="evCount">6</span> events ahead.
+            <span class="font-mono tabular text-foreground" id="ppCount">14</span> people worth meeting.
+          </p>
+        </div>
+
+        <div class="mt-6 flex items-center gap-2 rise rise-2">
+          <div class="surface flex items-center gap-2 px-3 flex-1" style="height: 44px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="hsl(258 8% 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="searchInput" placeholder="Search events, people, companies…" class="flex-1 bg-transparent border-0 outline-none text-[14px] focus-ring" style="line-height: 1; padding: 4px 0;" />
+            <kbd class="hidden md:inline">⌘K</kbd>
+          </div>
+        </div>
+
+        <div class="mt-3 flex items-center gap-2 flex-wrap rise rise-3">
+          <span class="inline-flex items-center gap-1.5 text-[11.5px] font-medium uppercase tracking-wider" style="color: hsl(var(--muted-foreground));">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            Filter
+          </span>
+          <div id="categoryChips" class="flex items-center gap-2 flex-wrap"></div>
+          <button id="clearChips" class="text-[11.5px] underline ml-1 hidden" style="color: hsl(var(--muted-foreground)); cursor: pointer; background: transparent; border: 0;">clear</button>
+        </div>
+
+        <div id="eventsByCategory" class="mt-6 flex flex-col gap-7"></div>
+      </section>
+
+      <!-- PEOPLE view -->
+      <section id="view-people" class="view hidden">
+        <div class="flex flex-col gap-1.5 rise rise-1">
+          <div class="text-[11px] font-medium uppercase tracking-wider" style="color: hsl(var(--muted-foreground));">Network</div>
+          <h1 class="font-serif text-[44px] md:text-[48px]" style="line-height: 1.05; letter-spacing: -0.012em;">People</h1>
+          <p class="text-[15px]" style="color: hsl(var(--muted-foreground)); max-width: 620px;">
+            A living rolodex. Every person Doss finds at an event is here — with their full event history.
+            <span class="font-mono tabular text-foreground" id="repeatCount"></span> people show up across multiple high-signal rooms.
+          </p>
+        </div>
+
+        <div class="mt-6 surface flex items-center gap-2 px-3 rise rise-2" style="height: 44px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="hsl(258 8% 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="peopleSearch" placeholder="Search people, companies, roles…" class="flex-1 bg-transparent border-0 outline-none text-[14px] focus-ring" style="padding: 4px 0;"/>
+        </div>
+
+        <div id="peopleChips" class="mt-3 flex items-center gap-2 flex-wrap rise rise-3"></div>
+
+        <div id="peopleGrid" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </section>
+
+      <!-- SAVED view -->
+      <section id="view-saved" class="view hidden">
+        <div class="flex flex-col gap-1.5 rise rise-1">
+          <div class="text-[11px] font-medium uppercase tracking-wider" style="color: hsl(var(--muted-foreground));">Shortlist</div>
+          <h1 class="font-serif text-[44px] md:text-[48px]" style="line-height: 1.05; letter-spacing: -0.012em;">Your shortlist</h1>
+          <p class="text-[15px]" style="color: hsl(var(--muted-foreground));">People you've saved, and the events where they'll be.</p>
+        </div>
+
+        <div class="mt-7">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-[13px] font-medium uppercase tracking-wider" style="color: hsl(var(--foreground));">Saved people</h2>
+            <span id="savedPeopleCount" class="text-[11px] text-muted-foreground font-mono tabular"></span>
+          </div>
+          <div id="savedPeopleGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        </div>
+
+        <div class="mt-9">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-[13px] font-medium uppercase tracking-wider" style="color: hsl(var(--foreground));">Events with saved people</h2>
+            <span id="savedEventsCount" class="text-[11px] text-muted-foreground font-mono tabular"></span>
+          </div>
+          <div id="savedEventsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        </div>
+      </section>
+
+      <!-- SETTINGS view -->
+      <section id="view-settings" class="view hidden">
+        <div class="flex flex-col gap-1.5 rise rise-1">
+          <div class="text-[11px] font-medium uppercase tracking-wider" style="color: hsl(var(--muted-foreground));">Settings</div>
+          <h1 class="font-serif text-[44px] md:text-[48px]" style="line-height: 1.05; letter-spacing: -0.012em;">Tune your signal</h1>
+          <p class="text-[15px]" style="color: hsl(var(--muted-foreground)); max-width: 540px;">Tell Doss what you care about so the rooms feel sharper every week.</p>
+        </div>
+
+        <div class="mt-7 surface p-5 rise rise-2">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <h3 class="text-[13px] font-medium uppercase tracking-wider">Goals</h3>
+            <button class="btn-outline" style="padding: 6px 10px; font-size: 12px;">Edit</button>
+          </div>
+          <p class="text-[14px]" style="color: hsl(var(--foreground)); line-height: 1.55;">
+            Meet 5 healthcare AI investors and 3 vertical-AI founders by Q1 2026. Re-engage 2 prior intros from past Doss events. Avoid generic mixers.
+          </p>
+        </div>
+
+        <div class="mt-4 surface p-5 rise rise-3">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <h3 class="text-[13px] font-medium uppercase tracking-wider">Categories I care about</h3>
+            <button class="btn-outline" style="padding: 6px 10px; font-size: 12px;">Edit</button>
+          </div>
+          <div id="settingsCats" class="flex items-center gap-2 flex-wrap"></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Event detail column (xl+) -->
+  <aside id="detailCol" class="detail-col"></aside>
+
+</div>
+
+<!-- Mobile sidebar sheet -->
+<div class="scrim" id="scrim"></div>
+<aside id="sidebarSheet" class="sheet-left">
+  <div class="flex items-center justify-between px-5 pt-5 pb-3">
+    <span class="font-serif text-[20px]">Doss</span>
+    <button class="btn-icon" id="closeSidebar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <nav class="px-3 flex flex-col gap-0.5" id="mobileNav"></nav>
+</aside>
+
+<!-- Event detail sheet (smaller screens) -->
+<aside id="detailSheet" class="sheet-right" style="z-index: 75;"></aside>
+
+<!-- Person profile drawer -->
+<aside id="profileDrawer" class="sheet-right" style="max-width: 480px; z-index: 80;"></aside>
+
+<script>
+/* =====================================================================
+   DATA
+===================================================================== */
+
+const ME = { firstName: 'Brandon', goal: 'Meet 5 healthcare AI investors and 3 vertical-AI founders by Q1 2026.' };
+
+const CATEGORIES = {
+  'private':       { label: 'Private / Invite-only', tagBg: 'rgba(22,20,28,0.05)', tagText: '#16141C',  dot: '#16141C' },
+  'ai-tech':       { label: 'AI / Tech',             tagBg: '#EFF7FF',             tagText: '#1E5BBF',  dot: '#1E5BBF' },
+  'startup-vc':    { label: 'Startup / VC',          tagBg: '#F1ECFF',             tagText: '#5B3DCC',  dot: '#5B3DCC' },
+  'healthcare':    { label: 'Healthcare',            tagBg: '#EAF8F1',             tagText: '#1F7A4F',  dot: '#1F7A4F' },
+  'university':    { label: 'University / Student',  tagBg: '#FFF7E6',             tagText: '#9A6B0A',  dot: '#9A6B0A' },
+  'creator-social':{ label: 'Creator / Social',      tagBg: '#FFF0F8',             tagText: '#B83085',  dot: '#B83085' }
+};
+const CATEGORY_ORDER = ['private', 'ai-tech', 'startup-vc', 'healthcare', 'university', 'creator-social'];
+
+const STATUSES = {
+  'not-met':      { label: 'Not met',      dot: '#9CA3AF', text: '#6F687A', bg: '#F3F4F6', border: '#E5E7EB' },
+  'want-to-meet': { label: 'Want to meet', dot: '#8B5CFF', text: '#5B3DCC', bg: '#F1ECFF', border: '#E1D4FD' },
+  'saved':        { label: 'Saved',        dot: '#8B5CFF', text: '#5B3DCC', bg: '#F1ECFF', border: '#E1D4FD' },
+  'met':          { label: 'Met',          dot: '#1F9D55', text: '#1F7A4F', bg: '#EAF8F1', border: '#C6F6D5' },
+  'followed-up':  { label: 'Followed up',  dot: '#1F9D55', text: '#1F7A4F', bg: '#EAF8F1', border: '#C6F6D5' },
+  'ignored':      { label: 'Ignored',      dot: '#9CA3AF', text: '#6F687A', bg: '#F3F4F6', border: '#E5E7EB' }
+};
+
+const PEOPLE = [
+  { id: 'p_sarah_chen',      name: 'Sarah Chen',      title: 'Partner',                  company: 'SeedFund',            tags: ['AI','Healthcare','Seed'],         score: 94, status: 'saved',         eventIds: ['e_ai_founder_dinner','e_cerebral_valley','e_healthcare_roundtable'], initials: 'SC', hue: 270, whyMeet: "Leads SeedFund's healthcare AI thesis. Six checks in clinical workflow startups in 2025.", talkingPoint: "Ask about her thesis on diagnostics vs. workflow wedges — she's been blogging about this all year.", introMessage: "Hi Sarah — Brandon here. Saw your recent piece on vertical AI in clinical workflow. We're building infra for ambient EHR agents and would love 20 minutes of your time.", summary: "Joined SeedFund in 2022 from a16z bio. Author of the 'Vertical AI in Healthcare' thesis." },
+  { id: 'p_marcus_webb',     name: 'Marcus Webb',     title: 'Founder & CEO',            company: 'Cortex',              tags: ['AI','Agents','Infra'],            score: 91, status: 'met',           eventIds: ['e_ai_founder_dinner','e_cerebral_valley'], initials: 'MW', hue: 200, whyMeet: "Cortex shipped agent infra to Fortune 500 in six months. Knows the pain of long-running agents at scale.", talkingPoint: "He has strong opinions on Anthropic vs OpenAI for tool use — easy to get him talking.", introMessage: "Hey Marcus — followed up after the dinner. Would love your read on our eval setup for long-horizon tasks. 15 min next week?", summary: "Ex-Stripe infra eng. Cortex Series A led by Sequoia in March 2025." },
+  { id: 'p_priya_raman',     name: 'Priya Raman',     title: 'Partner',                  company: 'First Round',         tags: ['Vertical AI','Enterprise'],       score: 89, status: 'want-to-meet',  eventIds: ['e_ai_founder_dinner','e_cerebral_valley','e_yc_demo','e_stanford_mixer'], initials: 'PR', hue: 30,  whyMeet: "Pre-seed checks into Cursor and Cognition. Decisive — no second meeting." },
+  { id: 'p_daniel_park',     name: 'Daniel Park',     title: 'VP Product',               company: 'Vercel',              tags: ['Devtools','DX'],                  score: 86, status: 'followed-up',   eventIds: ['e_ai_founder_dinner','e_cerebral_valley'], initials: 'DP', hue: 220, whyMeet: "Owns DX at Vercel. Best person in tech to test devtools positioning with." },
+  { id: 'p_elena_rodriguez', name: 'Elena Rodriguez', title: 'Founder & CEO',            company: 'Remedy',              tags: ['Healthcare','Clinical AI'],       score: 92, status: 'saved',         eventIds: ['e_ai_founder_dinner','e_cerebral_valley','e_healthcare_roundtable'], initials: 'ER', hue: 340, whyMeet: "Remedy is the most credible clinical AI startup in YC F24. Backed by a16z bio.", talkingPoint: "She's deep on prior-auth automation. Comes alive talking about claims data.", introMessage: "Elena — congrats on the recent raise. Curious if you're hiring on the eval side. Brandon @ Tract.", summary: "Ex-Verily product. YC F24. $14M seed at $80M post." },
+  { id: 'p_tomas_acuna',     name: 'Tomas Acuna',     title: 'General Partner',          company: 'Spark Capital',       tags: ['Seed','Frontier'],                score: 88, status: 'want-to-meet',  eventIds: ['e_cerebral_valley','e_yc_demo','e_healthcare_roundtable'], initials: 'TA', hue: 50,  whyMeet: "Spark just closed Fund VII. Writing $1–4M seed checks and looking for frontier teams." },
+  { id: 'p_aisha_kapoor',    name: 'Aisha Kapoor',    title: 'Founder & CEO',            company: 'Lumen',               tags: ['Creator','Growth'],               score: 84, status: 'want-to-meet',  eventIds: ['e_cerebral_valley','e_creator_brunch'], initials: 'AK', hue: 320, whyMeet: "Lumen is becoming the default creator analytics layer. 14M MAU in 18 months." },
+  { id: 'p_jordan_reeves',   name: 'Jordan Reeves',   title: 'Research Engineer',        company: 'Anthropic',           tags: ['AI','Agents','Research'],         score: 90, status: 'not-met',       eventIds: ['e_ai_founder_dinner'], initials: 'JR', hue: 180, whyMeet: "Anthropic agents team. Quietly shipping the eval loop most teams are missing." },
+  { id: 'p_kenji_tanaka',    name: 'Kenji Tanaka',    title: 'Founder & CEO',            company: 'Rookie Health',       tags: ['Healthcare','Operator'],          score: 87, status: 'saved',         eventIds: ['e_cerebral_valley','e_healthcare_roundtable'], initials: 'KT', hue: 100, whyMeet: "Rookie Health is YC F24 with $9M ARR in clinic ops. Hiring eng #5–8." },
+  { id: 'p_lila_brown',      name: 'Lila Brown',      title: 'Investor',                 company: 'Founders Fund',       tags: ['Frontier','Seed'],                score: 93, status: 'saved',         eventIds: ['e_ai_founder_dinner','e_cerebral_valley','e_yc_demo','e_stanford_mixer'], initials: 'LB', hue: 280, whyMeet: "Leads Founders Fund's frontier model investments. Closed Mistral and Suno.", talkingPoint: "Ask her view on closed vs. open weights for vertical applications — she's surprisingly nuanced.", introMessage: "Lila — Brandon, briefly met at Cerebral Valley. Working on agent reliability — I think you'll have a sharp opinion on our take. Coffee?", summary: "Founders Fund principal since 2023. Stanford CS '19, ex-Palantir forward deployed." },
+  { id: 'p_felix_ng',        name: 'Felix Ng',        title: 'General Partner',          company: 'HF0 Fellowship',      tags: ['Accelerator','Founders'],         score: 89, status: 'want-to-meet',  eventIds: ['e_ai_founder_dinner','e_cerebral_valley'], initials: 'FN', hue: 250, whyMeet: "Runs HF0 — 12-week residency for technical founders. Backs early." },
+  { id: 'p_marina_solo',     name: 'Marina Solo',     title: 'Founder',                  company: 'Stitch',              tags: ['Devtools','OSS'],                 score: 85, status: 'not-met',       eventIds: ['e_ai_founder_dinner'], initials: 'MS', hue: 160, whyMeet: "Stitch is OSS UI primitives gaining traction in next-gen agent IDEs." },
+  { id: 'p_aaron_vasquez',   name: 'Aaron Vasquez',   title: 'Surgeon & Founder',        company: 'UCSF / Stealth',      tags: ['Healthcare','Operator'],          score: 86, status: 'not-met',       eventIds: ['e_healthcare_roundtable'], initials: 'AV', hue: 130, whyMeet: "Practicing cardiothoracic surgeon spinning out a clinical decision support tool." },
+  { id: 'p_mira_patel',      name: 'Mira Patel',      title: "Stanford GSB '26",         company: 'Stanford',            tags: ['Student','Founders'],             score: 79, status: 'not-met',       eventIds: ['e_cerebral_valley'], initials: 'MP', hue: 290, whyMeet: "Stanford GSB '26. Deep ML background, looking for cofounder for healthcare GTM." }
+];
+
+const EVENTS = [
+  { id: 'e_ai_founder_dinner', name: 'AI Founder Dinner – Mission', category: 'private',        date: 'Fri, Nov 14', dayLabel: 'In 5 days',  time: '7:00 PM', location: 'Mission District',         city: 'San Francisco', summary: "Invite-only dinner for founders building agent infrastructure and applied AI. Curated by HF0.", topSignal: "High concentration of seed investors writing first checks in agent infra.", attendingPersonIds: ['p_sarah_chen','p_marcus_webb','p_priya_raman','p_daniel_park','p_elena_rodriguez','p_lila_brown','p_felix_ng','p_jordan_reeves','p_marina_solo'] },
+  { id: 'e_cerebral_valley',   name: 'Cerebral Valley Demo Night',  category: 'ai-tech',        date: 'Tue, Nov 18', dayLabel: 'In 9 days',  time: '6:30 PM', location: 'Shack15, Ferry Building',  city: 'San Francisco', summary: "Demo night for newly-funded AI startups across infra, agents, and vertical apps.", topSignal: "Frontier-model VCs sharing a room with operator-led healthcare AI startups.", attendingPersonIds: ['p_sarah_chen','p_marcus_webb','p_priya_raman','p_daniel_park','p_elena_rodriguez','p_lila_brown','p_felix_ng','p_aisha_kapoor','p_tomas_acuna','p_kenji_tanaka','p_mira_patel'] },
+  { id: 'e_yc_demo',           name: 'Y Combinator Fall Demo Day',  category: 'startup-vc',     date: 'Wed, Nov 19', dayLabel: 'In 10 days', time: '9:00 AM', location: 'YC HQ, Mountain View',     city: 'San Francisco', summary: "YC's Fall Demo Day. Half-AI half-everything. Seed investors swarm.", topSignal: "Top-decile seed VCs concentrated in two hours.", attendingPersonIds: ['p_priya_raman','p_lila_brown','p_tomas_acuna'] },
+  { id: 'e_healthcare_roundtable', name: 'Healthcare AI Roundtable at UCSF', category: 'healthcare', date: 'Thu, Nov 20', dayLabel: 'In 11 days', time: '5:00 PM', location: 'UCSF Mission Bay',        city: 'San Francisco', summary: "Roundtable on clinical AI deployment for cardiology and oncology workflows.", topSignal: "Practicing clinicians sharing the room with healthcare-AI VCs and operators.", attendingPersonIds: ['p_sarah_chen','p_elena_rodriguez','p_kenji_tanaka','p_aaron_vasquez','p_tomas_acuna'] },
+  { id: 'e_stanford_mixer',    name: 'Stanford GSB Founder Mixer',  category: 'university',     date: 'Sat, Nov 22', dayLabel: 'In 13 days', time: '7:00 PM', location: 'Knight Management Center', city: 'Palo Alto',     summary: "Annual GSB mixer for student founders, investor mentors, and recent grads.", topSignal: "Two top-quartile VCs scouting student-led teams pre-Demo Day.", attendingPersonIds: ['p_priya_raman','p_lila_brown','p_mira_patel'] },
+  { id: 'e_creator_brunch',    name: 'Creator Economy Brunch',      category: 'creator-social', date: 'Sun, Nov 23', dayLabel: 'In 14 days', time: '11:00 AM', location: 'Marina',                  city: 'San Francisco', summary: "Sunday brunch for creator-tools founders, growth marketers, and angel investors.", topSignal: "Hands-on creator-tools founders with active distribution audiences.", attendingPersonIds: ['p_aisha_kapoor'] }
+];
+
+const PEOPLE_FILTERS = [
+  { key: 'everyone',  label: 'Everyone', match: () => true },
+  { key: 'founders',  label: 'Founders', match: p => /Founder|CEO|Surgeon/i.test(p.title) },
+  { key: 'vcs',       label: 'VCs',      match: p => /Partner|Investor|VC|Capital|Fund|Fellowship/i.test(p.title + ' ' + p.company) },
+  { key: 'engineers', label: 'Engineers', match: p => /Engineer|Eng|Devtools|Infra/i.test(p.title + ' ' + p.tags.join(' ')) },
+  { key: 'healthcare',label: 'Healthcare', match: p => p.tags.some(t => /Healthcare|Clinical/i.test(t)) },
+  { key: 'ai',        label: 'AI',         match: p => p.tags.some(t => /^AI$|Agents|Research|Vertical AI|Frontier/i.test(t)) },
+  { key: 'students',  label: 'Students',   match: p => p.tags.some(t => /Student/i.test(t)) },
+  { key: 'operators', label: 'Operators',  match: p => p.tags.some(t => /Operator/i.test(t)) },
+  { key: 'investors', label: 'Investors',  match: p => p.tags.some(t => /Seed|Frontier|Accelerator/i.test(t)) || /Partner|Investor|Fund/i.test(p.title) },
+];
+
+/* =====================================================================
+   STATE
+===================================================================== */
+
+const state = {
+  tab: 'dashboard',
+  search: '',
+  activeCategories: new Set(),
+  selectedEventId: 'e_ai_founder_dinner',
+  selectedPerson: null,
+  profileOpen: false,
+  detailSheetOpen: false,
+  sidebarOpen: false,
+  peopleFilter: 'everyone',
+  peopleSearch: '',
+  people: PEOPLE.map(p => ({ ...p }))
+};
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+/* =====================================================================
+   HELPERS
+===================================================================== */
+
+const personById = id => state.people.find(p => p.id === id);
+const eventById  = id => EVENTS.find(e => e.id === id);
+const isHighRepeat = p => p.eventIds.length >= 4;
+const tier = s => s >= 92 ? 'Exceptional' : s >= 85 ? 'High' : s >= 78 ? 'Strong' : 'Notable';
+
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+
+function avatarHTML(p, size = 38) {
+  const grad = `linear-gradient(135deg, hsl(${p.hue} 80% 88%), hsl(${(p.hue + 30) % 360} 80% 78%))`;
+  const fg = `hsl(${p.hue} 60% 28%)`;
+  const fontSize = Math.max(10, Math.round(size * 0.36));
+  return `<span style="width:${size}px;height:${size}px;border-radius:50%;background:${grad};color:${fg};font-size:${fontSize}px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;border:1px solid hsl(0 0% 100% / 0.6);flex-shrink:0;">${escapeHtml(p.initials)}</span>`;
+}
+
+function categoryTag(cat) {
+  const meta = CATEGORIES[cat];
+  return `<span class="ctag" style="background:${meta.tagBg};color:${meta.tagText};">
+    <span class="pip-dot" style="background:${meta.dot};"></span>${escapeHtml(meta.label)}
+  </span>`;
+}
+
+function statusPipHTML(status, active = false) {
+  const meta = STATUSES[status];
+  return `<span class="pip" data-status="${status}" style="background:${active ? meta.bg : 'transparent'};color:${meta.text};border-color:${active ? meta.border : 'hsl(var(--border))'};">
+    <span class="pip-dot" style="background:${meta.dot};"></span>${meta.label}
+  </span>`;
+}
+
+function tagChips(tags) {
+  return tags.map(t => `<span class="ctag" style="background:hsl(258 100% 97%);color:hsl(258 50% 38%);">${escapeHtml(t)}</span>`).join('');
+}
+
+function bookmarkSVG(filled) {
+  const fill = filled ? 'hsl(258 80% 55%)' : 'none';
+  const stroke = filled ? 'hsl(258 80% 55%)' : 'currentColor';
+  return `<svg width="16" height="16" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`;
+}
+
+function eyeSVG()      { return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`; }
+function clockSVG()    { return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`; }
+function pinSVG()      { return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`; }
+function chevSVG()     { return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`; }
+function sparkleSVG()  { return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.5 5L18 8l-4.5 1L12 14l-1.5-5L6 8l4.5-1z"/></svg>`; }
+function repeatSVG()   { return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`; }
+function trendUpSVG()  { return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`; }
+function arrowUpRightSVG() { return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>`; }
+function quoteSVG()    { return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`; }
+function xSVG()        { return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`; }
+function copySVG()     { return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`; }
+
+/* =====================================================================
+   RENDER — DASHBOARD
+===================================================================== */
+
+function renderCategoryChips() {
+  const counts = {};
+  for (const ev of EVENTS) counts[ev.category] = (counts[ev.category] || 0) + 1;
+  const html = CATEGORY_ORDER
+    .filter(c => (counts[c] || 0) > 0)
+    .map(c => {
+      const meta = CATEGORIES[c];
+      const active = state.activeCategories.has(c);
+      return `<button class="chip ${active ? 'active' : ''}" data-cat="${c}">
+        <span class="pip-dot" style="background:${active ? '#fff' : meta.dot};"></span>
+        ${escapeHtml(meta.label)}
+        <span class="chip-count">${counts[c]}</span>
+      </button>`;
+    }).join('');
+  $('#categoryChips').innerHTML = html;
+  $('#clearChips').classList.toggle('hidden', state.activeCategories.size === 0);
+}
+
+function searchMatchesEvent(ev) {
+  const q = state.search.trim().toLowerCase();
+  if (!q) return true;
+  if (ev.name.toLowerCase().includes(q)) return true;
+  if (ev.summary.toLowerCase().includes(q)) return true;
+  if (ev.location.toLowerCase().includes(q)) return true;
+  for (const pid of ev.attendingPersonIds) {
+    const p = personById(pid);
+    if (!p) continue;
+    if (p.name.toLowerCase().includes(q)) return true;
+    if (p.company.toLowerCase().includes(q)) return true;
+  }
+  return false;
+}
+
+function categoryMatchesEvent(ev) {
+  if (state.activeCategories.size === 0) return true;
+  return state.activeCategories.has(ev.category);
+}
+
+function eventCardHTML(ev) {
+  const meta = CATEGORIES[ev.category];
+  const attendees = ev.attendingPersonIds.map(personById).filter(Boolean);
+  const high = attendees.filter(p => p.score >= 85).length;
+  const seen = attendees.filter(p => p.eventIds.length >= 2).length;
+  const saved = attendees.filter(p => p.status === 'saved').length;
+  const stack = attendees.slice(0, 4).map(p => avatarHTML(p, 22)).join('');
+  const more = attendees.length > 4 ? `<span class="font-mono tabular text-[11px] text-muted-foreground ml-2">+${attendees.length - 4}</span>` : '';
+  const selected = state.selectedEventId === ev.id ? 'selected' : '';
+  return `
+  <button class="event-card ${selected}" data-event="${ev.id}">
+    <span class="chev">${chevSVG()}</span>
+    <div class="flex items-center gap-2.5">
+      ${categoryTag(ev.category)}
+      <span class="font-mono tabular text-[11px] text-muted-foreground">${escapeHtml(ev.dayLabel)}</span>
+    </div>
+    <div class="flex flex-col gap-1.5 pr-7">
+      <h3 class="text-[16px] font-medium tracking-tight truncate">${escapeHtml(ev.name)}</h3>
+      <div class="flex items-center gap-3 text-[12.5px] text-muted-foreground">
+        <span class="inline-flex items-center gap-1.5">${clockSVG()}<span>${escapeHtml(ev.date)} · ${escapeHtml(ev.time)}</span></span>
+        <span class="inline-flex items-center gap-1.5">${pinSVG()}<span class="truncate">${escapeHtml(ev.location)}</span></span>
+      </div>
+    </div>
+    <p class="text-[13px] clamp-2" style="color: hsl(258 8% 38%); line-height: 1.5;">${escapeHtml(ev.summary)}</p>
+    <div class="flex items-end justify-between gap-3 pt-1">
+      <div class="flex items-center"><span class="avstack">${stack}</span>${more}</div>
+      <div class="flex items-center gap-3 text-[11.5px] font-mono tabular text-muted-foreground">
+        <span>${high} high-signal</span>
+        <span>·</span>
+        <span class="inline-flex items-center gap-1">${eyeSVG()} ${seen} seen before</span>
+        ${saved > 0 ? `<span>·</span><span class="inline-flex items-center gap-1" style="color:hsl(258 80% 55%);">${bookmarkSVG(true)} ${saved}</span>` : ''}
+      </div>
+    </div>
+    <div class="border-t border-dashed border-border pt-2.5 flex items-center gap-2 text-[12.5px]">
+      <span style="color:hsl(327 80% 55%);">${sparkleSVG()}</span>
+      <span class="text-muted-foreground">Top signal:</span>
+      <span class="font-medium truncate" style="color: hsl(var(--foreground));">${escapeHtml(ev.topSignal)}</span>
+    </div>
+  </button>`;
+}
+
+function renderEvents() {
+  const filtered = EVENTS.filter(ev => searchMatchesEvent(ev) && categoryMatchesEvent(ev));
+  const root = $('#eventsByCategory');
+  if (filtered.length === 0) {
+    root.innerHTML = `<div class="empty-state">No events match your filters.</div>`;
+    return;
+  }
+  const groups = CATEGORY_ORDER.map(cat => ({ cat, events: filtered.filter(e => e.category === cat) })).filter(g => g.events.length > 0);
+  root.innerHTML = groups.map(({ cat, events }) => `
+    <div class="flex flex-col gap-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-[12.5px] font-medium uppercase tracking-wider flex items-center gap-2" style="color: hsl(var(--foreground));">
+          <span class="pip-dot" style="background:${CATEGORIES[cat].dot};"></span>
+          ${escapeHtml(CATEGORIES[cat].label)}
+        </h2>
+        <span class="text-[11px] text-muted-foreground font-mono tabular">${events.length}</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        ${events.map(eventCardHTML).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  $$('.event-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.selectedEventId = btn.dataset.event;
+      const isLg = window.matchMedia('(min-width: 1280px)').matches;
+      if (isLg) {
+        renderDetail();
+        $('#appGrid').classList.add('with-detail');
+        $('#detailCol').classList.add('open');
+      } else {
+        openDetailSheet();
+      }
+      renderEvents();
+    });
+  });
+
+  // Counters
+  $('#evCount').textContent = EVENTS.length;
+  $('#ppCount').textContent = state.people.length;
+}
+
+/* =====================================================================
+   RENDER — EVENT DETAIL
+===================================================================== */
+
+function personRowHTML(p, opts = {}) {
+  const { rank = null, showWhy = true, showSeenBefore = false } = opts;
+  const high = isHighRepeat(p);
+  const status = STATUSES[p.status];
+  return `
+    <div class="person-row flex items-start gap-3 py-3 border-b border-border last:border-0" data-person="${p.id}">
+      ${rank !== null ? `<span class="font-mono tabular text-[12px] mt-1" style="color: hsl(258 50% 70%); width: 22px; flex-shrink:0;">${String(rank).padStart(2,'0')}</span>` : ''}
+      ${avatarHTML(p, 38)}
+      <div class="flex-1 min-w-0 cursor-pointer">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-[13.5px] font-medium truncate">${escapeHtml(p.name)}</span>
+          <span class="score-pill">${p.score}</span>
+          ${high ? `<span class="tt"><span class="signal-dot"></span><span class="tt-bubble">High repeat signal · seen at ${p.eventIds.length} events</span></span>` : ''}
+        </div>
+        <div class="text-[12px] text-muted-foreground truncate mt-0.5">${escapeHtml(p.title)} · ${escapeHtml(p.company)}</div>
+        ${showWhy && p.whyMeet ? `<div class="text-[12.5px] mt-1.5" style="color: hsl(258 8% 38%); line-height: 1.5;">${escapeHtml(p.whyMeet)}</div>` : ''}
+        <div class="flex items-center gap-1.5 mt-2 flex-wrap">
+          ${tagChips(p.tags)}
+          ${showSeenBefore ? `<span class="ctag" style="background:hsl(327 100% 96%);color:hsl(327 60% 38%);">${eyeSVG()} Seen at ${p.eventIds.length} events</span>` : ''}
+        </div>
+      </div>
+      <button class="save-btn ${p.status === 'saved' ? 'saved' : ''}" data-toggle-save="${p.id}" aria-label="Save">${bookmarkSVG(p.status === 'saved')}</button>
+    </div>`;
+}
+
+function renderDetail(targetEl) {
+  const ev = eventById(state.selectedEventId);
+  if (!ev) return;
+  const meta = CATEGORIES[ev.category];
+  const attendees = ev.attendingPersonIds.map(personById).filter(Boolean);
+  const ranked = [...attendees].sort((a,b) => b.score - a.score);
+  const top10 = ranked.slice(0, 10);
+  const seenBefore = attendees.filter(p => p.eventIds.length >= 2);
+  const newSignal = attendees.filter(p => p.eventIds.length === 1 && p.score >= 85);
+  const savedAttending = attendees.filter(p => p.status === 'saved');
+  const toMeet = attendees.filter(p => p.status === 'want-to-meet' || p.status === 'not-met').length;
+
+  const html = `
+    <!-- Header -->
+    <div class="border-b border-border pb-5 mb-5">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        ${categoryTag(ev.category)}
+        <button class="btn-icon" data-close-detail aria-label="Close">${xSVG()}</button>
+      </div>
+      <h2 class="font-serif text-[26px]" style="line-height: 1.1; letter-spacing: -0.01em;">${escapeHtml(ev.name)}</h2>
+      <div class="flex flex-col gap-1 mt-3 text-[12.5px] text-muted-foreground">
+        <span class="inline-flex items-center gap-1.5">${clockSVG()}<span>${escapeHtml(ev.date)} · ${escapeHtml(ev.time)}</span></span>
+        <span class="inline-flex items-center gap-1.5">${pinSVG()}<span>${escapeHtml(ev.location)} · ${escapeHtml(ev.city)}</span></span>
+      </div>
+      <p class="text-[13px] mt-3" style="color: hsl(258 8% 38%); line-height: 1.55;">${escapeHtml(ev.summary)}</p>
+
+      <div class="grid grid-cols-3 gap-2 mt-4">
+        <div class="surface px-3 py-3">
+          <div class="font-serif text-[22px] tabular" style="line-height: 1;">${toMeet}</div>
+          <div class="text-[10.5px] uppercase tracking-wider text-muted-foreground mt-1">To meet</div>
+        </div>
+        <div class="surface px-3 py-3">
+          <div class="font-serif text-[22px] tabular" style="line-height: 1;">${seenBefore.length}</div>
+          <div class="text-[10.5px] uppercase tracking-wider text-muted-foreground mt-1">Seen before</div>
+        </div>
+        <div class="surface-soft px-3 py-3">
+          <div class="font-serif text-[22px] tabular" style="line-height: 1; color: hsl(258 80% 50%);">${savedAttending.length}</div>
+          <div class="text-[10.5px] uppercase tracking-wider mt-1" style="color: hsl(258 60% 45%);">Saved</div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 mt-4">
+        <button class="btn-primary">Build my plan ${arrowUpRightSVG()}</button>
+        <button class="btn-outline">${bookmarkSVG(false)} Save event</button>
+      </div>
+    </div>
+
+    <!-- Sections -->
+    <div class="flex flex-col gap-7">
+      <section>
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-[12.5px] font-medium uppercase tracking-wider flex items-center gap-2" style="color: hsl(var(--foreground));">
+            <span style="color: hsl(258 80% 55%);">${trendUpSVG()}</span>
+            Top 10 people to meet
+          </h3>
+          <span class="text-[11px] text-muted-foreground">Ranked by relevance to your goals</span>
+        </div>
+        <div>${top10.length ? top10.map((p,i) => personRowHTML(p, { rank: i+1 })).join('') : `<div class="empty-state">No attendees yet.</div>`}</div>
+      </section>
+
+      <section>
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-[12.5px] font-medium uppercase tracking-wider flex items-center gap-2" style="color: hsl(var(--foreground));">
+            <span style="color: hsl(258 80% 55%);">${repeatSVG()}</span>
+            People you've seen before
+          </h3>
+          <span class="text-[11px] text-muted-foreground">${seenBefore.length} repeat across your events</span>
+        </div>
+        <div>${seenBefore.length ? seenBefore.slice(0,4).map(p => personRowHTML(p, { showWhy: false, showSeenBefore: true })).join('') : `<div class="empty-state">No repeat people yet for this room.</div>`}</div>
+      </section>
+
+      <section>
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-[12.5px] font-medium uppercase tracking-wider flex items-center gap-2" style="color: hsl(var(--foreground));">
+            <span style="color: hsl(327 80% 55%);">${sparkleSVG()}</span>
+            New high-signal people
+          </h3>
+          <span class="text-[11px] text-muted-foreground">First time appearing in a Doss event</span>
+        </div>
+        <div>${newSignal.length ? newSignal.slice(0,4).map(p => personRowHTML(p, { showWhy: false })).join('') : `<div class="empty-state">No new high-signal first-timers in this room.</div>`}</div>
+      </section>
+
+      <section>
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-[12.5px] font-medium uppercase tracking-wider flex items-center gap-2" style="color: hsl(var(--foreground));">
+            <span style="color: hsl(258 80% 55%);">${bookmarkSVG(true)}</span>
+            Saved people attending
+          </h3>
+          <span class="text-[11px] text-muted-foreground">${savedAttending.length} from your network</span>
+        </div>
+        <div>${savedAttending.length ? savedAttending.map(p => personRowHTML(p, { showWhy: false })).join('') : `<div class="empty-state">None of your saved people are attending.</div>`}</div>
+      </section>
+    </div>
+  `;
+  const target = targetEl || $('#detailCol');
+  target.innerHTML = html;
+  bindDetailRow(target);
+}
+
+function bindDetailRow(root) {
+  $$('[data-person]', root).forEach(row => {
+    row.querySelector('.flex-1').addEventListener('click', () => openProfile(row.dataset.person));
+  });
+  $$('[data-toggle-save]', root).forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); toggleSave(btn.dataset.toggleSave); });
+  });
+  $$('[data-close-detail]', root).forEach(btn => btn.addEventListener('click', closeDetail));
+}
+
+function closeDetail() {
+  $('#detailCol').classList.remove('open');
+  $('#appGrid').classList.remove('with-detail');
+  closeDetailSheet();
+}
+
+function openDetailSheet() {
+  state.detailSheetOpen = true;
+  const sheet = $('#detailSheet');
+  sheet.innerHTML = `<div class="overflow-y-auto h-full p-6"></div>`;
+  renderDetail(sheet.querySelector('div'));
+  sheet.classList.add('open');
+  $('#scrim').classList.add('open');
+}
+
+function closeDetailSheet() {
+  state.detailSheetOpen = false;
+  $('#detailSheet').classList.remove('open');
+  if (!state.profileOpen) $('#scrim').classList.remove('open');
+}
+
+/* =====================================================================
+   RENDER — PEOPLE
+===================================================================== */
+
+function personCardHTML(p) {
+  const high = isHighRepeat(p);
+  const status = STATUSES[p.status];
+  return `
+  <div class="surface p-4 flex flex-col gap-2.5" data-person-card="${p.id}" style="cursor: pointer;">
+    <div class="flex items-start gap-3">
+      ${avatarHTML(p, 42)}
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-[14px] font-medium truncate">${escapeHtml(p.name)}</span>
+          ${high ? `<span class="signal-dot"></span>` : ''}
+        </div>
+        <div class="text-[12px] text-muted-foreground truncate mt-0.5">${escapeHtml(p.title)} · ${escapeHtml(p.company)}</div>
+      </div>
+      <span class="score-pill">${p.score}</span>
+    </div>
+    ${p.whyMeet ? `<p class="text-[12.5px] clamp-2" style="color: hsl(258 8% 38%); line-height: 1.5;">${escapeHtml(p.whyMeet)}</p>` : ''}
+    <div class="flex items-center gap-1.5 flex-wrap">${tagChips(p.tags)}</div>
+    <div class="border-t border-dashed border-border pt-2.5 flex items-center justify-between gap-2">
+      <span class="inline-flex items-center gap-1.5 text-[11.5px] font-mono tabular ${high ? '' : 'text-muted-foreground'}" style="${high ? 'color:hsl(327 80% 55%);' : ''}">
+        ${repeatSVG()} Seen at ${p.eventIds.length} event${p.eventIds.length === 1 ? '' : 's'}
+      </span>
+      <div class="flex items-center gap-1">
+        <span class="pip" style="background:${status.bg};color:${status.text};border-color:${status.border};cursor:default;">
+          <span class="pip-dot" style="background:${status.dot};"></span>${status.label}
+        </span>
+        <button class="save-btn ${p.status === 'saved' ? 'saved' : ''}" style="opacity: 1;" data-toggle-save="${p.id}" aria-label="Save">${bookmarkSVG(p.status === 'saved')}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPeopleChips() {
+  const html = PEOPLE_FILTERS.map(f => {
+    const count = state.people.filter(f.match).length;
+    if (count === 0 && f.key !== 'everyone') return '';
+    const active = state.peopleFilter === f.key;
+    return `<button class="chip ${active ? 'active' : ''}" data-people-filter="${f.key}">
+      ${escapeHtml(f.label)}<span class="chip-count">${count}</span>
+    </button>`;
+  }).join('');
+  $('#peopleChips').innerHTML = html;
+}
+
+function renderPeople() {
+  const q = state.peopleSearch.trim().toLowerCase();
+  const f = PEOPLE_FILTERS.find(x => x.key === state.peopleFilter) || PEOPLE_FILTERS[0];
+  const filtered = state.people
+    .filter(f.match)
+    .filter(p => {
+      if (!q) return true;
+      const hay = (p.name + ' ' + p.title + ' ' + p.company + ' ' + p.tags.join(' ')).toLowerCase();
+      return hay.includes(q);
+    })
+    .sort((a,b) => b.score - a.score);
+
+  $('#peopleGrid').innerHTML = filtered.length
+    ? filtered.map(personCardHTML).join('')
+    : `<div class="empty-state col-span-full">No people match.</div>`;
+
+  $('#repeatCount').textContent = state.people.filter(p => p.eventIds.length >= 2).length;
+  bindPersonCards($('#peopleGrid'));
+}
+
+function bindPersonCards(root) {
+  $$('[data-person-card]', root).forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('[data-toggle-save]')) return;
+      openProfile(card.dataset.personCard);
+    });
+  });
+  $$('[data-toggle-save]', root).forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); toggleSave(btn.dataset.toggleSave); });
+  });
+}
+
+/* =====================================================================
+   RENDER — SAVED
+===================================================================== */
+
+function renderSaved() {
+  const saved = state.people.filter(p => p.status === 'saved').sort((a,b) => b.score - a.score);
+  $('#savedPeopleGrid').innerHTML = saved.length
+    ? saved.map(personCardHTML).join('')
+    : `<div class="empty-state col-span-full">You haven't saved anyone yet. Tap the bookmark icon on any person to add them.</div>`;
+  $('#savedPeopleCount').textContent = saved.length;
+  bindPersonCards($('#savedPeopleGrid'));
+
+  const events = EVENTS.filter(ev => ev.attendingPersonIds.some(pid => personById(pid)?.status === 'saved'));
+  $('#savedEventsGrid').innerHTML = events.length
+    ? events.map(eventCardHTML).join('')
+    : `<div class="empty-state col-span-full">No upcoming events feature your saved people.</div>`;
+  $('#savedEventsCount').textContent = events.length;
+  $$('#savedEventsGrid .event-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.selectedEventId = btn.dataset.event;
+      switchTab('dashboard');
+    });
+  });
+}
+
+/* =====================================================================
+   RENDER — SETTINGS
+===================================================================== */
+
+function renderSettings() {
+  $('#settingsCats').innerHTML = ['ai-tech','startup-vc','healthcare','private']
+    .map(c => categoryTag(c)).join('');
+}
+
+/* =====================================================================
+   PROFILE DRAWER
+===================================================================== */
+
+function openProfile(personId) {
+  const p = personById(personId);
+  if (!p) return;
+  state.selectedPerson = p;
+  state.profileOpen = true;
+  renderProfile();
+  $('#profileDrawer').classList.add('open');
+  $('#scrim').classList.add('open');
+}
+
+function closeProfile() {
+  state.profileOpen = false;
+  $('#profileDrawer').classList.remove('open');
+  if (!state.detailSheetOpen) $('#scrim').classList.remove('open');
+}
+
+function renderProfile() {
+  const p = state.selectedPerson;
+  if (!p) return;
+  const high = isHighRepeat(p);
+  const events = p.eventIds.map(eventById).filter(Boolean);
+
+  const statusRow = ['not-met','want-to-meet','met','followed-up','ignored'].map(s => {
+    const meta = STATUSES[s];
+    const active = p.status === s;
+    return `<button class="pip" data-set-status="${s}" style="background:${active ? meta.bg : 'transparent'};color:${meta.text};border-color:${active ? meta.border : 'hsl(var(--border))'};font-weight:${active ? 600 : 400};">
+      <span class="pip-dot" style="background:${meta.dot};"></span>${meta.label}
+    </button>`;
+  }).join('');
+
+  const html = `
+    <div class="flex items-center justify-between p-5 border-b border-border">
+      <span class="text-[11px] uppercase tracking-wider text-muted-foreground">Profile</span>
+      <button class="btn-icon" data-close-profile>${xSVG()}</button>
+    </div>
+    <div class="overflow-y-auto p-6 flex flex-col gap-6">
+
+      <div class="flex items-start gap-4">
+        ${avatarHTML(p, 64)}
+        <div class="flex-1 min-w-0">
+          <h2 class="font-serif text-[26px]" style="line-height: 1.1; letter-spacing: -0.01em;">${escapeHtml(p.name)}</h2>
+          <div class="text-[13px] text-muted-foreground mt-0.5">${escapeHtml(p.title)} · ${escapeHtml(p.company)}</div>
+          <div class="flex items-center gap-1.5 mt-2.5 flex-wrap">${tagChips(p.tags)}</div>
+        </div>
+      </div>
+
+      <div class="surface-soft p-4 flex items-center justify-between gap-4">
+        <div>
+          <div class="text-[10.5px] uppercase tracking-wider text-muted-foreground">Relevance</div>
+          <div class="font-serif text-[28px] tabular mt-0.5" style="color: hsl(258 80% 50%); line-height: 1;">${p.score}</div>
+          <div class="text-[12px] mt-1" style="color: hsl(258 8% 38%);">${tier(p.score)}</div>
+        </div>
+        ${high ? `<div class="text-right">
+          <div class="text-[10.5px] uppercase tracking-wider" style="color: hsl(327 60% 45%);">High repeat signal</div>
+          <div class="inline-flex items-center gap-1.5 text-[12px] mt-1" style="color: hsl(327 60% 45%);"><span class="signal-dot"></span> seen at ${p.eventIds.length} events</div>
+        </div>` : ''}
+      </div>
+
+      ${p.whyMeet ? `
+      <div>
+        <div class="flex items-center justify-between">
+          <div class="text-[10.5px] uppercase tracking-wider text-muted-foreground">Why meet</div>
+        </div>
+        <p class="text-[13px] mt-2" style="color: hsl(var(--foreground)); line-height: 1.55;">${escapeHtml(p.whyMeet)}</p>
+        ${p.summary ? `<p class="text-[12.5px] mt-2" style="color: hsl(var(--muted-foreground)); line-height: 1.5;">${escapeHtml(p.summary)}</p>` : ''}
+      </div>` : ''}
+
+      <div>
+        <div class="text-[10.5px] uppercase tracking-wider text-muted-foreground mb-2">Your status</div>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          ${statusRow}
+          <button class="pip" data-toggle-save-pip="${p.id}" style="background:${p.status === 'saved' ? STATUSES['saved'].bg : 'transparent'};color:${STATUSES['saved'].text};border-color:${p.status === 'saved' ? STATUSES['saved'].border : 'hsl(var(--border))'};">
+            ${bookmarkSVG(p.status === 'saved')} ${p.status === 'saved' ? 'Saved' : 'Save'}
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-[10.5px] uppercase tracking-wider text-muted-foreground">Seen at ${events.length} event${events.length === 1 ? '' : 's'}</div>
+          ${high ? `<div class="text-[10.5px] uppercase tracking-wider" style="color: hsl(327 60% 45%);">Appears often in AI / healthcare rooms</div>` : ''}
+        </div>
+        <div class="flex flex-col gap-2.5 relative">
+          <div class="absolute left-[3px] top-1.5 bottom-1.5 timeline-line"></div>
+          ${events.map(ev => `
+            <div class="flex items-start gap-3 relative">
+              <span style="width: 7px; height: 7px; background: hsl(258 80% 60%); border-radius: 50%; margin-top: 6px; flex-shrink: 0; z-index: 1;"></span>
+              <div class="flex-1 min-w-0 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="text-[13px] truncate">${escapeHtml(ev.name)}</div>
+                  <div class="mt-1">${categoryTag(ev.category).replace('class="ctag"', 'class="ctag" style="font-size:10.5px;padding:2px 6px;"')}</div>
+                </div>
+                <span class="font-mono tabular text-[11.5px] text-muted-foreground whitespace-nowrap">${escapeHtml(ev.date)}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      ${p.talkingPoint ? `
+      <div>
+        <div class="text-[10.5px] uppercase tracking-wider text-muted-foreground mb-2 inline-flex items-center gap-1.5">
+          ${quoteSVG()} Suggested talking point
+        </div>
+        <div class="surface-soft p-3.5 text-[13px]" style="color: hsl(var(--foreground)); line-height: 1.55;">${escapeHtml(p.talkingPoint)}</div>
+      </div>` : ''}
+
+      ${p.introMessage ? `
+      <div>
+        <div class="text-[10.5px] uppercase tracking-wider text-muted-foreground mb-2">Suggested intro</div>
+        <div class="surface p-4">
+          <p class="font-serif italic text-[14.5px]" style="line-height: 1.5; color: hsl(258 14% 16%);">"${escapeHtml(p.introMessage)}"</p>
+          <div class="flex items-center gap-2 mt-3">
+            <button class="btn-primary">${copySVG()} Copy &amp; open LinkedIn</button>
+            <button class="btn-outline">Edit</button>
+          </div>
+        </div>
+      </div>` : ''}
+
+      <div>
+        <div class="text-[10.5px] uppercase tracking-wider text-muted-foreground mb-2">Your notes</div>
+        <textarea class="w-full focus-ring" placeholder="Quick context to remember…" style="min-height: 88px; padding: 10px 12px; border-radius: 12px; border: 1px solid hsl(var(--border)); font-family: 'Geist', sans-serif; font-size: 13px; line-height: 1.5; resize: vertical; outline: none; background: white;"></textarea>
+      </div>
+
+    </div>
+  `;
+  $('#profileDrawer').innerHTML = html;
+  $$('[data-close-profile]').forEach(b => b.addEventListener('click', closeProfile));
+  $$('[data-set-status]').forEach(b => b.addEventListener('click', () => setStatus(p.id, b.dataset.setStatus)));
+  $$('[data-toggle-save-pip]').forEach(b => b.addEventListener('click', () => toggleSave(b.dataset.toggleSavePip)));
+}
+
+/* =====================================================================
+   STATE MUTATIONS
+===================================================================== */
+
+function toggleSave(personId) {
+  const p = personById(personId);
+  if (!p) return;
+  p.status = p.status === 'saved' ? 'not-met' : 'saved';
+  rerenderEverything();
+}
+
+function setStatus(personId, status) {
+  const p = personById(personId);
+  if (!p) return;
+  p.status = status;
+  rerenderEverything();
+}
+
+function rerenderEverything() {
+  renderEvents();
+  if (state.tab === 'dashboard') {
+    if ($('#detailCol').classList.contains('open')) renderDetail();
+    if (state.detailSheetOpen) {
+      const sheet = $('#detailSheet');
+      renderDetail(sheet.querySelector('div'));
+    }
+  }
+  if (state.tab === 'people') renderPeople();
+  if (state.tab === 'saved') renderSaved();
+  if (state.profileOpen) renderProfile();
+  $('#savedCount').textContent = state.people.filter(p => p.status === 'saved').length || '';
+}
+
+/* =====================================================================
+   TABS
+===================================================================== */
+
+function switchTab(tab) {
+  state.tab = tab;
+  $$('.view').forEach(v => v.classList.add('hidden'));
+  $('#view-' + (tab === 'events' ? 'dashboard' : tab)).classList.remove('hidden');
+  $$('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+
+  if (tab === 'people') renderPeople();
+  if (tab === 'saved') renderSaved();
+  if (tab === 'settings') renderSettings();
+
+  // Detail panel only in Dashboard/Events
+  if (tab !== 'dashboard' && tab !== 'events') {
+    $('#detailCol').classList.remove('open');
+    $('#appGrid').classList.remove('with-detail');
+  } else if (state.selectedEventId && window.matchMedia('(min-width: 1280px)').matches) {
+    renderDetail();
+    $('#detailCol').classList.add('open');
+    $('#appGrid').classList.add('with-detail');
+  }
+
+  closeSidebar();
+}
+
+/* =====================================================================
+   SIDEBAR (mobile)
+===================================================================== */
+
+function openSidebar() {
+  $('#sidebarSheet').classList.add('open');
+  $('#scrim').classList.add('open');
+}
+function closeSidebar() {
+  $('#sidebarSheet').classList.remove('open');
+  if (!state.profileOpen && !state.detailSheetOpen) $('#scrim').classList.remove('open');
+}
+
+function renderMobileNav() {
+  const items = [
+    { tab: 'dashboard', label: 'Dashboard' },
+    { tab: 'events',    label: 'Events' },
+    { tab: 'people',    label: 'People' },
+    { tab: 'saved',     label: 'Saved' },
+    { tab: 'settings',  label: 'Settings' }
+  ];
+  $('#mobileNav').innerHTML = items.map(i => `
+    <button class="nav-item ${state.tab === i.tab ? 'active' : ''}" data-mtab="${i.tab}">
+      <span>${i.label}</span>
+    </button>
+  `).join('');
+  $$('[data-mtab]').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.mtab)));
+}
+
+/* =====================================================================
+   WIRING
+===================================================================== */
+
+function init() {
+  // Greeting based on hour
+  const hour = new Date().getHours();
+  const part = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+  $('#greeting').textContent = `Good ${part}, ${ME.firstName}.`;
+
+  // Sidebar nav
+  $$('.nav-item[data-tab]').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+  // Search
+  $('#searchInput').addEventListener('input', e => { state.search = e.target.value; renderEvents(); });
+  $('#peopleSearch').addEventListener('input', e => { state.peopleSearch = e.target.value; renderPeople(); });
+
+  // Category chips — multi-select toggling, "clear" button resets
+  $('#categoryChips').addEventListener('click', e => {
+    const btn = e.target.closest('[data-cat]');
+    if (!btn) return;
+    const cat = btn.dataset.cat;
+    if (state.activeCategories.has(cat)) state.activeCategories.delete(cat);
+    else state.activeCategories.add(cat);
+    renderCategoryChips();
+    renderEvents();
+  });
+  $('#clearChips').addEventListener('click', () => {
+    state.activeCategories.clear();
+    renderCategoryChips();
+    renderEvents();
+  });
+
+  // People filter chips (single-select)
+  $('#peopleChips').addEventListener('click', e => {
+    const btn = e.target.closest('[data-people-filter]');
+    if (!btn) return;
+    state.peopleFilter = btn.dataset.peopleFilter;
+    renderPeopleChips();
+    renderPeople();
+  });
+
+  // Mobile sidebar
+  $('#open-sidebar').addEventListener('click', openSidebar);
+  $('#closeSidebar').addEventListener('click', closeSidebar);
+  $('#scrim').addEventListener('click', () => {
+    closeProfile();
+    closeDetailSheet();
+    closeSidebar();
+  });
+
+  // Esc
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (state.profileOpen) closeProfile();
+    else if (state.detailSheetOpen) closeDetailSheet();
+    else closeSidebar();
+  });
+
+  // Initial render
+  renderCategoryChips();
+  renderEvents();
+  renderPeopleChips();
+  renderMobileNav();
+  $('#savedCount').textContent = state.people.filter(p => p.status === 'saved').length || '';
+
+  // Open detail panel on lg+ if we have a default selection
+  if (window.matchMedia('(min-width: 1280px)').matches && state.selectedEventId) {
+    renderDetail();
+    $('#detailCol').classList.add('open');
+    $('#appGrid').classList.add('with-detail');
+  }
+
+  // Re-evaluate on resize
+  let rt = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      if (window.matchMedia('(min-width: 1280px)').matches) {
+        // close sheet, fall back to inline col
+        if (state.detailSheetOpen) closeDetailSheet();
+        if ((state.tab === 'dashboard' || state.tab === 'events') && state.selectedEventId) {
+          renderDetail();
+          $('#detailCol').classList.add('open');
+          $('#appGrid').classList.add('with-detail');
+        }
+      } else {
+        $('#detailCol').classList.remove('open');
+        $('#appGrid').classList.remove('with-detail');
+      }
+    }, 120);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
