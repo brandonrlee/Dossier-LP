@@ -338,17 +338,70 @@
     overflow: hidden;
   }
 
-  /* Event detail (inline column on xl+) */
-  .detail-col {
-    border-left: 1px solid hsl(var(--border));
+  /* Event detail (centered modal) */
+  .detail-col { display: none !important; }
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: hsl(258 30% 14% / 0.36);
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal-panel {
+    width: 100%;
+    max-width: 720px;
+    max-height: calc(100vh - 64px);
     background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 18px;
+    box-shadow: 0 30px 80px -20px hsl(258 30% 20% / 0.45);
     overflow-y: auto;
-    padding: 24px;
-    display: none;
+    padding: 28px;
+    transform: translateY(14px) scale(0.985);
+    transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-  @media (min-width: 1280px) {
-    .detail-col.open { display: block; }
+  .modal-overlay.open .modal-panel { transform: translateY(0) scale(1); }
+
+  /* Sidebar collapse */
+  @media (min-width: 1024px) {
+    .app-grid.sb-collapsed { grid-template-columns: 68px 1fr !important; }
   }
+  .sidebar-fixed.collapsed .nav-label,
+  .sidebar-fixed.collapsed .brand-text,
+  .sidebar-fixed.collapsed .week-card,
+  .sidebar-fixed.collapsed .user-meta { display: none !important; }
+  .sidebar-fixed.collapsed .nav-item {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .sidebar-fixed.collapsed .brand-row { justify-content: center; padding-left: 0; padding-right: 0; }
+  .sidebar-fixed.collapsed .user-row { justify-content: center; padding-left: 0; padding-right: 0; }
+  .sidebar-fixed.collapsed .saved-count { display: none; }
+  .collapse-btn {
+    width: 26px; height: 26px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    color: hsl(var(--muted-foreground));
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 150ms ease;
+  }
+  .collapse-btn:hover {
+    background: hsl(258 100% 96%);
+    color: hsl(var(--foreground));
+    border-color: hsl(var(--border));
+  }
+  .sidebar-fixed.collapsed .collapse-btn svg { transform: rotate(180deg); }
 
   .timeline-line {
     background: linear-gradient(to bottom, hsl(266 65% 88%), transparent);
@@ -421,7 +474,7 @@
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
   <div class="flex items-center gap-2">
-    <span class="font-serif text-[20px]" style="letter-spacing: -0.01em;">Doss</span>
+    <span style="font-family: 'Instrument Serif', Georgia, serif; font-size: 22px; font-weight: 400; letter-spacing: -0.01em; line-height: 1;">Doss</span>
   </div>
   <div style="width: 32px;"></div>
 </div>
@@ -429,39 +482,44 @@
 <div class="app-grid" id="appGrid">
 
   <!-- Sidebar (lg+) -->
-  <aside class="sidebar-fixed border-r border-border bg-white/60 backdrop-blur-md flex flex-col" style="height: 100vh;">
-    <div class="flex items-center gap-2 px-5 pt-5 pb-4">
-      <span class="inline-flex items-center justify-center" style="width: 26px; height: 26px;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="hsl(258 80% 55%)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-      </span>
-      <span class="font-serif text-[20px] tracking-tight">Doss</span>
+  <aside id="sidebar" class="sidebar-fixed border-r border-border bg-white/60 backdrop-blur-md flex flex-col" style="height: 100vh;">
+    <div class="brand-row flex items-center gap-2 px-5 pt-5 pb-4 justify-between">
+      <a href="../" class="flex items-center gap-2 brand-text" style="text-decoration:none; color: inherit;">
+        <span class="inline-flex items-center justify-center" style="width: 26px; height: 26px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="hsl(258 80% 55%)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </span>
+        <span style="font-family: 'Instrument Serif', Georgia, serif; font-size: 22px; font-weight: 400; font-style: normal; letter-spacing: -0.01em; line-height: 1;">Doss</span>
+      </a>
+      <button class="collapse-btn" id="collapseBtn" aria-label="Collapse sidebar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 180ms ease;"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
     </div>
 
     <nav class="px-3 flex flex-col gap-0.5">
       <button class="nav-item active" data-tab="dashboard">
         <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
-        <span>Dashboard</span>
+        <span class="nav-label">Dashboard</span>
       </button>
       <button class="nav-item" data-tab="events">
         <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <span>Events</span>
+        <span class="nav-label">Events</span>
       </button>
       <button class="nav-item" data-tab="people">
         <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span>People</span>
+        <span class="nav-label">People</span>
       </button>
       <button class="nav-item" data-tab="saved">
         <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-        <span class="flex-1">Saved</span>
-        <span id="savedCount" class="font-mono tabular text-[11px] text-muted-foreground"></span>
+        <span class="nav-label flex-1">Saved</span>
+        <span id="savedCount" class="saved-count font-mono tabular text-[11px] text-muted-foreground"></span>
       </button>
       <button class="nav-item" data-tab="settings">
         <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        <span>Settings</span>
+        <span class="nav-label">Settings</span>
       </button>
     </nav>
 
-    <div class="px-4 mt-5">
+    <div class="week-card px-4 mt-5">
       <div class="surface-soft p-3.5 flex flex-col gap-1.5">
         <div class="flex items-center gap-2">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="hsl(327 80% 55%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.5 5L18 8l-4.5 1L12 14l-1.5-5L6 8l4.5-1z"/><path d="M5 16l.8 2.7L8 19l-2.2.3L5 22l-.8-2.7L2 19l2.2-.3z"/><path d="M19 14l.5 1.7 1.7.3-1.7.3L19 18l-.5-1.7-1.7-.3 1.7-.3z"/></svg>
@@ -474,9 +532,9 @@
       </div>
     </div>
 
-    <div class="mt-auto px-4 py-4 border-t border-border flex items-center gap-2.5">
-      <div class="rounded-full" style="width: 32px; height: 32px; background: linear-gradient(135deg, hsl(258 80% 88%), hsl(290 80% 78%)); color: hsl(258 60% 28%); display: grid; place-items: center; font-size: 12px; font-weight: 600; border: 1px solid hsl(0 0% 100% / 0.6);">B</div>
-      <div class="flex flex-col leading-tight min-w-0">
+    <div class="user-row mt-auto px-4 py-4 border-t border-border flex items-center gap-2.5">
+      <div class="rounded-full" style="width: 32px; height: 32px; background: linear-gradient(135deg, hsl(258 80% 88%), hsl(290 80% 78%)); color: hsl(258 60% 28%); display: grid; place-items: center; font-size: 12px; font-weight: 600; border: 1px solid hsl(0 0% 100% / 0.6); flex-shrink: 0;">B</div>
+      <div class="user-meta flex flex-col leading-tight min-w-0">
         <span class="text-[13px] font-medium truncate">Brandon</span>
         <span class="text-[11px] text-muted-foreground truncate">Tract · SF</span>
       </div>
@@ -581,7 +639,7 @@
             <button class="btn-outline" style="padding: 6px 10px; font-size: 12px;">Edit</button>
           </div>
           <p class="text-[14px]" style="color: hsl(var(--foreground)); line-height: 1.55;">
-            Meet 5 healthcare AI investors and 3 vertical-AI founders by Q1 2026. Re-engage 2 prior intros from past Doss events. Avoid generic mixers.
+            Surface the best rooms: VCs, founders, creators, operators, and socially interesting high-signal people. Prioritize AI, healthcare, startup, and private events. Avoid generic mixers.
           </p>
         </div>
 
@@ -606,7 +664,7 @@
 <div class="scrim" id="scrim"></div>
 <aside id="sidebarSheet" class="sheet-left">
   <div class="flex items-center justify-between px-5 pt-5 pb-3">
-    <span class="font-serif text-[20px]">Doss</span>
+    <span style="font-family: 'Instrument Serif', Georgia, serif; font-size: 22px; font-weight: 400; letter-spacing: -0.01em; line-height: 1;">Doss</span>
     <button class="btn-icon" id="closeSidebar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
   <nav class="px-3 flex flex-col gap-0.5" id="mobileNav"></nav>
@@ -615,15 +673,20 @@
 <!-- Event detail sheet (smaller screens) -->
 <aside id="detailSheet" class="sheet-right" style="z-index: 75;"></aside>
 
+<!-- Event detail modal (centered popup, blurred backdrop) -->
+<div id="eventModal" class="modal-overlay">
+  <div class="modal-panel" id="eventModalPanel"></div>
+</div>
+
 <!-- Person profile drawer -->
-<aside id="profileDrawer" class="sheet-right" style="max-width: 480px; z-index: 80;"></aside>
+<aside id="profileDrawer" class="sheet-right" style="max-width: 480px; z-index: 90;"></aside>
 
 <script>
 /* =====================================================================
    DATA
 ===================================================================== */
 
-const ME = { firstName: 'Brandon', goal: 'Meet 5 healthcare AI investors and 3 vertical-AI founders by Q1 2026.' };
+const ME = { firstName: 'Brandon', goal: 'Surface the best rooms: VCs, founders, creators, operators, and socially interesting high-signal people. Prioritize AI, healthcare, startup, and private events. Avoid generic mixers.' };
 
 const CATEGORIES = {
   'private':       { label: 'Private / Invite-only', tagBg: 'rgba(22,20,28,0.05)', tagText: '#16141C',  dot: '#16141C' },
@@ -695,6 +758,7 @@ const state = {
   profileOpen: false,
   detailSheetOpen: false,
   sidebarOpen: false,
+  sidebarCollapsed: false,
   peopleFilter: 'everyone',
   peopleSearch: '',
   people: PEOPLE.map(p => ({ ...p }))
@@ -847,33 +911,21 @@ function renderEvents() {
     root.innerHTML = `<div class="empty-state">No events match your filters.</div>`;
     return;
   }
-  const groups = CATEGORY_ORDER.map(cat => ({ cat, events: filtered.filter(e => e.category === cat) })).filter(g => g.events.length > 0);
-  root.innerHTML = groups.map(({ cat, events }) => `
-    <div class="flex flex-col gap-3">
-      <div class="flex items-center justify-between">
-        <h2 class="text-[12.5px] font-medium uppercase tracking-wider flex items-center gap-2" style="color: hsl(var(--foreground));">
-          <span class="pip-dot" style="background:${CATEGORIES[cat].dot};"></span>
-          ${escapeHtml(CATEGORIES[cat].label)}
-        </h2>
-        <span class="text-[11px] text-muted-foreground font-mono tabular">${events.length}</span>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        ${events.map(eventCardHTML).join('')}
-      </div>
+  const daysOut = ev => {
+    const m = (ev.dayLabel || '').match(/-?\d+/);
+    return m ? parseInt(m[0], 10) : 9999;
+  };
+  const sorted = [...filtered].sort((a, b) => daysOut(a) - daysOut(b));
+  root.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      ${sorted.map(eventCardHTML).join('')}
     </div>
-  `).join('');
+  `;
 
   $$('.event-card').forEach(btn => {
     btn.addEventListener('click', () => {
       state.selectedEventId = btn.dataset.event;
-      const isLg = window.matchMedia('(min-width: 1280px)').matches;
-      if (isLg) {
-        renderDetail();
-        $('#appGrid').classList.add('with-detail');
-        $('#detailCol').classList.add('open');
-      } else {
-        openDetailSheet();
-      }
+      openEventModal();
       renderEvents();
     });
   });
@@ -1022,18 +1074,27 @@ function bindDetailRow(root) {
 }
 
 function closeDetail() {
-  $('#detailCol').classList.remove('open');
+  closeEventModal();
+  $('#detailCol')?.classList.remove('open');
   $('#appGrid').classList.remove('with-detail');
   closeDetailSheet();
 }
 
+function openEventModal() {
+  const panel = $('#eventModalPanel');
+  renderDetail(panel);
+  $('#eventModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEventModal() {
+  $('#eventModal').classList.remove('open');
+  if (!state.profileOpen) document.body.style.overflow = '';
+}
+
 function openDetailSheet() {
-  state.detailSheetOpen = true;
-  const sheet = $('#detailSheet');
-  sheet.innerHTML = `<div class="overflow-y-auto h-full p-6"></div>`;
-  renderDetail(sheet.querySelector('div'));
-  sheet.classList.add('open');
-  $('#scrim').classList.add('open');
+  // legacy — now routes to modal so all viewports get the same popup behavior
+  openEventModal();
 }
 
 function closeDetailSheet() {
@@ -1432,10 +1493,33 @@ function init() {
     closeSidebar();
   });
 
+  // Sidebar collapse (lg+)
+  $('#collapseBtn').addEventListener('click', () => {
+    state.sidebarCollapsed = !state.sidebarCollapsed;
+    $('#sidebar').classList.toggle('collapsed', state.sidebarCollapsed);
+    $('#appGrid').classList.toggle('sb-collapsed', state.sidebarCollapsed);
+    try { localStorage.setItem('doss_sb_collapsed', state.sidebarCollapsed ? '1' : '0'); } catch(_) {}
+  });
+
+  // Restore collapse preference
+  try {
+    if (localStorage.getItem('doss_sb_collapsed') === '1') {
+      state.sidebarCollapsed = true;
+      $('#sidebar').classList.add('collapsed');
+      $('#appGrid').classList.add('sb-collapsed');
+    }
+  } catch(_) {}
+
+  // Event modal — backdrop close
+  $('#eventModal').addEventListener('click', e => {
+    if (e.target.id === 'eventModal') closeEventModal();
+  });
+
   // Esc
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
     if (state.profileOpen) closeProfile();
+    else if ($('#eventModal').classList.contains('open')) closeEventModal();
     else if (state.detailSheetOpen) closeDetailSheet();
     else closeSidebar();
   });
@@ -1446,33 +1530,6 @@ function init() {
   renderPeopleChips();
   renderMobileNav();
   $('#savedCount').textContent = state.people.filter(p => p.status === 'saved').length || '';
-
-  // Open detail panel on lg+ if we have a default selection
-  if (window.matchMedia('(min-width: 1280px)').matches && state.selectedEventId) {
-    renderDetail();
-    $('#detailCol').classList.add('open');
-    $('#appGrid').classList.add('with-detail');
-  }
-
-  // Re-evaluate on resize
-  let rt = null;
-  window.addEventListener('resize', () => {
-    clearTimeout(rt);
-    rt = setTimeout(() => {
-      if (window.matchMedia('(min-width: 1280px)').matches) {
-        // close sheet, fall back to inline col
-        if (state.detailSheetOpen) closeDetailSheet();
-        if ((state.tab === 'dashboard' || state.tab === 'events') && state.selectedEventId) {
-          renderDetail();
-          $('#detailCol').classList.add('open');
-          $('#appGrid').classList.add('with-detail');
-        }
-      } else {
-        $('#detailCol').classList.remove('open');
-        $('#appGrid').classList.remove('with-detail');
-      }
-    }, 120);
-  });
 }
 
 document.addEventListener('DOMContentLoaded', init);
