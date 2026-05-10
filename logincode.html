@@ -48,7 +48,7 @@
 <h1 class="font-display-lg text-display-lg text-on-surface">enter your code.</h1>
 <p class="font-body-md text-body-md text-on-surface-variant">we texted a 6-digit code to <span id="phoneDisplay" class="text-on-surface font-medium">+1 (201) 555-0123</span></p>
 </div>
-<form id="codeForm" class="flex flex-col gap-lg" autocomplete="one-time-code">
+<form id="codeForm" class="flex flex-col gap-lg" autocomplete="one-time-code" action="./number.html" method="get">
 <div class="flex justify-between gap-sm" id="codeBoxes">
 <input class="code-input" type="text" inputmode="numeric" maxlength="1" autofocus />
 <input class="code-input" type="text" inputmode="numeric" maxlength="1" />
@@ -57,11 +57,11 @@
 <input class="code-input" type="text" inputmode="numeric" maxlength="1" />
 <input class="code-input" type="text" inputmode="numeric" maxlength="1" />
 </div>
-<a href="/number" id="verifyBtn" class="w-full bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm py-md rounded-full hover:opacity-90 transition-opacity flex justify-center items-center gap-sm">
+<a href="./number.html" id="verifyBtn" class="w-full bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm py-md rounded-full hover:opacity-90 transition-opacity flex justify-center items-center gap-sm">
 verify and continue
 </a>
 <div class="flex items-center justify-between text-label-sm font-label-sm">
-<a href="/login" class="text-on-surface-variant hover:text-on-surface flex items-center gap-xs transition-colors">
+<a href="./login.html" class="text-on-surface-variant hover:text-on-surface flex items-center gap-xs transition-colors">
 <span class="material-symbols-outlined text-[16px]">arrow_back</span>
 change number
 </a>
